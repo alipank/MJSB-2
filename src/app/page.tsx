@@ -1,112 +1,297 @@
-import Image from "next/image";
+import {
+  Accordion,
+  AccordionItem,
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Chip,
+  Divider,
+  Image,
+} from "@nextui-org/react";
+import NextImage from "next/image";
+import { alegreya, sourceSans } from "./fonts";
 
-export default function Home() {
+async function getData() {
+  const res = await fetch(
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vRfksdbrKVE4LC_SBXQV6piq2T5TXZb-6-1kzTlLmn9Upsdz-EtABaX4T15X_Vz0zVrfwr9xPBxlc5V/pub?output=csv"
+  );
+
+  // if (!res.ok) {
+  //   throw new Error("Failed to fetch data");
+  // }
+
+  // return new Promise<String>((resolve, reject) => {
+  //   resolve(res.text());
+  // });
+
+  return res.text();
+}
+
+export default async function Home() {
+  // const data = await getData();
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
+    <main className="bg-sky-100">
+      <div className="w-full h-4/5 relative">
+        <div className="grid grid-rows-1 grid-cols-2">
+          <div className="px-16 py-32 flex flex-col justify-between">
+            <h1
+              className={`${alegreya.className} bg-gradient-to-t from-primary-800 to-primary-600 inline-block text-transparent bg-clip-text font-black text-5xl text-primary-800 [text-shadow:0px_2px_5px_#0006]`}
+            >
+              Kamu Bisa loh.. Menjahit Tanpa Kantong Jebol
+            </h1>
+            <div className={` text-2xl my-16 text-stone-800`}>
+              <p className="mb-1">
+                Kamu ingin{" "}
+                <span className="underline decoration-solid decoration-primary-700">
+                  Mesin Jahit murah
+                </span>{" "}
+                ?
+              </p>
+              <p className="mb-5">
+                atau Mesin jahit anda rusak dan perlu segera di perbaiki?{" "}
+              </p>
+              <p>Segera hubungi kami !! buka setiap hari ;)</p>
+            </div>
+            <div>
+              <Button
+                className={`text-amber-950 bg-gradient-to-tr from-amber-500 to-amber-300 border-amber-950 border-2 border-b-4 text-xl font-bold py-6 px-8  box-border`}
+              >
+                <p>Hubungi Kami</p>
+              </Button>
+              <span className="inline-block w-24"></span>
+              <Button className="text-amber-950 bg-transparent text-xl py-6 px-8 border-amber-950 border-2 border-b-4 font-bold ">
+                <p>Lihat-Lihat Mesin</p>
+              </Button>
+            </div>
+          </div>
+
+          <div>
+            <Divider orientation="vertical" className="absolute"></Divider>
             <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+              src="/hero.png"
+              removeWrapper
+              className="mx-auto my-12"
+              width="70%"
+              alt=""
             />
-          </a>
+          </div>
         </div>
       </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      {/* bg-gradient-to-b from-sky-50 to-sky-100  */}
+      <div className="relative z-10">
+        <Card
+          isBlurred
+          className="flex flex-col absolute bg-white/50 mb-16 -top-12 right-0 left-0 mx-auto my-0 mr-auto w-full max-w-screen-md h-24 "
+        >
+          {/* <img src="/hero.png" alt="" /> */}
+          <div className="absolute flex items-center px-4 justify-evenly border-2 border-amber-950 before:hidden before:bg-white/10 w-full h-full rounded-2xl ">
+            <h2 className={`${alegreya.className} font-bold text-2xl`}>
+              Sejak{" "}
+              <span className="bg-gradient-to-tr from-amber-600 to-amber-400 text-transparent bg-clip-text">
+                2015
+              </span>
+            </h2>
+            <Divider orientation="vertical" className="bg-amber-950">
+              {" "}
+            </Divider>
+            <h2 className={`${alegreya.className} font-bold text-2xl`}>
+              800+ Mesin telah diperbaiki/terjual
+            </h2>
+            <Divider orientation="vertical" className="bg-amber-950"></Divider>
+            <h2
+              className={`${alegreya.className} font-black text-2xl bg-gradient-to-tr from-primary-600 to-primary-400 text-transparent bg-clip-text`}
+            >
+              MJSB
+            </h2>
+          </div>
+        </Card>
       </div>
+      <div className="relative text-center bg-sky-50 py-20">
+        {/* background bulat bulat start*/}
+        <div className="absolute w-36 h-36 left-24 top-36 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400"></div>
+        <div className="absolute w-36 h-36 right-24 bottom-10 rounded-full bg-gradient-to-tl from-primary-600 to-primary-400"></div>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
+        {/* background bulat bulat end */}
+        <h2
+          className={`${alegreya.className} text-center text-5xl font-black text-amber-950`}
         >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+          Pengalaman Pelanggan
+        </h2>
+        <span className="inline-block h-6"></span>
+        <Chip
+          variant="shadow"
+          className="text-amber-950 bg-gradient-to-tr from-amber-500 to-amber-300 border-amber-950 border-2 font-bold"
+        >
+          Ulasan Google Maps
+        </Chip>
+        <div className="flex justify-evenly *:bg-white/50 mt-8 *:max-w-96 *:py-2 *:px-4 *:border-2 *:border-b-4 *:border-amber-950 *:h-60 *:flex *:flex-col *:justify-around">
+          <Card isBlurred>
+            <CardBody>
+              <p>
+                Recommended untuk yang lagi cari mesin jahit second dengan
+                kualitas mulus, dapet harga yang cocok. penjual nya ramah,
+                ngerti merk dan perbandingan mesin. Insyaallah beli disini
+                amanah diajarin sampai bisa, bisa dikontak buat service pula.
+              </p>
+            </CardBody>
+            <Divider></Divider>
+            <CardFooter className="font-bold">
+              <p>Rumah Jahit by insannuur</p>
+            </CardFooter>
+          </Card>
+          <Card isBlurred>
+            <CardBody>
+              <p>
+                Rekomend buat yg nyari mesin jahit seken.. bisa service jg,
+                ownernya ramah banget. Mesin jahit berbagai jenis ada tinggal
+                menyesuaikan budget. Dan dipastikan siap pakai.
+              </p>
+            </CardBody>
+            <Divider></Divider>
+            <CardFooter className="font-bold">
+              <p>Septi Pertiwi</p>
+            </CardFooter>
+          </Card>
+          <Card isBlurred>
+            <CardBody>
+              <p>
+                Kang servis mesin portable/mesin industri/mesin jadul dan
+                penjual mesin paling enaken,enak diajak ngobrol,enak ditnya soal
+                mesin,dikasih saran,dikasih tips,bisa datang kerumah
+              </p>
+            </CardBody>
+            <Divider></Divider>
+            <CardFooter className="font-bold">
+              <p>Ummu RayyaS</p>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+      <div className="text-center relative py-20">
+        {/* background accent start*/}
+        <div className="absolute w-24 h-64 left-56 top-36 rounded-2xl bg-gradient-to-tr from-primary-600 to-primary-400 -z-1"></div>
+        <div className="absolute w-24 h-64 right-56 bottom-10 rounded-2xl  bg-gradient-to-tl from-amber-600 to-amber-400"></div>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+        {/* background accent end */}
+        <div>
+          <p className="text-slate-700">Kondisi Mesin</p>
+          <h3 className={`${alegreya.className} text-3xl font-bold`}>
+            Apakah Ada Menjual Mesin Jahit Baru ?
+          </h3>
+          <Card
+            className="w-2/3 mx-auto mt-8 py-2 px-4 bg-white/75 border-2  border-primary-900"
+            isBlurred
+          >
+            <CardBody className="text-lg">
+              Kami berfokus untuk menjual mesin jahit bekas yang sudah kami
+              periksa dengan teliti. Setiap mesin yang kami jual sudah
+              dipastikan berfungsi dengan baik dan siap dipakai, jadi Anda bisa
+              mendapatkan mesin jahit berkualitas (like new) dengan harga yang
+              lebih terjangkau.
+            </CardBody>
+          </Card>
+        </div>
+        <Divider className="w-1/2 mx-auto my-16"></Divider>
+        <div>
+          <p className="text-slate-700">Garansi Barang</p>
+          <h3 className={`${alegreya.className} text-3xl font-bold`}>
+            Bagaimana jika mesin yang dibeli rusak ?
+          </h3>
+          <Card
+            isBlurred
+            className="w-2/3 mx-auto mt-8 py-2 px-4 bg-white/75 border-2 border-amber-950"
+          >
+            <CardBody className="text-lg">
+              Kami menjamin semua mesin jahit yang kami jual akan berfungsi
+              dengan baik. Kami juga memberikan garansi selama 30 hari untuk
+              semua barang dan perbaikan yang kami lakukan. Jika ada masalah
+              selama masa garansi, kami akan memperbaikinya secara gratis. Jadi,
+              anda tidak perlu khawatir.
+            </CardBody>
+          </Card>
+        </div>
+        <Divider className="w-1/2 mx-auto my-16"></Divider>
+        <div>
+          <p className="text-slate-700">Kondisi Mesin</p>
+          <h3 className={`${alegreya.className} text-3xl font-bold`}>
+            Apakah Ada Menjual Mesin Jahit Baru ?
+          </h3>
+          <Card
+            className="w-2/3 mx-auto mt-8 py-2 px-4 bg-white/75 border-2  border-primary-900"
+            isBlurred
+          >
+            <CardBody className="text-lg">
+              Kami berfokus untuk menjual mesin jahit bekas yang sudah kami
+              periksa dengan teliti. Setiap mesin yang kami jual sudah
+              dipastikan berfungsi dengan baik dan siap dipakai, jadi Anda bisa
+              mendapatkan mesin jahit berkualitas (like new) dengan harga yang
+              lebih terjangkau.
+            </CardBody>
+          </Card>
+        </div>
+      </div>
+      <div className="bg-sky-50 py-16">
+        <h2 className={`${alegreya.className} text-center text-5xl font-black`}>
+          Kunjungi kami
+        </h2>
+        <div className="grid grid-rows-1 grid-cols-2 gap-8 py-16 px-24">
+          <div className="w-1/2 mr-0 ml-auto">
+            <Button
+              className=" text-slate-50 w-full mb-4 flex justify-start bg-gradient-to-tr from-[#25D366] to-green-400 text-2xl py-8 px-4 border-amber-950 border-2 border-b-4 font-bold"
+              startContent={
+                <Image
+                  as={NextImage}
+                  src="/wa_white.svg"
+                  width={40}
+                  height={40}
+                />
+              }
+            >
+              0812-6644-2133
+            </Button>
+            <Button
+              className=" text-slate-50 w-full mb-4 flex justify-start bg-gradient-to-tr from-[#1877F2] to-sky-500 text-2xl py-8 px-4 border-amber-950 border-2 border-b-4 font-bold"
+              startContent={
+                <Image
+                  as={NextImage}
+                  src="/fb_white.png"
+                  width={40}
+                  height={40}
+                />
+              }
+            >
+              Mesin Jahit Seken Batam
+            </Button>
+            <Button
+              className=" text-slate-50 w-full flex justify-start bg-gradient-to-r from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-2xl py-8 px-4 border-amber-950 border-2 border-b-4 font-bold"
+              startContent={
+                <Image
+                  as={NextImage}
+                  src="/ig_white.svg"
+                  width={40}
+                  height={40}
+                />
+              }
+            >
+              Mesin Jahit Seken Batam
+            </Button>
+            <p className="text-right mt-4">
+              Jl. Rindang Garden Batu Aji No.15 blok C2, Buliang, Kec. Batu Aji,
+              Kota Batam, Kepulauan Riau 29424
+            </p>
+          </div>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+          <div>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.141549138857!2d103.97474881136158!3d1.0553296624455868!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d98daa3c1a2ab3%3A0xd92241c19d311839!2smesin%20jahit%20seken%20batam!5e0!3m2!1sid!2sid!4v1721545975577!5m2!1sid!2sid"
+              className="w-3/4 rounded-2xl aspect-square border-4 border-amber-950"
+              allowFullScreen={true}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+        </div>
       </div>
     </main>
   );
