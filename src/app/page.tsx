@@ -33,14 +33,14 @@ export default async function Home() {
   return (
     <main className="bg-sky-100">
       <div className="w-full h-4/5 relative">
-        <div className="grid grid-rows-1 grid-cols-2">
-          <div className="px-16 py-32 flex flex-col justify-between">
+        <div className="px-32 grid grid-rows-1 grid-cols-2">
+          <div className=" py-32 flex flex-col justify-between">
             <h1
-              className={`${alegreya.className} bg-gradient-to-t from-primary-800 to-primary-600 inline-block text-transparent bg-clip-text font-black text-5xl text-primary-800 [text-shadow:0px_2px_5px_#0006]`}
+              className={`${alegreya.className} bg-gradient-to-t from-primary-800 to-primary-600 inline-block text-transparent bg-clip-text font-black text-7xl text-primary-800 [text-shadow:0px_2px_5px_#0006]`}
             >
               Kamu Bisa loh.. Menjahit Tanpa Kantong Jebol
             </h1>
-            <div className={` text-2xl my-16 text-stone-800`}>
+            <div className={` text-3xl my-16 text-stone-800`}>
               <p className="mb-1">
                 Kamu ingin{" "}
                 <span className="underline decoration-solid decoration-primary-700">
@@ -55,24 +55,23 @@ export default async function Home() {
             </div>
             <div>
               <Button
-                className={`text-amber-950 bg-gradient-to-tr from-amber-500 to-amber-300 border-amber-950 border-2 border-b-4 text-xl font-bold py-6 px-8  box-border`}
+                className={`text-amber-950 bg-gradient-to-tr from-amber-500 to-amber-300 border-amber-950 border-2 border-b-4 text-2xl  font-bold py-8 px-10  box-border`}
               >
                 <p>Hubungi Kami</p>
               </Button>
               <span className="inline-block w-24"></span>
-              <Button className="text-amber-950 bg-transparent text-xl py-6 px-8 border-amber-950 border-2 border-b-4 font-bold ">
+              <Button className="text-amber-950 bg-transparent text-2xl py-8 px-10 border-amber-950 border-2 border-b-4 font-bold ">
                 <p>Lihat-Lihat Mesin</p>
               </Button>
             </div>
           </div>
 
           <div>
-            <Divider orientation="vertical" className="absolute"></Divider>
+          <Divider orientation="vertical" className="absolute"></Divider>
             <Image
               src="/hero.png"
               removeWrapper
-              className="mx-auto my-12"
-              width="70%"
+              className="mx-auto w-4/5 my-12"
               alt=""
             />
           </div>
@@ -82,25 +81,24 @@ export default async function Home() {
       <div className="relative z-10">
         <Card
           isBlurred
-          className="flex flex-col absolute bg-white/50 mb-16 -top-12 right-0 left-0 mx-auto my-0 mr-auto w-full max-w-screen-md h-24 "
+          className="absolute bg-white/50 mb-16 -top-12 right-0 left-0 mx-auto w-full max-w-screen-md h-24 "
         >
           {/* <img src="/hero.png" alt="" /> */}
-          <div className="absolute flex items-center px-4 justify-evenly border-2 border-amber-950 before:hidden before:bg-white/10 w-full h-full rounded-2xl ">
-            <h2 className={`${alegreya.className} font-bold text-2xl`}>
+          <div className="absolute flex flex-row items-center text-center  px-4 justify-evenly border-2 border-amber-950 before:hidden before:bg-white/10 w-full h-full rounded-2xl ">
+            <h2 className={`${alegreya.className} flex-grow-[3] font-bold text-2xl`}>
               Sejak{" "}
               <span className="bg-gradient-to-tr from-amber-600 to-amber-400 text-transparent bg-clip-text">
                 2015
               </span>
             </h2>
-            <Divider orientation="vertical" className="bg-amber-950">
-              {" "}
+            <Divider orientation="vertical" className="  bg-amber-950">
             </Divider>
-            <h2 className={`${alegreya.className} font-bold text-2xl`}>
+            <h2 className={`${alegreya.className} flex-grow-[7] font-bold text-2xl`}>
               800+ Mesin telah diperbaiki/terjual
             </h2>
-            <Divider orientation="vertical" className="bg-amber-950"></Divider>
+            <Divider orientation="vertical" className=" bg-amber-950"></Divider>
             <h2
-              className={`${alegreya.className} font-black text-2xl bg-gradient-to-tr from-primary-600 to-primary-400 text-transparent bg-clip-text`}
+              className={`${alegreya.className} flex-grow-[3] font-black text-2xl bg-gradient-to-tr from-primary-600 to-primary-400 text-transparent bg-clip-text`}
             >
               MJSB
             </h2>
@@ -114,11 +112,11 @@ export default async function Home() {
 
         {/* background bulat bulat end */}
         <h2
-          className={`${alegreya.className} text-center text-5xl font-black text-amber-950`}
+          className={`${alegreya.className} text-center mb-2 text-5xl font-black text-amber-950`}
         >
           Pengalaman Pelanggan
         </h2>
-        <span className="inline-block h-6"></span>
+        
         <Chip
           variant="shadow"
           className="text-amber-950 bg-gradient-to-tr from-amber-500 to-amber-300 border-amber-950 border-2 font-bold"

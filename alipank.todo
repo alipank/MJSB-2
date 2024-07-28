@@ -1,1 +1,6 @@
 refactor landing page shit to make it mobile first
+
+800+ mesin telah diperbaiki, change the posisition to absolute to make it match the line beetwen the two section
+
+section that may need to be completely switched (display: hide) between breakpoints :
+1. 800+ Mesin telah diperbaiki
