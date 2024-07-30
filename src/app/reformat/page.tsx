@@ -128,12 +128,12 @@ export default function Home() {
       </div>
       <div className="relative text-center bg-sky-50 pt-20 pb-12">
         {/* background bulat bulat start*/}
-        <div className="absolute  w-36 h-36 left-4 top-36 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400"></div>
-        <div className="absolute w-36 h-36 right-4 bottom-10 rounded-full bg-gradient-to-tl from-primary-600 to-primary-400"></div>
+        <div className="absolute left-4 lg:left-24 w-36 h-36  top-36 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400"></div>
+        <div className="absolute right-4 xl:right-24 w-36 h-36 bottom-10 rounded-full bg-gradient-to-tl from-primary-600 to-primary-400"></div>
 
         {/* background bulat bulat end */}
         <h2
-          className={`${alegreya.className} relative mb-2 text-center text-3xl font-black text-amber-950`}
+          className={`${alegreya.className} text-3xl md:text-5xl relative mb-2 text-center  font-black text-amber-950`}
         >
           Pengalaman Pelanggan
         </h2>
@@ -165,8 +165,8 @@ export default function Home() {
       </div>
       <div className="text-center relative py-12">
         {/* background accent start*/}
-        <div className="absolute w-24 h-64 left-4 top-36 rounded-2xl bg-gradient-to-tr from-primary-600 to-primary-400 -z-1"></div>
-        <div className="absolute w-24 h-64 right-4 bottom-10 rounded-2xl  bg-gradient-to-tl from-amber-600 to-amber-400"></div>
+        <div className="absolute w-24 h-64 left-4 lg:left-24 top-36 rounded-2xl bg-gradient-to-tr from-primary-600 to-primary-400 -z-1"></div>
+        <div className="absolute w-24 h-64 right-4 lg:right-24 bottom-10 rounded-2xl  bg-gradient-to-tl from-amber-600 to-amber-400"></div>
 
         {/* background accent end */}
         <QnaSection
@@ -230,8 +230,8 @@ export default function Home() {
         <h2 className={`${alegreya.className} mb-4 text-center text-5xl font-black`}>
           Kunjungi kami
         </h2>
-        <div className="px-8">
-          <div className="w-5/6 mx-auto mb-4">
+        <div className="px-8 lg:px-16 xl:px-20 2xl:px-24 lg:py-6 2xl:py-8 md:grid md:grid-rows-1 md:grid-cols-2 md:gap-8">
+          <div className="w-5/6 lg:w-2/3 xl:w-1/2 lg:mr-0 mx-auto mb-4">
             <Button
               className=" text-slate-50 w-full mb-4 flex justify-start bg-gradient-to-tr from-[#25D366] to-green-400 text-xl py-8 px-4 border-amber-950 border-2 border-b-4 font-bold"
               startContent={
@@ -280,7 +280,7 @@ export default function Home() {
           <div>
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.141549138857!2d103.97474881136158!3d1.0553296624455868!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d98daa3c1a2ab3%3A0xd92241c19d311839!2smesin%20jahit%20seken%20batam!5e0!3m2!1sid!2sid!4v1721545975577!5m2!1sid!2sid"
-              className="w-full rounded-2xl aspect-square border-4 border-amber-950"
+              className="w-full lg:w-3/4 rounded-2xl aspect-square border-4 border-amber-950"
               allowFullScreen={true}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

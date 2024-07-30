@@ -1,4 +1,5 @@
 import { nextui } from "@nextui-org/react";
+import { Alegreya_Sans } from "next/font/google";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
