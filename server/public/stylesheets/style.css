@@ -1,0 +1,21 @@
+@font-face {
+  font-family: alegreyaSans;
+  src: url(fonts/AlegreyaSans-Black.ttf);
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: sourceSans;
+  src: url(fonts/SourceSans3-Medium.ttf);
+  font-weight: 500;
+}
+
+h1 {
+  font-family: alegreyaSans, Arial, Helvetica, sans-serif;
+  font-weight: 900;
+}
+
+body {
+  font-family: sourceSans, Helvetica, Arial, sans-serif;
+  font-weight: 500;
+}
