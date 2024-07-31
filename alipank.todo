@@ -4,3 +4,10 @@ refactor landing page shit to make it mobile first
 
 section that may need to be completely switched (display: hide) between breakpoints :
 1. 800+ Mesin telah diperbaiki
+
+for the server's section, 
+- can create id card for multiple items (and abstract away the shit).
+- dont open and close puppeteer browser frequently, it's a memory hogger.
+- abstract the screenshoot process too, so we only need to input the dimension and url params
+- create pdf to print it. n yeah it should scalable for other id cards with fixed size
+- db ? maybe do hardcoded for now
