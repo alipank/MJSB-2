@@ -4,10 +4,11 @@ const QRCode = require("qrcode");
 const puppeteer = require("puppeteer");
 const pool = require("../util/database");
 
+
 router.get("/generate", async (req, res, next) => {
   const sqlQuery = "SELECT id, model, timestamp FROM machines WHERE id=?;";
 
-  const machine = await pool.query(sqlQuery, Number(req.body.id));
+  const machine = await pool.query(sqlQuery, req.body.id);
 
   console.log(req.body.id);
 
@@ -36,7 +37,7 @@ router.get("/print-cards", async function (req, res, next) {
   });
   await page.setViewport({ width: 1348, height: 458 });
 
-  await page.goto(`http://localhost:${process.env.PORT}/gen-id-card`, {
+  await page.goto(`http://localhost:${process.env.PORT}/card/generate`, {
     waitUntil: "networkidle2",
   });
   const image = await page.screenshot();
@@ -54,5 +55,8 @@ router.get("/print-cards", async function (req, res, next) {
 
   res.render("index", { title: "Express", imageSrc: base64image });
 });
+
+
+
 
 module.exports = router;
