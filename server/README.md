@@ -1,4 +1,4 @@
-This project is currently not related to MJSB2 site project.
+This project is currently not related(sync ? connected ?) to MJSB2 site project.
 
 i create this server to sort all sewing machine that my parents had. they actually have some machine ready to be sold / promoted but they lost it in the waves of sewing machine.
 
