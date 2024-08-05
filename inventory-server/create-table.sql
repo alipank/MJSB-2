@@ -1,9 +1,12 @@
-CREATE TABLE `mjsb-test`.machines (
-	`id` INT auto_increment NOT NULL,
-	model varchar(100) NOT NULL,
-	`timestamp` DATETIME DEFAULT CURRENT_TIMESTAMP NULL,
-	CONSTRAINT machines_pk PRIMARY KEY (`index`)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_general_ci;
+CREATE TABLE machines (
+	machines_id INT PRIMARY KEY AUTO_INCREMENT,
+	brand varchar(20),
+	model varchar(30),
+	note varchar(200),
+	FOREIGN KEY(brand) REFERENCES brand(name)
+);
+
+CREATE TABLE brand (
+	brand_id INT PRIMARY KEY,
+	name varchar(20) UNIQUE KEY
+);

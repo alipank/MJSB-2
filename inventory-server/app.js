@@ -24,8 +24,11 @@ app.use(express.static(path.join(__dirname, "public")));
 
 puppeteer.launch({ debuggingPort: 9222 }).then((b) => {console.log("puppeteer on debugging port 9222")});
 
+// app.use("/machines", require("./routes/machine"))
+app.use("/admin/machines", require("./routes/machines"));
 app.use("/card", require("./routes/card"));
 app.use("/admin", require("./routes/admin"));
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
