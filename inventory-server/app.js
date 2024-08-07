@@ -27,6 +27,7 @@ puppeteer.launch({ debuggingPort: 9222 }).then((b) => {console.log("puppeteer on
 // app.use("/machines", require("./routes/machine"))
 app.use("/admin/machines", require("./routes/admin/machines"));
 app.use("/card", require("./routes/card"));
+app.use("/machines", require("./routes/machines"))
 app.use("/admin", require("./routes/admin/admin"));
 
 
