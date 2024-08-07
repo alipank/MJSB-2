@@ -25,9 +25,9 @@ app.use(express.static(path.join(__dirname, "public")));
 puppeteer.launch({ debuggingPort: 9222 }).then((b) => {console.log("puppeteer on debugging port 9222")});
 
 // app.use("/machines", require("./routes/machine"))
-app.use("/admin/machines", require("./routes/machines"));
+app.use("/admin/machines", require("./routes/admin/machines"));
 app.use("/card", require("./routes/card"));
-app.use("/admin", require("./routes/admin"));
+app.use("/admin", require("./routes/admin/admin"));
 
 
 // catch 404 and forward to error handler
@@ -40,6 +40,23 @@ app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
+
+  if(err.errno == 1054) {
+    res.statusMessage = "Wrong object key {brand: required, model: required, note}"
+    res.status(400).end()
+    return
+  }
+  if (err.errno == 1452) {
+    res.statusMessage = "Brand is not registered in database";
+    res.status(400).end();
+    return;
+  }
+  if (err.errno == 1062) {
+    res.statusMessage = "Brand is already in the database";
+    res.status(400).end();
+    console.log(res.statusMessage);
+    return;
+  }
 
   // render the error page
   res.status(err.status || 500);

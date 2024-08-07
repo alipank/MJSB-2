@@ -39,7 +39,7 @@ router.get("/print-cards", async function (req, res, next) {
 
   await page.goto(`http://localhost:${process.env.PORT}/card/generate`, {
     waitUntil: "networkidle2",
-  });
+  })
   const image = await page.screenshot();
 
   await page
