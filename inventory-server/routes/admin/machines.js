@@ -12,7 +12,7 @@ router.post("/new-brand", async function (req, res, next) {
     .then((success) => {
       console.log(success);
       res.json({
-        name,
+        name: name.toUpperCase(),
       });
     })
     .catch((err) => {
@@ -61,7 +61,7 @@ router.put("/:id", function (req, res, next) {
 });
 
 router.delete("/:id", function (req, res, next) {
-  res.send("say hello");
+  res.send("say hello, your item is not deleted rn");
 });
 
 router.post("/", async function (req, res, next) {
@@ -69,7 +69,8 @@ router.post("/", async function (req, res, next) {
 
   if (!req.body || !brand || !model) {
     res.status(400);
-    res.send("Error required data is not sufficed");
+    res.json({error: "Error required data is not sufficed"});
+    return
   }
 
   const sqlQuery = "INSERT INTO machines (brand, model, note) VALUES (?, ?, ?)";
@@ -80,7 +81,7 @@ router.post("/", async function (req, res, next) {
       console.log(success);
       res.status(201);
       res.json({
-        brand: req.body.brand,
+        brand: req.body.brand.toUpperCase(),
         model: req.body.model,
         note: req.body.note,
       });

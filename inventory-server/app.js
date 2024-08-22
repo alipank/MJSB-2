@@ -5,6 +5,9 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 require("dotenv").config()
 
+const multer  = require('multer')
+const upload = multer()
+
 const { default: puppeteer } = require("puppeteer");
 
 console.log("Using port : "+process.env.PORT);
@@ -21,9 +24,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use('/', upload.none(), function (req, res, next) {
+  next()
+})
 
 puppeteer.launch({ debuggingPort: 9222 }).then((b) => {console.log("puppeteer on debugging port 9222")});
-
+app.use((req, res, next) => {
+  res.append('Access-Control-Allow-Origin', ['http://localhost:3000']);
+  res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.append('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 // app.use("/machines", require("./routes/machine"))
 app.use("/admin/machines", require("./routes/admin/machines"));
 app.use("/card", require("./routes/card"));
