@@ -54,7 +54,7 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   if(err.errno == 1054) {
-    res.statusMessage = "Wrong object key {brand: required, model: required, note}"
+    res.statusMessage = "Wrong object key {brand_id: required, model: required, note}"
     res.status(400).end()
     return
   }
@@ -64,7 +64,7 @@ app.use(function (err, req, res, next) {
     return;
   }
   if (err.errno == 1062) {
-    res.statusMessage = "Brand is already in the database";
+    res.statusMessage = "Brand already in the database";
     res.status(400).end();
     console.log(res.statusMessage);
     return;
@@ -72,7 +72,8 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  // res.render("error", {error : err});
+  res.json(err)
 });
 
 module.exports = app;
