@@ -1,4 +1,4 @@
-import { FormAddMachine } from "@/app/admin/FormAdd";
+import { FormAddMachine } from "@/app/admin/FormAddMachine";
 import {
   Autocomplete,
   AutocompleteItem,
@@ -6,9 +6,10 @@ import {
   divider,
   Input,
   Textarea,
+  useDisclosure,
 } from "@nextui-org/react";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { FormEvent } from "react";
+
+import { NewBrand } from "./NewBrand";
 // import { FormEvent, useState } from "react";
 
 export type Brand = {
@@ -16,14 +17,21 @@ export type Brand = {
   brand_name: string
 }
 
-//why it takes me a week just to finish this section, huft
+//why it takes me weeks just to finish this section, huft
 
 export default async function Admin() {
 
-  const res = await fetch('http://localhost:3002/admin/machines/brands')
-  const brands: Brand[] = await res.json()
+  // const res = await fetch('http://localhost:3002/admin/machines/brands')
+  // const brands: Brand[] = await res.json()
+
+  const brands: Brand[] = [
+    {
+      id:1,
+      brand_name: "tes"
+    }
+  ]
 
   return (
-    <FormAddMachine brands={brands} />
+      <FormAddMachine brands={brands}/>
   )
 }

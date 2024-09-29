@@ -30,7 +30,7 @@ CREATE TABLE `machine_brands` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
+
 -- Table structure for table `machine_buyers`
 --
 

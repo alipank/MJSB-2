@@ -6,7 +6,9 @@ var logger = require("morgan");
 require("dotenv").config()
 
 const multer  = require('multer')
-const upload = multer()
+const upload = multer({
+  dest: './public/images'
+})
 
 const { default: puppeteer } = require("puppeteer");
 
@@ -24,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use('/', upload.none(), function (req, res, next) {
+app.use('/', upload.array('image', 10), function (req, res, next) {
   next()
 })
 
@@ -73,6 +75,7 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   // res.render("error", {error : err});
+  console.log(err)
   res.json(err)
 });
 

@@ -86,6 +86,7 @@ router.post("/", async function (req, res, next) {
 
   if (!req.body || !brand_id || !model || !bought_price) {
     res.status(400);
+    console.log(req.body)
     res.json({ error: "Error required data is not sufficed" });
     return
   }
