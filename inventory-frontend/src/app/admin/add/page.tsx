@@ -1,4 +1,4 @@
-import { FormAddMachine } from "@/app/admin/FormAddMachine";
+import { FormAddMachine } from "@/app/admin/add/FormAddMachine";
 import {
   Autocomplete,
   AutocompleteItem,
