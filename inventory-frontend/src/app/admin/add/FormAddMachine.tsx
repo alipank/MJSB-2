@@ -2,7 +2,7 @@
 
 import { Brand } from "@/app/admin/add/page";
 import { Autocomplete, AutocompleteItem, Button, image, Input, LinkIcon, Modal, ModalBody, ModalContent, ModalHeader, Textarea, useDisclosure, UseDisclosureProps } from "@nextui-org/react";
-import { ChangeEvent, ChangeEventHandler, FormEvent, FormEventHandler, HTMLAttributes, Key, useState } from "react";
+import { ChangeEvent, ChangeEventHandler, Dispatch, FormEvent, FormEventHandler, HTMLAttributes, Key, SetStateAction, useState } from "react";
 import { NewBrand } from "./NewBrand";
 import Image from "next/image";
 import { readFileAsDataURL } from "../../utils/fileReader";
@@ -11,25 +11,67 @@ import { faCirclePlus, faImage, faImages, faPlus, faPlusCircle, faPlusMinus } fr
 import { resizeImage } from "../../utils/resizeImage";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 
-type FormAddMachineProps = {
+
+export type FormInputProps = {
+	fileImages: File[],
+	brandId: Key,
+	model: string,
+	boughtPrice: number,
+	note: string
+}
+
+export type formControlProps = {
+	fileImages: File[], setFileImages: Dispatch<SetStateAction<File[]>>,
+	previews: string[], setPreviews: Dispatch<SetStateAction<string[]>>,
+	brandId: Key, setBrandId: Dispatch<SetStateAction<Key>>,
+	model: string, setModel: Dispatch<SetStateAction<string>>,
+	boughtPrice: number, setBoughtPrice: Dispatch<SetStateAction<number>>
+	note: string, setNote: Dispatch<SetStateAction<string>>
+	onSubmit: (formInput: FormInputProps) => void
+}
+
+export type FormAddMachineProps = {
 	brands: Brand[]
+	formControl: formControlProps
+}
+
+export const useFormControl = (onSubmit: (formInput: FormInputProps) => void): formControlProps => {
+	const [fileImages, setFileImages] = useState<File[]>([])
+	const [previews, setPreviews] = useState<string[]>([])
+	const [brandId, setBrandId] = useState<Key>('')
+	const [model, setModel] = useState<string>('')
+	const [boughtPrice, setBoughtPrice] = useState<number>(0)
+	const [note, setNote] = useState<string>('')
+
+	return {
+		fileImages, setFileImages,
+		previews, setPreviews,
+		brandId, setBrandId,
+		model, setModel,
+		boughtPrice, setBoughtPrice,
+		note, setNote,
+		onSubmit
+	}
+
+
 }
 
 export function FormAddMachine(props: FormAddMachineProps) {
 
 	const formRoundness: string | undefined = 'rounded-lg'
-
-	const [fileImages, setFileImages] = useState<File[]>([])
-	const [previews, setPreviews] = useState<string[]>([])
-	const [brandId, setBrandId] = useState<Key>("");
-	const [model, setModel] = useState("");
-	const [boughtPrice, setBoughtPrice] = useState(0);
-	const [note, setNote] = useState("");
+	const { fileImages, setFileImages, previews, setPreviews, brandId, setBrandId, model, setModel, boughtPrice, setBoughtPrice, note, setNote, onSubmit } = props.formControl
+	// const [fileImages, setFileImages] = useState<File[]>([])
+	// const [previews, setPreviews] = useState<string[]>([])
+	// const [brandId, setBrandId] = useState<Key>("");
+	// const [model, setModel] = useState("");
+	// const [boughtPrice, setBoughtPrice] = useState(0);
+	// const [note, setNote] = useState("");
 	//test modal
+
 
 	const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
-	const baseURL = "http://localhost:3002"
+	// const baseURL = "http://localhost:3002"
 
 	async function handleImagesInput(e: ChangeEvent<HTMLInputElement>) {
 
@@ -52,36 +94,33 @@ export function FormAddMachine(props: FormAddMachineProps) {
 		setPreviews([...previews, ...newPreviews])
 	}
 
-	function onSubmit(event: FormEvent<HTMLFormElement>) {
-		event.preventDefault();
+	// function onSubmit() {
+	// 	// event.preventDefault();
 
-		const formData = new FormData(event.currentTarget);
-		formData.set("images", "") //reset images field to be used with useState value fileImages
-		formData.set("brand_id", brandId.toString());
+	// 	// const formData = new FormData(event.currentTarget);
+	// 	formData.set("images", "") //reset images field to be used with useState value fileImages
+	// 	formData.set("brand_id", brandId.toString());
 
-		fileImages.forEach((file) => {
-			formData.append("images", file)
-		})
+	// 	fileImages.forEach((file) => {
+	// 		formData.append("images", file)
+	// 	})
 
-		fetch(
-			baseURL + "/admin/machines",
-			// "http://192.168.172.87:3002/admin/machines",
-			{
-				// headers: { "Content-Type": "multipart/form-data" },
-				method: "POST",
-				body: formData,
-			})
-			.then(async (res) => {
-				console.log(await res.json())
-				// setBrandId(undefined)
-
-			})
-			.catch((err) => console.log(err));
-	}
+	// 	fetch(
+	// 		baseURL + "/admin/machines",
+	// 		{
+	// 			// headers: { "Content-Type": "multipart/form-data" },
+	// 			method: "POST",
+	// 			body: formData,
+	// 		})
+	// 		.then(async (res) => {
+	// 			console.log(await res.json())
+	// 		})
+	// 		.catch((err) => console.log(err));
+	// }
 
 	return (
 		<div className="min-h-dvh flex justify-center items-center">
-			<form onSubmit={onSubmit} className="*:mb-4 max-w-md w-full p-4 border-2 border-gray-200 rounded-3xl">
+			<form className="*:mb-4 max-w-md w-full p-4 border-2 border-gray-200 rounded-3xl">
 				<div className="block w-full overflow-x-auto">
 					<div className="flex w-full flex-row-reverse justify-end gap-1">
 
@@ -198,9 +237,15 @@ export function FormAddMachine(props: FormAddMachineProps) {
 					labelPlacement="inside"
 				/>
 
-				<Button onPress={onOpen}>Open Modal</Button>
-
-				<Button type="submit" size="lg" color="primary" className="w-36 h-12 font-bold">Selesai</Button>
+				<Button onPress={() => {
+					const formInput: FormInputProps = {
+						fileImages, brandId, model, boughtPrice, note
+					}
+					onSubmit(formInput)
+				}}
+					size="lg"
+					color="primary"
+					className="w-36 h-12 font-bold">Selesai</Button>
 				<NewBrand isOpen={isOpen} onOpenChange={onOpenChange}></NewBrand>
 			</form>
 		</div>
