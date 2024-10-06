@@ -38,11 +38,9 @@ app.use((req, res, next) => {
   next();
 });
 // app.use("/machines", require("./routes/machine"))
-app.use("/admin/machines", require("./routes/admin/machines"));
+app.use("/admin", require("./routes/admin/admin"));
 app.use("/card", require("./routes/card"));
 app.use("/machines", require("./routes/machines"))
-app.use("/admin", require("./routes/admin/admin"));
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

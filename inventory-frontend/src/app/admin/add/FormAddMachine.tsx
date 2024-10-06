@@ -12,8 +12,20 @@ import { resizeImage } from "../../utils/resizeImage";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 
 
+enum ImageType {
+	Existing = 1,
+	New = 2
+  }
+  
+  interface FormImageData {
+	id: number,
+	type: ImageType
+	src: File | string
+  }
+
 export type FormInputProps = {
-	fileImages: File[],
+	newImages: File[],
+	deleteImages: number[],
 	brandId: Key,
 	model: string,
 	boughtPrice: number,
@@ -21,7 +33,8 @@ export type FormInputProps = {
 }
 
 export type formControlProps = {
-	fileImages: File[], setFileImages: Dispatch<SetStateAction<File[]>>,
+	newImages: File[], setNewImages: Dispatch<SetStateAction<File[]>>,
+	deleteImages: number[], setDeleteImages: Dispatch<SetStateAction<number[]>>
 	previews: string[], setPreviews: Dispatch<SetStateAction<string[]>>,
 	brandId: Key, setBrandId: Dispatch<SetStateAction<Key>>,
 	model: string, setModel: Dispatch<SetStateAction<string>>,
@@ -36,7 +49,8 @@ export type FormAddMachineProps = {
 }
 
 export const useFormControl = (onSubmit: (formInput: FormInputProps) => void): formControlProps => {
-	const [fileImages, setFileImages] = useState<File[]>([])
+	const [newImages, setNewImages] = useState<File[]>([])
+	const [deleteImages, setDeleteImages] = useState<number[]>([])
 	const [previews, setPreviews] = useState<string[]>([])
 	const [brandId, setBrandId] = useState<Key>('')
 	const [model, setModel] = useState<string>('')
@@ -44,7 +58,8 @@ export const useFormControl = (onSubmit: (formInput: FormInputProps) => void): f
 	const [note, setNote] = useState<string>('')
 
 	return {
-		fileImages, setFileImages,
+		newImages, setNewImages,
+		deleteImages, setDeleteImages,
 		previews, setPreviews,
 		brandId, setBrandId,
 		model, setModel,
@@ -59,7 +74,7 @@ export const useFormControl = (onSubmit: (formInput: FormInputProps) => void): f
 export function FormAddMachine(props: FormAddMachineProps) {
 
 	const formRoundness: string | undefined = 'rounded-lg'
-	const { fileImages, setFileImages, previews, setPreviews, brandId, setBrandId, model, setModel, boughtPrice, setBoughtPrice, note, setNote, onSubmit } = props.formControl
+	const { newImages, setNewImages, deleteImages, setDeleteImages, previews, setPreviews, brandId, setBrandId, model, setModel, boughtPrice, setBoughtPrice, note, setNote, onSubmit } = props.formControl
 	// const [fileImages, setFileImages] = useState<File[]>([])
 	// const [previews, setPreviews] = useState<string[]>([])
 	// const [brandId, setBrandId] = useState<Key>("");
@@ -77,17 +92,21 @@ export function FormAddMachine(props: FormAddMachineProps) {
 
 		const selectedFiles = Array.from(e.target.files || [])
 
-		setFileImages([...fileImages, ...selectedFiles])
+		setNewImages([...newImages, ...selectedFiles])
 
 		//Handle Image Preview
 		const newPreviews = await Promise.all(
 			selectedFiles.map(async (file, i) => {
 				const url = URL.createObjectURL(file)
 				const resizedImageUrl = resizeImage(url, 600, 600, 0.9)
+				
+				const imageObj:FormImageData = {
+					id:0,
+					type:ImageType.New,
+					src: await resizeImage(url, 600, 600, 0.9)
+				}
 
-				console.log(resizedImageUrl)
-
-				return resizedImageUrl
+				return imageObj
 			})
 		)
 
@@ -239,7 +258,7 @@ export function FormAddMachine(props: FormAddMachineProps) {
 
 				<Button onPress={() => {
 					const formInput: FormInputProps = {
-						fileImages, brandId, model, boughtPrice, note
+						newImages, deleteImages, brandId, model, boughtPrice, note
 					}
 					onSubmit(formInput)
 				}}

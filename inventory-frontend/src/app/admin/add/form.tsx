@@ -3,10 +3,12 @@
 import { FormAddMachine, FormInputProps, useFormControl } from "./FormAddMachine"
 import { Brand } from "./page"
 
+
+
 export default function Form(props: { brands: Brand[] }) {
 
   const onSubmit = (formInput: FormInputProps) => {
-    const { fileImages, brandId, model, boughtPrice, note } = formInput
+    const { newImages, deleteImages, brandId, model, boughtPrice, note } = formInput
 
     // 	// const formData = new FormData(event.currentTarget);
     // 	formData.set("images", "") //reset images field to be used with useState value fileImages
@@ -15,7 +17,7 @@ export default function Form(props: { brands: Brand[] }) {
     // 	fileImages.forEach((file) => {
     // 		formData.append("images", file)
     // 	})
-    
+
 
     const formData = {
 
@@ -38,6 +40,9 @@ export default function Form(props: { brands: Brand[] }) {
   }
 
   const formControl = useFormControl((formInput) => { onSubmit(formInput) })
+
+  // untuk form edit
+  //formControl.setPreviews([])
 
   return (
     <FormAddMachine brands={props.brands} formControl={formControl} />
