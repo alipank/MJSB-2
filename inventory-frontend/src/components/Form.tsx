@@ -3,25 +3,47 @@
 import { Brand } from "@/app/admin/add/page";
 import { Autocomplete, AutocompleteItem, Button, image, Input, LinkIcon, Modal, ModalBody, ModalContent, ModalHeader, Textarea, useDisclosure, UseDisclosureProps } from "@nextui-org/react";
 import { ChangeEvent, ChangeEventHandler, Dispatch, FormEvent, FormEventHandler, HTMLAttributes, Key, SetStateAction, useState } from "react";
-import { NewBrand } from "./NewBrand";
+import { NewBrand } from "../app/admin/add/NewBrand";
 import Image from "next/image";
-import { readFileAsDataURL } from "../../utils/fileReader";
+import { readFileAsDataURL } from "../app/utils/fileReader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus, faImage, faImages, faPlus, faPlusCircle, faPlusMinus } from "@fortawesome/free-solid-svg-icons";
-import { resizeImage } from "../../utils/resizeImage";
+import { resizeImage } from "../app/utils/resizeImage";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
+import { inherits } from "util";
+import randomInt from "@/app/utils/randomInt";
+import useStateMax from "@/app/utils/useStateMax";
 
 
 enum ImageType {
 	Existing = 1,
 	New = 2
-  }
-  
-  interface FormImageData {
+}
+
+interface FormImageDataFile {
 	id: number,
 	type: ImageType
-	src: File | string
-  }
+	src: File
+}
+
+interface FormImageDataURL {
+	id: number,
+	type: ImageType
+	src: string
+}
+
+class FormImageDataURL {
+	public constructor(id: number, type: ImageType, src: string) {
+		this.id = id
+		this.type = type
+		this.src = src
+	}
+
+	//for react list key
+	public getKey(): number {
+		return Number(this.type.toString() + this.id)
+	}
+}
 
 export type FormInputProps = {
 	newImages: File[],
@@ -33,9 +55,15 @@ export type FormInputProps = {
 }
 
 export type formControlProps = {
-	newImages: File[], setNewImages: Dispatch<SetStateAction<File[]>>,
-	deleteImages: number[], setDeleteImages: Dispatch<SetStateAction<number[]>>
-	previews: string[], setPreviews: Dispatch<SetStateAction<string[]>>,
+	newImages: FormImageDataFile[], setNewImages: Dispatch<SetStateAction<FormImageDataFile[]>>,
+
+	deleteImages: number[],
+
+	/**
+	 * state to store images that are to be deleted, this state is only used for the existing images (images that has been stored in the server), then you want to delete it
+	 */
+	setDeleteImages: Dispatch<SetStateAction<number[]>>
+	previews: FormImageDataURL[], setPreviews: Dispatch<SetStateAction<FormImageDataURL[]>>,
 	brandId: Key, setBrandId: Dispatch<SetStateAction<Key>>,
 	model: string, setModel: Dispatch<SetStateAction<string>>,
 	boughtPrice: number, setBoughtPrice: Dispatch<SetStateAction<number>>
@@ -49,9 +77,10 @@ export type FormAddMachineProps = {
 }
 
 export const useFormControl = (onSubmit: (formInput: FormInputProps) => void): formControlProps => {
-	const [newImages, setNewImages] = useState<File[]>([])
+	const [newImages, setNewImages] = useState<FormImageDataFile[]>([])
 	const [deleteImages, setDeleteImages] = useState<number[]>([])
-	const [previews, setPreviews] = useState<string[]>([])
+	const [previews, setPreviews] = useState<FormImageDataURL[]>([])
+	// const [previews, addPreviews, subPreviews] = useStateMax(10, () => {})
 	const [brandId, setBrandId] = useState<Key>('')
 	const [model, setModel] = useState<string>('')
 	const [boughtPrice, setBoughtPrice] = useState<number>(0)
@@ -67,8 +96,21 @@ export const useFormControl = (onSubmit: (formInput: FormInputProps) => void): f
 		note, setNote,
 		onSubmit
 	}
+}
 
-
+const randomId: { usedIds: number[], generate: () => number } = {
+	usedIds: [],
+	generate: () => {
+		let rand
+		do {
+			rand = randomInt(1000)
+			console.log(rand)
+		} while (
+			randomId.usedIds.includes(rand)
+		)
+		randomId.usedIds.push(rand)
+		return rand
+	}
 }
 
 export function FormAddMachine(props: FormAddMachineProps) {
@@ -83,67 +125,77 @@ export function FormAddMachine(props: FormAddMachineProps) {
 	// const [note, setNote] = useState("");
 	//test modal
 
-
 	const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
+
 
 	// const baseURL = "http://localhost:3002"
 
 	async function handleImagesInput(e: ChangeEvent<HTMLInputElement>) {
 
-		const selectedFiles = Array.from(e.target.files || [])
+		const selectedFiles = Array
+			.from(e.target.files || [])
+			.map(file => (
+				{
+					id: randomId.generate(),
+					type: ImageType.New,
+					src: file
+				} as FormImageDataFile
+			))
 
 		setNewImages([...newImages, ...selectedFiles])
 
 		//Handle Image Preview
 		const newPreviews = await Promise.all(
-			selectedFiles.map(async (file, i) => {
-				const url = URL.createObjectURL(file)
+			selectedFiles.map(async (imageData, i) => {
+
+				const url = URL.createObjectURL(imageData.src)
 				const resizedImageUrl = resizeImage(url, 600, 600, 0.9)
-				
-				const imageObj:FormImageData = {
-					id:0,
-					type:ImageType.New,
-					src: await resizeImage(url, 600, 600, 0.9)
-				}
+
+
+				const imageObj: FormImageDataURL = new FormImageDataURL(
+					imageData.id,
+					imageData.type,
+					await resizedImageUrl,
+
+				)
 
 				return imageObj
+
+
 			})
 		)
-
 		setPreviews([...previews, ...newPreviews])
 	}
 
-	// function onSubmit() {
-	// 	// event.preventDefault();
+	function handleImageDelete(e: React.MouseEvent<HTMLButtonElement>) {
+		const id = Number(e.currentTarget.getAttribute('data-img-id'))
+		const type = e.currentTarget.getAttribute('data-img-type')
 
-	// 	// const formData = new FormData(event.currentTarget);
-	// 	formData.set("images", "") //reset images field to be used with useState value fileImages
-	// 	formData.set("brand_id", brandId.toString());
+		console.log(id, type)
 
-	// 	fileImages.forEach((file) => {
-	// 		formData.append("images", file)
-	// 	})
+		const filteredPreviews = previews.filter(img => img.id !== id)
 
-	// 	fetch(
-	// 		baseURL + "/admin/machines",
-	// 		{
-	// 			// headers: { "Content-Type": "multipart/form-data" },
-	// 			method: "POST",
-	// 			body: formData,
-	// 		})
-	// 		.then(async (res) => {
-	// 			console.log(await res.json())
-	// 		})
-	// 		.catch((err) => console.log(err));
-	// }
+
+		if (type === ImageType.Existing.toString()) {
+			setPreviews(filteredPreviews)
+			setDeleteImages([...deleteImages, id])
+		}
+		if (type === ImageType.New.toString()) {
+			const filteredNewImages = newImages.filter(img => img.id !== id)
+			setPreviews(filteredPreviews)
+			setNewImages(filteredNewImages)
+		}
+
+	}
 
 	return (
 		<div className="min-h-dvh flex justify-center items-center">
 			<form className="*:mb-4 max-w-md w-full p-4 border-2 border-gray-200 rounded-3xl">
 				<div className="block w-full overflow-x-auto">
-					<div className="flex w-full flex-row-reverse justify-end gap-1">
+					<div className="flex w-full flex-row-reverse justify-end gap-1 *:flex-shrink-0">
 
-						<label htmlFor="images" className={`flex justify-center items-center ${formRoundness} flex-col gap-1 flex-shrink-0 w-52 aspect-[3/2] text-foreground-500 border-2 border-default-200 hover:border-default-400 focus:border-default-foreground `}>
+						<label htmlFor="images" className={`flex justify-center items-center ${formRoundness} flex-col gap-1 w-52 aspect-[3/2] text-foreground-500 border-2 border-default-200 hover:border-default-400 focus:border-default-foreground `}>
 							<FontAwesomeIcon icon={faImage} size="xl" />
 							<p>Tambahkan Foto</p>
 						</label>
@@ -155,13 +207,29 @@ export function FormAddMachine(props: FormAddMachineProps) {
 
 						{
 							previews.map((imageSrc, i) => {
-								return (<Image key={i} src={imageSrc} alt="Your image" width={0} height={0} className="w-fit h-fit max-h-36 border-2 border-gray-200 rounded-2xl"></Image>)
+								if (typeof imageSrc.src == 'string') {
 
+									const key = imageSrc.type + imageSrc.id
+
+									return (
+										<div key={imageSrc.getKey()} >
+											<Button data-img-id={imageSrc.id} data-img-type={imageSrc.type} className="absolute p-0 min-w-8 w-8 h-8 rounded-full" onClick={handleImageDelete}>Del</Button>
+											<Image key={imageSrc.getKey()} src={imageSrc.src} alt="Your image" width={1} height={1} className="w-fit h-36 border-2 border-gray-200 rounded-2xl" />
+										</div>
+									)
+
+								} else {
+									console.log(typeof imageSrc.src, "Seharusnya type imageSrc.src adalah string")
+								}
 							})
 						}
 
 					</div>
 				</div>
+
+				<Button onClick={() => {
+					console.log(previews, newImages, deleteImages)
+				}}></Button>
 
 
 				<div className={`flex gap-3 items-center`}>
@@ -257,8 +325,9 @@ export function FormAddMachine(props: FormAddMachineProps) {
 				/>
 
 				<Button onPress={() => {
+					const newImagesFile = newImages.map(img => img.src)
 					const formInput: FormInputProps = {
-						newImages, deleteImages, brandId, model, boughtPrice, note
+						newImages: newImagesFile, deleteImages, brandId, model, boughtPrice, note
 					}
 					onSubmit(formInput)
 				}}

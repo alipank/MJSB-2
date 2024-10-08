@@ -18,7 +18,6 @@ export function NewBrand(props: NewBrandProps) {
 
     const [brand, setBrand] = useState<string>()
 
-
     const [loading, setLoading] = useState<boolean>(false)
     const [disable, setDisable] = useState<boolean>(false)
     const [error, setError] = useState<Error>()

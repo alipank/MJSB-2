@@ -1,6 +1,6 @@
 'use client'
 
-import { FormAddMachine, FormInputProps, useFormControl } from "./FormAddMachine"
+import { FormAddMachine, FormInputProps, useFormControl } from "../../../components/Form"
 import { Brand } from "./page"
 
 
@@ -40,6 +40,7 @@ export default function Form(props: { brands: Brand[] }) {
   }
 
   const formControl = useFormControl((formInput) => { onSubmit(formInput) })
+
 
   // untuk form edit
   //formControl.setPreviews([])
