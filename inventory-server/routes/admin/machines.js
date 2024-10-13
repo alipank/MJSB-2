@@ -1,6 +1,8 @@
 var express = require("express");
 const pool = require("../../util/database");
 var router = express.Router();
+const path = require('path');
+const { rename } = require("fs");
 
 router.get("/:id", async function (req, res, next) {
   const id = req.params.id;
@@ -58,6 +60,8 @@ router.get("/", async function (req, res, next) {
 router.post("/", async function (req, res, next) {
   const { brand_id, model, bought_price, note } = req.body;
 
+  console.log(req.body)
+
   if (!req.body || !brand_id || !model || !bought_price) {
     res.status(400);
     console.log(req.body);
@@ -65,20 +69,49 @@ router.post("/", async function (req, res, next) {
     return;
   }
 
-  const sqlQuery =
-    "INSERT INTO machines (brand_id, model, bought_price, note) VALUES (?, ?, ?, ?)";
+  const sqAddMachine =
+    "INSERT INTO machines (brand_id, model, bought_price, note) VALUES (?, ?, ?, ?)"
 
+  let sqAddImages = "INSERT INTO machine_images (machine_id, image_path) VALUES "
+
+  // console.log(req.body, req.files)
   await pool
-    .query(sqlQuery, [brand_id, model, bought_price, note])
-    .then((success) => {
-      console.log(success);
-      res.status(201);
-      res.json({
-        brand_id: brand_id,
-        model: model,
-        bought_price: bought_price,
-        note: note,
-      });
+    .query(sqAddMachine, [brand_id, model, bought_price, note])
+    .then(async (success) => {
+      //      console.log(Object.entries(success))
+      const machineId = Number(success.insertId)
+
+      //EHH SALAH COK HARUSNYA INSERT KE MACHINES IMAGES DULU BARU BUAT KAYAK GINI,, AH BODO LAH
+      
+      // req.files.forEach((img, i) => {
+      //   console.log(img)
+      //   sqAddImages = sqAddImages.concat(`(${machineId}, `, `${img.filename})` + i+1 >= sqAddImages.length ? "" : "," )
+      // })
+      // console.log(sqAddImages)
+      
+      // return await pool.query(sqAddImages)
+      // Promise.all(
+      //   req.files.forEach((file) => {
+      //     const oldPath = path.join(__dirname, '..', '..', 'public', 'images', file.filename)
+      //     const newPath = path.join(__dirname, '..', '..', 'public', 'images', `${id}-file.filename`)
+
+      //     rename(oldPath, newPath,)
+      //   })
+      // ).then(
+      //   () => {
+      //     res.status(201);
+      //     res.json({
+      //       id: id,
+      //       brand_id: brand_id,
+      //       model: model,
+      //       bought_price: bought_price,
+      //       note: note,
+      //       images: req.files
+      //     });
+      // }
+      // ).catch(err => { throw err }) //TODO BUAT error handling, kalo gagal, yang di db hapus, dan return gagal ke client 
+
+
     })
     .catch((err) => {
       console.log(err);
