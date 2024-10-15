@@ -29,6 +29,8 @@ const diskStorageOptions = {
     //redundant if the name is duplicated
     //const customNameDuplicate = customName + '-' + '2' + ext
 
+    //TODO: use front end compression 
+
     console.log(customName)
 
     if (

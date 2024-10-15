@@ -3,7 +3,7 @@
 import { Brand } from "@/app/admin/add/page";
 import { Autocomplete, AutocompleteItem, Button, image, Input, LinkIcon, Modal, ModalBody, ModalContent, ModalHeader, Textarea, useDisclosure, UseDisclosureProps } from "@nextui-org/react";
 import { ChangeEvent, ChangeEventHandler, Dispatch, FormEvent, FormEventHandler, HTMLAttributes, Key, SetStateAction, useState } from "react";
-import { NewBrand } from "../app/admin/add/NewBrand";
+import { NewBrand } from "./NewBrand";
 import Image from "next/image";
 import { readFileAsDataURL } from "../app/utils/fileReader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
