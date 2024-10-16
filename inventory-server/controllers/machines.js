@@ -37,6 +37,13 @@ exports.postMachine = async function (req, res, next) {
 
     let sqAddImages = "INSERT INTO machine_images (machine_id, image_path) VALUES "
 
+    // req.files.forEach((img, i) => {
+    //     console.log(img)
+    //     sqAddImages = sqAddImages.concat(`(${machineId}, `, `${img.filename})` + i+1 >= img.length ? "" : "," )
+    //   })
+
+    // console.log(sqAddImages)
+
     // console.log(req.body, req.files)
     await pool
         .query(sqAddMachine, [brand_id, model, bought_price, note])
@@ -46,11 +53,11 @@ exports.postMachine = async function (req, res, next) {
 
             //EHH SALAH COK HARUSNYA INSERT KE MACHINES IMAGES DULU BARU BUAT KAYAK GINI,, AH BODO LAH
 
-            // req.files.forEach((img, i) => {
-            //   console.log(img)
-            //   sqAddImages = sqAddImages.concat(`(${machineId}, `, `${img.filename})` + i+1 >= sqAddImages.length ? "" : "," )
-            // })
-            // console.log(sqAddImages)
+            req.files.forEach((img, i) => {
+              console.log(img)
+              sqAddImages = sqAddImages.concat(`(${machineId}, `, `${img.filename})` + i+1 >= sqAddImages.length ? "" : "," )
+            })
+            console.log(sqAddImages)
 
             // return await pool.query(sqAddImages)
             // Promise.all(

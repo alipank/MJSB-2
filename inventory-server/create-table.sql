@@ -82,7 +82,7 @@ CREATE TABLE `machines` (
   `note` text DEFAULT NULL,
   `added_at` date NOT NULL DEFAULT current_timestamp(),
   `updated_at` date NOT NULL DEFAULT current_timestamp(),
-  `buy_price` int(11) DEFAULT NULL,
+  `bought_price` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_brand` (`brand_id`),
   CONSTRAINT `fk_brand` FOREIGN KEY (`brand_id`) REFERENCES `machine_brands` (`id`)
