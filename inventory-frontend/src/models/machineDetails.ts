@@ -6,10 +6,10 @@ export interface MachineDetails {
     added_at: Date,
     updated_at: Date,
     bought_price: number,
-    images: Image[]
+    images: ImageDetails[]
 }
 
-interface Image {
+export interface ImageDetails {
     image_id: number,
     image_path: string
 }

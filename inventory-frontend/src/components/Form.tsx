@@ -2,7 +2,7 @@
 
 import { Brand } from "@/app/admin/add/page";
 import { Autocomplete, AutocompleteItem, Button, image, Input, LinkIcon, Modal, ModalBody, ModalContent, ModalHeader, Textarea, useDisclosure, UseDisclosureProps } from "@nextui-org/react";
-import { ChangeEvent, ChangeEventHandler, Dispatch, FormEvent, FormEventHandler, HTMLAttributes, Key, SetStateAction, useState } from "react";
+import { ChangeEvent, ChangeEventHandler, Dispatch, FormEvent, FormEventHandler, HTMLAttributes, Key, SetStateAction, useEffect, useState } from "react";
 import { NewBrand } from "./NewBrand";
 import Image from "next/image";
 import { readFileAsDataURL } from "../app/utils/fileReader";
@@ -15,7 +15,7 @@ import randomInt from "@/app/utils/randomInt";
 import useStateMax from "@/app/utils/useStateMax";
 
 
-enum ImageType {
+export enum ImageType {
 	Existing = 1,
 	New = 2
 }
@@ -26,13 +26,13 @@ interface FormImageDataFile {
 	src: File
 }
 
-interface FormImageDataURL {
+export interface FormImageDataURL {
 	id: number,
 	type: ImageType
 	src: string
 }
 
-class FormImageDataURL {
+export class FormImageDataURL {
 	public constructor(id: number, type: ImageType, src: string) {
 		this.id = id
 		this.type = type
@@ -71,7 +71,7 @@ export type formControlProps = {
 	onSubmit: (formInput: FormInputProps) => void
 }
 
-export type FormAddMachineProps = {
+export type FormMachineProps = {
 	brands: Brand[]
 	formControl: formControlProps
 }
@@ -113,7 +113,7 @@ const randomId: { usedIds: number[], generate: () => number } = {
 	}
 }
 
-export function FormAddMachine(props: FormAddMachineProps) {
+export function FormMachine(props: FormMachineProps) {
 
 	const formRoundness: string | undefined = 'rounded-lg'
 	const { newImages, setNewImages, deleteImages, setDeleteImages, previews, setPreviews, brandId, setBrandId, model, setModel, boughtPrice, setBoughtPrice, note, setNote, onSubmit } = props.formControl
@@ -126,6 +126,9 @@ export function FormAddMachine(props: FormAddMachineProps) {
 	//test modal
 
 	const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
+	console.log(brandId, model, boughtPrice, note)
+
 
 
 
@@ -190,6 +193,10 @@ export function FormAddMachine(props: FormAddMachineProps) {
 		}
 
 	}
+
+	// useEffect(() => {
+
+	// }, [])
 
 	return (
 		<div className="min-h-dvh flex justify-center items-center">
@@ -256,6 +263,7 @@ export function FormAddMachine(props: FormAddMachineProps) {
 							setBrandId(e || '');
 							// console.log(e);
 						}}
+						selectedKey={brandId.toString()}
 						listboxProps={{
 							emptyContent: <><Button onPress={onOpen} variant="bordered" className="-m-2">+ Tambahkan Brand</Button></>
 

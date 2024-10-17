@@ -1,12 +1,14 @@
 'use client'
 
-import { MachineDetails } from "@/models/machineDetails"
-import { FormAddMachine, FormInputProps, useFormControl } from "../../../components/Form"
+import { ImageDetails, MachineDetails } from "@/models/machineDetails"
+import { FormImageDataURL, FormInputProps, FormMachine, ImageType, useFormControl } from "../../../components/Form"
 import { Brand } from "./page"
+import { useEffect } from "react"
 
 
 
-export default function Form(props: { brands: Brand[], machineDetails: MachineDetails}) {
+export default function Form(props: { brands: Brand[], machineDetails: MachineDetails }) {
+  const details: MachineDetails = props.machineDetails
 
   const onSubmit = (formInput: FormInputProps) => {
     const { newImages, deleteImages, brandId, model, boughtPrice, note } = formInput
@@ -38,14 +40,26 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
       })
       .catch((err) => console.log(err));
   }
+  const formControl = useFormControl((formInput) => { onSubmit(formInput) })
 
-const formControl = useFormControl((formInput) => { onSubmit(formInput) })
+  useEffect(() => {
+    formControl.setBrandId(details.brand_id)
+
+  }, [])
+
+  // formControl.setModel(details.model)
+  // formControl.setNote(details.note)
+  // formControl.setPreviews(
+  //   details.images.map((img:ImageDetails) => (
+  //     new FormImageDataURL(img.image_id, ImageType.Existing, img.image_path)
+  //   ))
+  // )
 
 
-// untuk form edit
-//formControl.setPreviews([])
+  // untuk form edit
+  //formControl.setPreviews([])
 
-return (
-  <FormAddMachine brands={props.brands} formControl={formControl} />
-)
+  return (
+    <FormMachine brands={props.brands} formControl={formControl} />
+  )
 }

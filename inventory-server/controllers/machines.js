@@ -4,6 +4,7 @@ const pool = require("../util/database");
 
 
 exports.getMachine = async function (req, res, next) {
+    const imageDest = "http://localhost:3002/images/"
     const id = req.params.id;
     const sqlQuery =
         "SELECT m.*, img.id as image_id, img.image_path FROM machines AS m RIGHT JOIN machine_images as img ON m.id = img.machine_id WHERE m.id=?;";
@@ -16,14 +17,15 @@ exports.getMachine = async function (req, res, next) {
 
             let images = json.map((row) => {
                 const { image_id, image_path } = row
-                return { image_id, image_path }
+                return { image_id,  image_path }
             })
 
             const machineDetails = { ...rest, images }
 
             return machineDetails
         }).catch(err => {
-            throw new Error(err)
+            next(err)
+            // throw new Error(err)
             // console.log(err)
         })
 
