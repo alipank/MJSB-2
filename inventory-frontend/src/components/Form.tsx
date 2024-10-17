@@ -165,7 +165,9 @@ export function FormAddMachine(props: FormAddMachineProps) {
 
 			})
 		)
-		setPreviews([...previews, ...newPreviews])
+
+		e.target.value = ""	 
+ 		setPreviews([...previews, ...newPreviews])
 	}
 
 	function handleImageDelete(e: React.MouseEvent<HTMLButtonElement>) {

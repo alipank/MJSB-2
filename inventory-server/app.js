@@ -21,7 +21,7 @@ const diskStorageOptions = {
 
 
     const date = new Date().toLocaleDateString('en-CA')
-    const random = randomInt(1, 3)
+    const random = randomInt(10000, 99999)
     const ext = path.extname(file.originalname) || mime.extension(file.mimetype)
 
    

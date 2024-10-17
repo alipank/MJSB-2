@@ -6,9 +6,27 @@ const pool = require("../util/database");
 exports.getMachine = async function (req, res, next) {
     const id = req.params.id;
     const sqlQuery =
-        "SELECT brand_id, model, note FROM machines WHERE machine_id=?;";
+        "SELECT m.*, img.id as image_id, img.image_path FROM machines AS m RIGHT JOIN machine_images as img ON m.id = img.machine_id WHERE m.id=?;";
 
-    const machine = await pool.query(sqlQuery, id);
+    const machine = await pool.query(sqlQuery, id)
+        .then(json => {
+            // transform duplicated, because of one to many rel
+
+            const { image_id, image_path, ...rest } = json[0]
+
+            let images = json.map((row) => {
+                const { image_id, image_path } = row
+                return { image_id, image_path }
+            })
+
+            const machineDetails = { ...rest, images }
+
+            return machineDetails
+        }).catch(err => {
+            throw new Error(err)
+            // console.log(err)
+        })
+
 
     res.json(machine);
 }
@@ -35,7 +53,7 @@ exports.postMachine = async function (req, res, next) {
     const sqAddMachine =
         "INSERT INTO machines (brand_id, model, bought_price, note) VALUES (?, ?, ?, ?)"
 
-    let sqAddImages = "INSERT INTO machine_images (machine_id, image_path) VALUES "
+    let sqAddImages = "INSERT INTO machine_images (machine_id, image_path) VALUES"
 
     // req.files.forEach((img, i) => {
     //     console.log(img)
@@ -54,12 +72,17 @@ exports.postMachine = async function (req, res, next) {
             //EHH SALAH COK HARUSNYA INSERT KE MACHINES IMAGES DULU BARU BUAT KAYAK GINI,, AH BODO LAH
 
             req.files.forEach((img, i) => {
-              console.log(img)
-              sqAddImages = sqAddImages.concat(`(${machineId}, `, `${img.filename})` + i+1 >= sqAddImages.length ? "" : "," )
-            })
-            console.log(sqAddImages)
+                console.log(img)
+                //   sqAddImages = sqAddImages  + `(${machineId},  ${img.filename})` + i+1 >= sqAddImages.length ? "" : "," 
+                const comma = i + 1 < req.files.length ? "," : ""
 
-            // return await pool.query(sqAddImages)
+                sqAddImages = `${sqAddImages} (${machineId}, "${img.filename}") ${comma}`
+            })
+            console.log("sqAddImages", sqAddImages)
+
+            console.log(req.files)
+
+            return await pool.query(sqAddImages)
             // Promise.all(
             //   req.files.forEach((file) => {
             //     const oldPath = path.join(__dirname, '..', '..', 'public', 'images', file.filename)
@@ -82,9 +105,13 @@ exports.postMachine = async function (req, res, next) {
             // ).catch(err => { throw err }) //TODO BUAT error handling, kalo gagal, yang di db hapus, dan return gagal ke client 
 
             //response sementara
-            res.json({ message: "berhasil eaks" })
 
         })
+        .then((success => {
+            console.log(success)
+            res.json({ message: "berhasil eaks" })
+
+        }))
         .catch((err) => {
             console.log(err);
             next(err);
@@ -124,4 +151,4 @@ exports.putMachine = function (req, res, next) {
 }
 exports.deleteMachine = function (req, res, next) {
     res.send("say hello, your item is not deleted rn");
-  }
+}
