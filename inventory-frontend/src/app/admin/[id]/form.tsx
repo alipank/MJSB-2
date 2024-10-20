@@ -21,7 +21,7 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
 
     formData.append("brand_id", brandId.toString())
     formData.append("model", model)
-    formData.append("bought_price", boughtPrice.toString())
+    formData.append("bought_price", boughtPrice)
     formData.append("note", note)
 
     console.log(formData)
@@ -29,7 +29,7 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
     const baseURL = "http://localhost:3002"
 
     fetch(
-      baseURL + "/admin/machines",
+      baseURL + "/admin/",
       {
         // headers: { "Content-Type": "multipart/form-data" },  
         method: "POST",
@@ -43,7 +43,13 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
   const formControl = useFormControl((formInput) => { onSubmit(formInput) })
 
   useEffect(() => {
+    // formControl.setBrandId(details.brand_id)
     formControl.setBrandId(details.brand_id)
+    formControl.setModel(details.model)
+    formControl.setBoughtPrice(details.bought_price.toString())
+    formControl.setNote(details.note)
+    
+
 
   }, [])
 

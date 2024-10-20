@@ -2,7 +2,7 @@
 
 import { Brand } from "@/app/admin/add/page";
 import { Autocomplete, AutocompleteItem, Button, image, Input, LinkIcon, Modal, ModalBody, ModalContent, ModalHeader, Textarea, useDisclosure, UseDisclosureProps } from "@nextui-org/react";
-import { ChangeEvent, ChangeEventHandler, Dispatch, FormEvent, FormEventHandler, HTMLAttributes, Key, SetStateAction, useEffect, useState } from "react";
+import { ChangeEvent, ChangeEventHandler, Dispatch, FormEvent, FormEventHandler, HTMLAttributes, Key, SetStateAction, useEffect, useMemo, useState } from "react";
 import { NewBrand } from "./NewBrand";
 import Image from "next/image";
 import { readFileAsDataURL } from "../app/utils/fileReader";
@@ -13,6 +13,8 @@ import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import { inherits } from "util";
 import randomInt from "@/app/utils/randomInt";
 import useStateMax from "@/app/utils/useStateMax";
+import { register } from "module";
+import { Label } from "./Label";
 
 
 export enum ImageType {
@@ -50,7 +52,7 @@ export type FormInputProps = {
 	deleteImages: number[],
 	brandId: Key,
 	model: string,
-	boughtPrice: number,
+	boughtPrice: string,
 	note: string
 }
 
@@ -66,7 +68,7 @@ export type formControlProps = {
 	previews: FormImageDataURL[], setPreviews: Dispatch<SetStateAction<FormImageDataURL[]>>,
 	brandId: Key, setBrandId: Dispatch<SetStateAction<Key>>,
 	model: string, setModel: Dispatch<SetStateAction<string>>,
-	boughtPrice: number, setBoughtPrice: Dispatch<SetStateAction<number>>
+	boughtPrice: string, setBoughtPrice: Dispatch<SetStateAction<string>>
 	note: string, setNote: Dispatch<SetStateAction<string>>
 	onSubmit: (formInput: FormInputProps) => void
 }
@@ -83,7 +85,7 @@ export const useFormControl = (onSubmit: (formInput: FormInputProps) => void): f
 	// const [previews, addPreviews, subPreviews] = useStateMax(10, () => {})
 	const [brandId, setBrandId] = useState<Key>('')
 	const [model, setModel] = useState<string>('')
-	const [boughtPrice, setBoughtPrice] = useState<number>(0)
+	const [boughtPrice, setBoughtPrice] = useState<string>('')
 	const [note, setNote] = useState<string>('')
 
 	return {
@@ -127,8 +129,6 @@ export function FormMachine(props: FormMachineProps) {
 
 	const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
-	console.log(brandId, model, boughtPrice, note)
-
 
 
 
@@ -169,8 +169,8 @@ export function FormMachine(props: FormMachineProps) {
 			})
 		)
 
-		e.target.value = ""	 
- 		setPreviews([...previews, ...newPreviews])
+		e.target.value = ""
+		setPreviews([...previews, ...newPreviews])
 	}
 
 	function handleImageDelete(e: React.MouseEvent<HTMLButtonElement>) {
@@ -194,6 +194,33 @@ export function FormMachine(props: FormMachineProps) {
 
 	}
 
+	const required = (value: any) => useMemo(() => {
+		return !Boolean(value)
+	}, [value])
+
+	const isInvalid = {
+		images: required(previews.length),
+		brandId: required(brandId),
+		model: required(model),
+		boughtPrice: required(boughtPrice),
+		note: required(note)
+	}
+
+	const [touched, setTouched] = useState({
+		image: false,
+		brandId: false,
+		model: false,
+		boughtPrice: false,
+		note: false
+	})
+
+	const handleTouched = (set: 'image'|'brandId'|'model'|'boughtPrice'|'note') => {
+		setTouched((prevState) => ({
+			...prevState,
+			[set] : true
+		}))
+	}
+
 	// useEffect(() => {
 
 	// }, [])
@@ -204,11 +231,11 @@ export function FormMachine(props: FormMachineProps) {
 				<div className="block w-full overflow-x-auto">
 					<div className="flex w-full flex-row-reverse justify-end gap-1 *:flex-shrink-0">
 
-						<label htmlFor="images" className={`flex justify-center items-center ${formRoundness} flex-col gap-1 w-52 aspect-[3/2] text-foreground-500 border-2 border-default-200 hover:border-default-400 focus:border-default-foreground `}>
+						<Label htmlFor="images" isInvalid={isInvalid.images && touched.image} className={`flex justify-center items-center ${formRoundness} flex-col gap-1 w-52 aspect-[3/2] text-foreground-500 border-2 border-default-200 hover:border-default-400 focus:border-default-foreground `}>
 							<FontAwesomeIcon icon={faImage} size="xl" />
 							<p>Tambahkan Foto</p>
-						</label>
-						<Input id="images" name="images" type="file" onChange={handleImagesInput} multiple accept="image/*" className="hidden" classNames={{
+						</Label>
+						<Input isInvalid={isInvalid.images} id="images" name="images" type="file" onChange={handleImagesInput} multiple accept="image/*" className="hidden" classNames={{
 							// input: "h-full",
 							// inputWrapper: "h-full",
 
@@ -236,11 +263,6 @@ export function FormMachine(props: FormMachineProps) {
 					</div>
 				</div>
 
-				<Button onClick={() => {
-					console.log(previews, newImages, deleteImages)
-				}}></Button>
-
-
 				<div className={`flex gap-3 items-center`}>
 					<Autocomplete
 						name="brand_id"
@@ -253,8 +275,8 @@ export function FormMachine(props: FormMachineProps) {
 						classNames={{
 							selectorButton: "text-medium",
 						}}
+						description="Pilih merek Mesin Jahitnya"
 						inputProps={{
-							required: true,
 							classNames: {
 								inputWrapper: `${formRoundness}`
 							}
@@ -267,7 +289,11 @@ export function FormMachine(props: FormMachineProps) {
 						listboxProps={{
 							emptyContent: <><Button onPress={onOpen} variant="bordered" className="-m-2">+ Tambahkan Brand</Button></>
 
-						}}>
+						}}
+						onClose={() => {handleTouched("brandId")}}
+						errorMessage="Harap pilih merek Mesin Jahitnya yang betul"
+						isInvalid={touched.brandId && isInvalid.brandId}
+					>
 
 						{props.brands.map((brand: any) => (
 							<AutocompleteItem
@@ -286,20 +312,23 @@ export function FormMachine(props: FormMachineProps) {
 				</div>
 
 				<Input
-					required
 					name="model"
 					onChange={(e) => {
 						setModel(e.currentTarget.value);
 					}}
-					className={`max-w-72`}
+					className={`max-w-72 `}
 					classNames={{
 						'inputWrapper': `${formRoundness}`
 					}}
+					value={model}
 					// placeholder="Model Mesin Jahit. Contoh: 8280, MYLOCK 3340"
 					variant="bordered"
 					size="lg"
 					label="Model"
 					labelPlacement="inside"
+					onBlur={() => {handleTouched("model")}}
+					isInvalid={isInvalid.model && touched.model}
+					errorMessage="Wajib diisi"
 				/>
 				<Input
 					name="bought_price"
@@ -307,8 +336,13 @@ export function FormMachine(props: FormMachineProps) {
 					classNames={{
 						'inputWrapper': `${formRoundness}`
 					}}
-					onChange={(e) => setBoughtPrice(Number(e.currentTarget.value))}
-					type="number"
+					inputMode="numeric"
+					value={boughtPrice.toString()}
+					onChange={(e) => {
+						setBoughtPrice(e.currentTarget.value.match(/\D+/) ? boughtPrice : e.currentTarget.value)
+
+					}}
+					type="text"
 					// placeholder="Model Mesin Jahit. Contoh: 8280, MYLOCK 3340"
 					variant="bordered"
 					size="lg"
@@ -319,6 +353,9 @@ export function FormMachine(props: FormMachineProps) {
 							<span className="text-default-500 ">Rp.</span>
 						</div>
 					}
+					onBlur={() => {handleTouched('boughtPrice')}}
+					isInvalid={isInvalid.boughtPrice && touched.boughtPrice}
+					errorMessage="Wajib diisi"
 				/>
 				<Textarea
 					name="note"
@@ -326,12 +363,15 @@ export function FormMachine(props: FormMachineProps) {
 						label: "text-medium", // to match regular input style
 						inputWrapper: `${formRoundness}`
 					}}
+					value={note}
 					onChange={(e) => setNote(e.currentTarget.value)}
-					// placeholder="Catatan seperti: Butuh sparepart apa. mau diperbaiki bagaimana"
+					placeholder="Catatan: Butuh sparepart apa. mau diperbaiki bagaimana."
 					variant="bordered"
 					size="lg"
 					label="Note"
 					labelPlacement="inside"
+					isInvalid={isInvalid.note && touched.note}
+					errorMessage='Wajib diisi'
 				/>
 
 				<Button onPress={() => {

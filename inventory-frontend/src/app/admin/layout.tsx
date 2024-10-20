@@ -9,7 +9,6 @@ export default function AdminLayout({
 }>) {
   return (
     <div>
-      Hello Everybody
         {children}
     </div>
   );

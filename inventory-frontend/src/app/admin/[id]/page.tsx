@@ -14,7 +14,8 @@ export default async function Page({params}: any) {
 
   // const res = await fetch('http://localhost:3002/admin/machines/brands')
   // const brands: Brand[] = await res.json()
-  const machineDetails:MachineDetails = await (await fetch('http://localhost:3002/admin/machines/'+params.id)).json()
+  console.log(params)
+  const machineDetails:MachineDetails = await (await fetch('http://localhost:3002/admin/'+params.id)).json()
 
   const brands: Brand[] = [
     {

@@ -1,6 +1,6 @@
 'use client'
 
-import { FormAddMachine, FormInputProps, useFormControl } from "../../../components/Form"
+import { FormMachine, FormInputProps, useFormControl } from "../../../components/Form"
 import { Brand } from "./page"
 
 
@@ -35,7 +35,7 @@ export default function Form(props: { brands: Brand[] }) {
 
     formData.append("brand_id", brandId.toString())
     formData.append("model", model)
-    formData.append("bought_price", boughtPrice.toString())
+    formData.append("bought_price", boughtPrice)
     formData.append("note", note)
 
     console.log(formData)
@@ -62,6 +62,6 @@ const formControl = useFormControl((formInput) => { onSubmit(formInput) })
 //formControl.setPreviews([])
 
 return (
-  <FormAddMachine brands={props.brands} formControl={formControl} />
+  <FormMachine brands={props.brands} formControl={formControl} />
 )
 }
