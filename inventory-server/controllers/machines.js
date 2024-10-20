@@ -12,6 +12,13 @@ exports.getMachine = async function (req, res, next) {
     const machine = await pool.query(sqlQuery, id)
         .then(json => {
             // transform duplicated, because of one to many rel
+            if (!json.length) {
+                // const err = {
+                //     status: 404,
+                //     message: "Machine not found"
+                // }
+                throw {status: 404}
+            }
 
             const { image_id, image_path, ...rest } = json[0]
 
@@ -26,7 +33,7 @@ exports.getMachine = async function (req, res, next) {
         }).catch(err => {
             next(err)
             // throw new Error(err)
-            // console.log(err)
+            console.log(err)
         })
 
 

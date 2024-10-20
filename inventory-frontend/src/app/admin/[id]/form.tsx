@@ -8,11 +8,13 @@ import { useEffect } from "react"
 
 
 export default function Form(props: { brands: Brand[], machineDetails: MachineDetails }) {
+  
+  
   const details: MachineDetails = props.machineDetails
 
   const onSubmit = (formInput: FormInputProps) => {
     const { newImages, deleteImages, brandId, model, boughtPrice, note } = formInput
-
+    
     const formData = new FormData()
 
     newImages.forEach(file => {
@@ -44,14 +46,12 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
 
   useEffect(() => {
     // formControl.setBrandId(details.brand_id)
+    console.log("monitor formControl useEffect")
     formControl.setBrandId(details.brand_id)
     formControl.setModel(details.model)
     formControl.setBoughtPrice(details.bought_price.toString())
     formControl.setNote(details.note)
-    
-
-
-  }, [])
+  }, [formControl])
 
   // formControl.setModel(details.model)
   // formControl.setNote(details.note)

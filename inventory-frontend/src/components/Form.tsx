@@ -127,10 +127,6 @@ export function FormMachine(props: FormMachineProps) {
 	// const [note, setNote] = useState("");
 	//test modal
 
-	const { isOpen, onOpen, onOpenChange } = useDisclosure()
-
-
-
 
 	// const baseURL = "http://localhost:3002"
 
@@ -194,16 +190,16 @@ export function FormMachine(props: FormMachineProps) {
 
 	}
 
-	const required = (value: any) => useMemo(() => {
+	const Required = (value: any) => useMemo(() => {
 		return !Boolean(value)
 	}, [value])
 
 	const isInvalid = {
-		images: required(previews.length),
-		brandId: required(brandId),
-		model: required(model),
-		boughtPrice: required(boughtPrice),
-		note: required(note)
+		images: Required(previews.length),
+		brandId: Required(brandId),
+		model: Required(model),
+		boughtPrice: Required(boughtPrice),
+		note: Required(note)
 	}
 
 	const [touched, setTouched] = useState({
@@ -211,19 +207,30 @@ export function FormMachine(props: FormMachineProps) {
 		brandId: false,
 		model: false,
 		boughtPrice: false,
-		note: false
+		note: false,
 	})
 
-	const handleTouched = (set: 'image'|'brandId'|'model'|'boughtPrice'|'note') => {
+	const handleTouched = (set: 'image' | 'brandId' | 'model' | 'boughtPrice' | 'note') => {
 		setTouched((prevState) => ({
 			...prevState,
-			[set] : true
+			[set]: true
 		}))
 	}
 
-	// useEffect(() => {
+	// const [errorFinish, setErrorFinish] = useState<boolean>(false)
 
-	// }, [])
+	const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
+	const areFieldsValid = !Object.values(isInvalid).includes(true)
+	const [btnTouched, setBtnTouched] = useState(false)
+
+	// useEffect(() => {
+	// 	if (disableFinish) {
+	// 		console.log("set finish")
+	// 		setDisableFinish(false)
+	// 	}
+	// 	console.log('useEffect')
+	// }, [areFieldsValid])
 
 	return (
 		<div className="min-h-dvh flex justify-center items-center">
@@ -290,7 +297,7 @@ export function FormMachine(props: FormMachineProps) {
 							emptyContent: <><Button onPress={onOpen} variant="bordered" className="-m-2">+ Tambahkan Brand</Button></>
 
 						}}
-						onClose={() => {handleTouched("brandId")}}
+						onClose={() => { handleTouched("brandId") }}
 						errorMessage="Harap pilih merek Mesin Jahitnya yang betul"
 						isInvalid={touched.brandId && isInvalid.brandId}
 					>
@@ -326,7 +333,10 @@ export function FormMachine(props: FormMachineProps) {
 					size="lg"
 					label="Model"
 					labelPlacement="inside"
-					onBlur={() => {handleTouched("model")}}
+					onBlur={() => {
+						handleTouched("model")
+						// console.log(isInvalid)
+					}}
 					isInvalid={isInvalid.model && touched.model}
 					errorMessage="Wajib diisi"
 				/>
@@ -353,7 +363,7 @@ export function FormMachine(props: FormMachineProps) {
 							<span className="text-default-500 ">Rp.</span>
 						</div>
 					}
-					onBlur={() => {handleTouched('boughtPrice')}}
+					onBlur={() => { handleTouched('boughtPrice') }}
 					isInvalid={isInvalid.boughtPrice && touched.boughtPrice}
 					errorMessage="Wajib diisi"
 				/>
@@ -374,16 +384,30 @@ export function FormMachine(props: FormMachineProps) {
 					errorMessage='Wajib diisi'
 				/>
 
-				<Button onPress={() => {
-					const newImagesFile = newImages.map(img => img.src)
-					const formInput: FormInputProps = {
-						newImages: newImagesFile, deleteImages, brandId, model, boughtPrice, note
-					}
-					onSubmit(formInput)
-				}}
-					size="lg"
-					color="primary"
-					className="w-36 h-12 font-bold">Selesai</Button>
+				<div className="flex flex-row items-center gap-2">
+					<Button onPress={() => {
+						const newImagesFile = newImages.map(img => img.src)
+						setBtnTouched(true)
+						const formInput: FormInputProps = {
+							newImages: newImagesFile, deleteImages, brandId, model, boughtPrice, note
+						}
+						if (areFieldsValid) {
+							onSubmit(formInput)
+						} else {
+							Object.keys(touched).forEach((key) => {
+								setTouched((prevState) => ({
+									...prevState,
+									[key]: true
+								}))
+							})
+						}
+					}}
+						size="lg"
+						color={!areFieldsValid && btnTouched ? "danger" : "primary"}
+						className="w-36 h-12 font-bold">Selesai
+					</Button>
+					<p className="text-xs text-danger" hidden={!(!areFieldsValid && btnTouched)}>Isi Semua Kolom Dulu</p>
+				</div>
 				<NewBrand isOpen={isOpen} onOpenChange={onOpenChange}></NewBrand>
 			</form>
 		</div>

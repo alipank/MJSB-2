@@ -1,1 +1,1 @@
-console.log('321'.match(/^\d+&/g) )
+console.log(Boolean(''))

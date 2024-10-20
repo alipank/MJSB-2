@@ -10,24 +10,40 @@ export type Brand = {
 
 //why it takes me weeks just to finish this section, huft
 
-export default async function Page({params}: any) {
+export default async function Page({ params }: any) {
+
+  async function getData() {
+    const res = await fetch('http://localhost:3002/admin/machines/' + params.id, {cache: "no-store"})
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch data')
+    }
+
+    return res.json()
+  }
+
 
   // const res = await fetch('http://localhost:3002/admin/machines/brands')
   // const brands: Brand[] = await res.json()
   console.log(params)
-  const machineDetails:MachineDetails = await (await fetch('http://localhost:3002/admin/'+params.id)).json()
+  try {
+    const machineDetails: MachineDetails = await getData()
 
-  const brands: Brand[] = [
-    {
-      id: 1,
-      brand_name: "tes"
-    }
-  ]
+    const brands: Brand[] = [
+      {
+        id: 1,
+        brand_name: "tes"
+      }
+    ]
 
-  console.log(machineDetails)
+    return (
+      <Form brands={brands} machineDetails={machineDetails} />
+    )
+  } catch (error: any) {
+    
+    // console.log(error)
 
-  return (
-    <Form  brands={brands} machineDetails={machineDetails} />
-  )
- 
+    return <p>{error.message}</p>
+  }
+
 }
