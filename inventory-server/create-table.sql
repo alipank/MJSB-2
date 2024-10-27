@@ -30,7 +30,18 @@ CREATE TABLE `machine_brands` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `machine_brands`
+--
 
+LOCK TABLES `machine_brands` WRITE;
+/*!40000 ALTER TABLE `machine_brands` DISABLE KEYS */;
+INSERT INTO `machine_brands` VALUES
+(1,'SINGER','2024-10-16');
+/*!40000 ALTER TABLE `machine_brands` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `machine_buyers`
 --
 
@@ -51,6 +62,15 @@ CREATE TABLE `machine_buyers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `machine_buyers`
+--
+
+LOCK TABLES `machine_buyers` WRITE;
+/*!40000 ALTER TABLE `machine_buyers` DISABLE KEYS */;
+/*!40000 ALTER TABLE `machine_buyers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `machine_images`
 --
 
@@ -64,9 +84,18 @@ CREATE TABLE `machine_images` (
   `added_at` date NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `fk_machine_image` (`machine_id`),
-  CONSTRAINT `fk_machine_image` FOREIGN KEY (`machine_id`) REFERENCES `machines` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  CONSTRAINT `fk_machine_image` FOREIGN KEY (`machine_id`) REFERENCES `machines` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `machine_images`
+--
+
+LOCK TABLES `machine_images` WRITE;
+/*!40000 ALTER TABLE `machine_images` DISABLE KEYS */;
+/*!40000 ALTER TABLE `machine_images` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `machines`
@@ -85,9 +114,18 @@ CREATE TABLE `machines` (
   `bought_price` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_brand` (`brand_id`),
-  CONSTRAINT `fk_brand` FOREIGN KEY (`brand_id`) REFERENCES `machine_brands` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  CONSTRAINT `machines_machine_brands_FK` FOREIGN KEY (`brand_id`) REFERENCES `machine_brands` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `machines`
+--
+
+LOCK TABLES `machines` WRITE;
+/*!40000 ALTER TABLE `machines` DISABLE KEYS */;
+/*!40000 ALTER TABLE `machines` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping routines for database 'mjsb'
@@ -102,4 +140,4 @@ CREATE TABLE `machines` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-10 17:28:34
+-- Dump completed on 2024-10-27  0:40:56

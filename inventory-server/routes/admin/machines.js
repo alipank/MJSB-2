@@ -5,12 +5,13 @@ const { getMachine, putMachine, postMachine, getMachines, deleteMachine } = requ
 
 router.get("/:id", getMachine);
 
+router.put("/:id", putMachine);
+
+router.delete("/:id", deleteMachine);
+
 router.get("/", getMachines);
 
 router.post("/", postMachine);
 
-router.put("/:id", putMachine);
-
-router.delete("/:id", deleteMachine);
 
 module.exports = router;

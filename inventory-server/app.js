@@ -74,7 +74,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // app.use(cors())
-app.use('/', upload.array('new_images', 10), function (req, res, next) {
+app.use('/', upload.array('new_images[]', 10), function (req, res, next) {
   next()
 })
 
@@ -85,11 +85,9 @@ app.use((req, res, next) => {
   res.append('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
-// app.use("/machines", require("./routes/machine"))
-app.use("/admin", require("./routes/admin/admin"));
-app.use("/admin/machines", require("./routes/admin/machines"));
+
 app.use("/card", require("./routes/card"));
-app.use("/machines", require("./routes/machines"))
+app.use("/admin", require("./routes/admin/machines"))
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -118,6 +116,8 @@ app.use(function (err, req, res, next) {
     console.log(res.statusMessage);
     return;
   }
+
+  console.log(err)
 
   // render the error page
   res.status(err.status || 500);

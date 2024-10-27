@@ -13,18 +13,14 @@ exports.getMachine = async function (req, res, next) {
         .then(json => {
             // transform duplicated, because of one to many rel
             if (!json.length) {
-                // const err = {
-                //     status: 404,
-                //     message: "Machine not found"
-                // }
-                throw {status: 404}
+                throw { status: 404 }
             }
 
             const { image_id, image_path, ...rest } = json[0]
 
             let images = json.map((row) => {
                 const { image_id, image_path } = row
-                return { image_id,  image_path }
+                return { image_id, image_path }
             })
 
             const machineDetails = { ...rest, images }
@@ -53,111 +49,110 @@ exports.postMachine = async function (req, res, next) {
     console.log(req.body)
 
     if (!req.body || !brand_id || !model || !bought_price) {
-        res.status(400);
-        console.log(req.body);
-        res.json({ error: "Error required data is not sufficed" });
-        return;
+        throw {
+            status: 400,
+            message: "Error required data is not sufficed"
+        }
     }
 
     const sqAddMachine =
-        "INSERT INTO machines (brand_id, model, bought_price, note) VALUES (?, ?, ?, ?)"
+        "INSERT INTO machines (brand_id, model, bought_price, note) VALUES (?, ?, ?, ?);"
 
     let sqAddImages = "INSERT INTO machine_images (machine_id, image_path) VALUES"
-
-    // req.files.forEach((img, i) => {
-    //     console.log(img)
-    //     sqAddImages = sqAddImages.concat(`(${machineId}, `, `${img.filename})` + i+1 >= img.length ? "" : "," )
-    //   })
 
     // console.log(sqAddImages)
 
     // console.log(req.body, req.files)
-    await pool
+    pool
         .query(sqAddMachine, [brand_id, model, bought_price, note])
-        .then(async (success) => {
+        .then((success) => {
             //      console.log(Object.entries(success))
             const machineId = Number(success.insertId)
 
             //EHH SALAH COK HARUSNYA INSERT KE MACHINES IMAGES DULU BARU BUAT KAYAK GINI,, AH BODO LAH
 
-            req.files.forEach((img, i) => {
-                console.log(img)
-                //   sqAddImages = sqAddImages  + `(${machineId},  ${img.filename})` + i+1 >= sqAddImages.length ? "" : "," 
-                const comma = i + 1 < req.files.length ? "," : ""
-
-                sqAddImages = `${sqAddImages} (${machineId}, "${img.filename}") ${comma}`
+            req.files.forEach((file, i) => {
+                // console.log(file)
+                sqAddImages += `(${machineId}, "${file.filename}") ${i + 1 >= req.files.length ? ';' : ','}`
             })
+
             console.log("sqAddImages", sqAddImages)
 
             console.log(req.files)
 
-            return await pool.query(sqAddImages)
-            // Promise.all(
-            //   req.files.forEach((file) => {
-            //     const oldPath = path.join(__dirname, '..', '..', 'public', 'images', file.filename)
-            //     const newPath = path.join(__dirname, '..', '..', 'public', 'images', `${id}-file.filename`)
-
-            //     rename(oldPath, newPath,)
-            //   })
-            // ).then(
-            //   () => {
-            //     res.status(201);
-            //     res.json({
-            //       id: id,
-            //       brand_id: brand_id,
-            //       model: model,
-            //       bought_price: bought_price,
-            //       note: note,
-            //       images: req.files
-            //     });
-            // }
-            // ).catch(err => { throw err }) //TODO BUAT error handling, kalo gagal, yang di db hapus, dan return gagal ke client 
-
-            //response sementara
-
+            return pool.query(sqAddImages)
         })
         .then((success => {
             console.log(success)
-            res.json({ message: "berhasil eaks" })
-
+            res.status(201).json({ 
+                status: 201,
+                message: "berhasil eaks" 
+            })
         }))
         .catch((err) => {
             console.log(err);
-            next(err);
+            next({
+                status:500,
+                message: "Failed to create new machine."
+            });
         });
 }
 
 exports.putMachine = function (req, res, next) {
     if (!req.body) {
-        res.statusMessage = "atleast edit a thing bruh";
-        res.status(400).end();
-        return;
+        throw {
+            status: 400,
+            message: "atleast edit a thing bruh"
+        }
     }
 
-    const { brand, model, note } = req.body;
-    let sqlQuery = "UPDATE machines SET ";
+    const { delete_images_id, brand_id, model, bought_price, note } = req.body;
 
-    Object.keys(req.body).forEach((key, i) => {
-        sqlQuery += `${key}="${req.body[key]}"`;
-        if (i + 1 < Object.keys(req.body).length) sqlQuery += ",";
-    });
+    let sqlQuery = "UPDATE machines SET brand_id=?, model=?, bought_price=?, note=? WHERE id=?;";
 
-    sqlQuery += ` WHERE machine_id=${req.params.id}`;
-
+    console.log('1', sqlQuery)
+    
     pool
-        .query(sqlQuery)
+        .query(sqlQuery, [brand_id, model, bought_price, note, req.params.id])
         .then((success) => {
-            console.log(success);
-            res.json({
-                brand,
-                model,
-                note,
-            });
+            console.log('1.', success)
+            if (req.files.length) {
+                let sqlQuery = "INSERT INTO machine_images (machine_id, image_path) VALUES "
+                req.files.forEach((file, i) => {
+                    sqlQuery += `(${req.params.id}, "${file.filename}") ${i + 1 >= req.files.length ? ';' : ','}`
+                })
+                return pool.query(sqlQuery)
+            }
+            return
+        })
+        .then((success) => {
+            console.log('2.', success)
+            if (delete_images_id) {
+                let sqlQuery = `DELETE FROM machine_images WHERE`
+                delete_images_id.forEach((id, i) => {
+                    sqlQuery += ` id=${id} ${i + 1 >= delete_images_id.length ? ';' : 'OR'}`
+                })
+                return pool.query(sqlQuery)
+            }
+        
+            return
+        })
+        .then((success) => {
+            console.log('3.', success)
+            console.log('done')
+            res.status(201).json({
+                status: 201,
+                message: "Succesfully Edit the Machine"
+            })
         })
         .catch((err) => {
-            next(err);
+            console.log(err)
+            throw {
+                status: 500,
+                message: "Database error"
+            }
         });
 }
 exports.deleteMachine = function (req, res, next) {
-    res.send("say hello, your item is not deleted rn");
+    const sqlQuery = "DELETE FROM"
 }
