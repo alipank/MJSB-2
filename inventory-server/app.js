@@ -78,7 +78,14 @@ app.use('/', upload.array('new_images[]', 10), function (req, res, next) {
   next()
 })
 
-puppeteer.launch({ debuggingPort: 9222 }).then((b) => { console.log("puppeteer on debugging port 9222") });
+app.use('/', (req,res,next) => {
+  console.log(req.method, req.path)
+  next()
+})
+
+// temporarely not launching puppeteer, it's a memory hogger beast, so use <canvas> quickly or look for how to kill puppeteer when node killed
+
+// puppeteer.launch({ debuggingPort: 9222 }).then((b) => { console.log("puppeteer on debugging port 9222") });
 app.use((req, res, next) => {
   res.append('Access-Control-Allow-Origin', ['http://localhost:3000']);
   res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');

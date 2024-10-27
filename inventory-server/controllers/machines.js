@@ -1,10 +1,8 @@
 const path = require('path');
-const { rename } = require("fs");
 const pool = require("../util/database");
 
 
 exports.getMachine = async function (req, res, next) {
-    const imageDest = "http://localhost:3002/images/"
     const id = req.params.id;
     const sqlQuery =
         "SELECT m.*, img.id as image_id, img.image_path FROM machines AS m RIGHT JOIN machine_images as img ON m.id = img.machine_id WHERE m.id=?;";
@@ -48,10 +46,17 @@ exports.postMachine = async function (req, res, next) {
 
     console.log(req.body)
 
-    if (!req.body || !brand_id || !model || !bought_price) {
+    if (!brand_id || !model || !bought_price || !req.files.length) {
         throw {
             status: 400,
             message: "Error required data is not sufficed"
+        }
+    }
+
+    if (brand_id.match(/\D+/) || bought_price.match(/\D+/)) {
+        throw {
+            status: 400,
+            message: "Wrong data type"
         }
     }
 
@@ -84,58 +89,86 @@ exports.postMachine = async function (req, res, next) {
         })
         .then((success => {
             console.log(success)
-            res.status(201).json({ 
+            res.status(201).json({
                 status: 201,
-                message: "berhasil eaks" 
+                message: "berhasil eaks"
             })
         }))
         .catch((err) => {
             console.log(err);
             next({
-                status:500,
-                message: "Failed to create new machine."
+                status: err.status || 500,
+                message: "Failed to create new machine. // "+err.message
             });
         });
 }
 
 exports.putMachine = function (req, res, next) {
-    if (!req.body) {
-        throw {
-            status: 400,
-            message: "atleast edit a thing bruh"
-        }
-    }
 
     const { delete_images_id, brand_id, model, bought_price, note } = req.body;
 
-    let sqlQuery = "UPDATE machines SET brand_id=?, model=?, bought_price=?, note=? WHERE id=?;";
+    const MAX_IMAGES = 10
 
-    console.log('1', sqlQuery)
-    
-    pool
-        .query(sqlQuery, [brand_id, model, bought_price, note, req.params.id])
+    if (!brand_id || !model || !bought_price) {
+        throw {
+            status: 400,
+            message: "Error required data is not sufficed"
+        }
+    }
+
+    if (brand_id.match(/\D+/) || bought_price.match(/\D+/)) {
+        throw {
+            status: 400,
+            message: "Wrong data type"
+        }
+    }
+    const currentImages = pool.query(`SELECT * FROM machine_images WHERE machine_id=${req.params.id}`)
+
+    currentImages
+        .then((images) => {
+            //check if images will be insert and delete are exceeding limit (10) or not 
+            console.log(images.length,
+                 req.files.length,
+                 delete_images_id,
+                 delete_images_id?.length,
+                 images.length + req.files.length - (delete_images_id?.length || 0),
+                 images.length + req.files.length - delete_images_id?.length || 0> MAX_IMAGES)
+
+            if (images.length + req.files.length - (delete_images_id?.length || 0) > MAX_IMAGES && req.files.length) { // the req.files.length allow for deleting the overloaded image (for somehow)
+                throw {
+                    status: 400,
+                    message: "Maximum image is exceeded"
+                }
+            }
+            const sqlQuery = "UPDATE machines SET brand_id=?, model=?, bought_price=?, note=? WHERE id=?;";
+
+            return pool.query(sqlQuery, [brand_id, model, bought_price, note, req.params.id])
+
+        })
         .then((success) => {
             console.log('1.', success)
-            if (req.files.length) {
-                let sqlQuery = "INSERT INTO machine_images (machine_id, image_path) VALUES "
-                req.files.forEach((file, i) => {
-                    sqlQuery += `(${req.params.id}, "${file.filename}") ${i + 1 >= req.files.length ? ';' : ','}`
-                })
-                return pool.query(sqlQuery)
+            if (!delete_images_id) {
+                return
             }
-            return
+
+            let sqlQuery = `DELETE FROM machine_images WHERE`
+            delete_images_id.forEach((id, i) => {
+                sqlQuery += ` id=${id} ${i + 1 >= delete_images_id.length ? ';' : 'OR'}`
+            })
+
+            return pool.query(sqlQuery).catch(err => console.log(err))
         })
         .then((success) => {
             console.log('2.', success)
-            if (delete_images_id) {
-                let sqlQuery = `DELETE FROM machine_images WHERE`
-                delete_images_id.forEach((id, i) => {
-                    sqlQuery += ` id=${id} ${i + 1 >= delete_images_id.length ? ';' : 'OR'}`
-                })
-                return pool.query(sqlQuery)
+            if (!req.files.length) {
+                return
             }
-        
-            return
+            let sqlQuery = "INSERT INTO machine_images (machine_id, image_path) VALUES "
+            req.files.forEach((file, i) => {
+                sqlQuery += `(${req.params.id}, "${file.filename}") ${i + 1 >= req.files.length ? ';' : ','}`
+            })
+
+            return pool.query(sqlQuery).catch(err => { console.log(err) })
         })
         .then((success) => {
             console.log('3.', success)
@@ -147,12 +180,23 @@ exports.putMachine = function (req, res, next) {
         })
         .catch((err) => {
             console.log(err)
-            throw {
-                status: 500,
-                message: "Database error"
-            }
+            next(err)
         });
 }
 exports.deleteMachine = function (req, res, next) {
-    const sqlQuery = "DELETE FROM "
+    const sqlQuery = `DELETE FROM machines WHERE id=${req.params.id}`
+    pool.query(sqlQuery)
+    .then(() => {
+        res.status(200).json({
+            status: 200,
+            message: 'Remove machine successfully'
+        })
+    })
+    .catch((err) => {
+        console.log(err)
+        next({
+            status: 500,
+            message: "Failed to Remove"
+        })
+    })
 }

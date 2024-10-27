@@ -14,6 +14,7 @@ import { inherits } from "util";
 import randomInt from "@/app/utils/randomInt";
 import { Label } from "./Label";
 import { FormImageDataFile, FormImageDataURL as IFormImageDataURL, ImageType } from "@/models/FormImageData";
+import { redirect } from "next/navigation";
 
 export class FormImageDataURL implements IFormImageDataURL {
 	public constructor(id: number, type: ImageType, src: string) {

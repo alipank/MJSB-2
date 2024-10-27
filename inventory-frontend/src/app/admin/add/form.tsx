@@ -18,7 +18,7 @@ export default function Form(props: { brands: Brand[] }) {
     // 		formData.append("images", file)
     // 	})
 
-    
+
     // const formData = {
     //   new_images: newImages,
     //   brand_id: brandId,
@@ -29,7 +29,8 @@ export default function Form(props: { brands: Brand[] }) {
 
     const formData = new FormData()
 
-    newImages.forEach((file) => {
+
+    newImages.forEach(file => {
       formData.append("new_images[]", file)
     })
 
@@ -43,7 +44,7 @@ export default function Form(props: { brands: Brand[] }) {
     const baseURL = "http://localhost:3002"
 
     fetch(
-      baseURL + "/admin/",
+      baseURL + "/admin",
       {
         // headers: { "Content-Type": "multipart/form-data" },  
         method: "POST",
@@ -55,13 +56,13 @@ export default function Form(props: { brands: Brand[] }) {
       .catch((err) => console.log(err));
   }
 
-const formControl = useFormControl((formInput) => { onSubmit(formInput) })
+  const formControl = useFormControl((formInput) => { onSubmit(formInput) })
 
 
-// untuk form edit
-//formControl.setPreviews([])
+  // untuk form edit
+  //formControl.setPreviews([])
 
-return (
-  <FormMachine brands={props.brands} formControl={formControl} />
-)
+  return (
+    <FormMachine brands={props.brands} formControl={formControl} />
+  )
 }

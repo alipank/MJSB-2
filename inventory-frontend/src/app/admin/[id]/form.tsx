@@ -5,6 +5,8 @@ import { FormImageDataURL, FormInputProps, FormMachine, useFormControl } from ".
 import { Brand } from "./page"
 import { useEffect } from "react"
 import { ImageType } from "@/models/FormImageData"
+import { usePathname, useRouter } from "next/navigation"
+import { Button } from "@nextui-org/react"
 
 
 
@@ -12,18 +14,21 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
 
   const baseURL = "http://localhost:3002"
 
+  const pathname = usePathname()
+
+  const router = useRouter()
 
   const onSubmit = (formInput: FormInputProps) => {
     const { newImages, deleteImages, brandId, model, boughtPrice, note } = formInput
 
     const formData = new FormData()
 
-    newImages.forEach((file, i) => {
-      formData.append(`new_images[]`, file)
+    newImages.forEach(file => {
+      formData.append("new_images[]", file)
     })
     deleteImages.forEach((id, i) => {
       formData.append(`delete_images_id[]`, id.toString())
-    }) 
+    })
     formData.append("brand_id", brandId.toString())
     formData.append("model", model)
     formData.append("bought_price", boughtPrice)
@@ -41,6 +46,8 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
       })
       .then(async (res) => {
         console.log(await res.json())
+        router.push('/admin/add')
+
       })
       .catch((err) => console.log(err));
   }
@@ -64,19 +71,23 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
     formControl.setNote(details.note)
   }, [props.machineDetails])
 
-  // formControl.setModel(details.model)
-  // formControl.setNote(details.note)
-  // formControl.setPreviews(
-  //   details.images.map((img:ImageDetails) => (
-  //     new FormImageDataURL(img.image_id, ImageType.Existing, img.image_path)
-  //   ))
-  // )
-
-
-  // untuk form edit
-  //formControl.setPreviews([])
-
   return (
-    <FormMachine brands={props.brands} formControl={formControl} />
+    <div className="flex flex-col items-center">
+      <FormMachine brands={props.brands} formControl={formControl} />
+
+      <Button className="w-36 h-12 font-bold -mt-60" color="warning" onPress={() => {
+        console.log(pathname.split('/'))
+        fetch(
+          baseURL + '/admin/' + pathname.split('/').at(-1),
+          {
+            method: 'DELETE'
+          }
+        ).then(
+          () => {console.log("DELETEEED")}
+        ).catch(
+          (err) => {console.log(err)}
+        )
+      }}>Hapus</Button>
+    </div>
   )
 }
