@@ -154,5 +154,5 @@ exports.putMachine = function (req, res, next) {
         });
 }
 exports.deleteMachine = function (req, res, next) {
-    const sqlQuery = "DELETE FROM"
+    const sqlQuery = "DELETE FROM "
 }
