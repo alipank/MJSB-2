@@ -1,40 +1,42 @@
 'use client'
 
-import { ImageDetails, MachineDetails } from "@/models/machineDetails"
-import { FormImageDataURL, FormInputProps, FormMachine, ImageType, useFormControl } from "../../../components/Form"
+import { MachineDetails } from "@/models/machineDetails"
+import { FormImageDataURL, FormInputProps, FormMachine, useFormControl } from "../../../components/Form"
 import { Brand } from "./page"
 import { useEffect } from "react"
+import { ImageType } from "@/models/FormImageData"
 
 
 
 export default function Form(props: { brands: Brand[], machineDetails: MachineDetails }) {
-  
-  
-  const details: MachineDetails = props.machineDetails
+
+  const baseURL = "http://localhost:3002"
+
 
   const onSubmit = (formInput: FormInputProps) => {
     const { newImages, deleteImages, brandId, model, boughtPrice, note } = formInput
-    
+
     const formData = new FormData()
 
-    newImages.forEach(file => {
-      formData.append("new_images", file)
+    newImages.forEach((file, i) => {
+      formData.append(`new_images[]`, file)
     })
-
+    deleteImages.forEach((id, i) => {
+      formData.append(`delete_images_id[]`, id.toString())
+    }) 
     formData.append("brand_id", brandId.toString())
     formData.append("model", model)
     formData.append("bought_price", boughtPrice)
     formData.append("note", note)
 
-    console.log(formData)
+    console.log(newImages, deleteImages, brandId, model, boughtPrice, note)
 
-    const baseURL = "http://localhost:3002"
 
     fetch(
-      baseURL + "/admin/",
+      baseURL + "/admin/" + props.machineDetails.id,
       {
         // headers: { "Content-Type": "multipart/form-data" },  
-        method: "POST",
+        method: "PUT",
         body: formData,
       })
       .then(async (res) => {
@@ -44,14 +46,23 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
   }
   const formControl = useFormControl((formInput) => { onSubmit(formInput) })
 
+
   useEffect(() => {
-    // formControl.setBrandId(details.brand_id)
+
+    const details: MachineDetails = props.machineDetails
+
+    const existingImages: FormImageDataURL[] = details.images.map((img) => (
+      new FormImageDataURL(img.image_id, ImageType.Existing, baseURL + '/images/' + img.image_path)
+    ))
+
+
     console.log("monitor formControl useEffect")
+    formControl.setPreviews(existingImages)
     formControl.setBrandId(details.brand_id)
     formControl.setModel(details.model)
     formControl.setBoughtPrice(details.bought_price.toString())
     formControl.setNote(details.note)
-  }, [formControl])
+  }, [props.machineDetails])
 
   // formControl.setModel(details.model)
   // formControl.setNote(details.note)

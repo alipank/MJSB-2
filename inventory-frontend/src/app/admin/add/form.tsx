@@ -29,8 +29,8 @@ export default function Form(props: { brands: Brand[] }) {
 
     const formData = new FormData()
 
-    newImages.forEach(file => {
-      formData.append("new_images", file)
+    newImages.forEach((file) => {
+      formData.append("new_images[]", file)
     })
 
     formData.append("brand_id", brandId.toString())
@@ -43,7 +43,7 @@ export default function Form(props: { brands: Brand[] }) {
     const baseURL = "http://localhost:3002"
 
     fetch(
-      baseURL + "/admin/machines",
+      baseURL + "/admin/",
       {
         // headers: { "Content-Type": "multipart/form-data" },  
         method: "POST",

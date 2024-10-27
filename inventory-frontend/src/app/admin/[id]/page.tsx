@@ -13,7 +13,7 @@ export type Brand = {
 export default async function Page({ params }: any) {
 
   async function getData() {
-    const res = await fetch('http://localhost:3002/admin/machines/' + params.id, {cache: "no-store"})
+    const res = await fetch('http://localhost:3002/admin/' + params.id, {cache: "no-store"})
 
     if (!res.ok) {
       throw new Error('Failed to fetch data')

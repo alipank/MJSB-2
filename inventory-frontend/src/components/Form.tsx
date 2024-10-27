@@ -8,38 +8,22 @@ import Image from "next/image";
 import { readFileAsDataURL } from "../app/utils/fileReader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus, faImage, faImages, faPlus, faPlusCircle, faPlusMinus } from "@fortawesome/free-solid-svg-icons";
-import { resizeImage } from "../app/utils/resizeImage";
+import { resizeImage, ResizeImageResult } from "../app/utils/resizeImage";
 import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
 import { inherits } from "util";
 import randomInt from "@/app/utils/randomInt";
-import useStateMax from "@/app/utils/useStateMax";
-import { register } from "module";
 import { Label } from "./Label";
+import { FormImageDataFile, FormImageDataURL as IFormImageDataURL, ImageType } from "@/models/FormImageData";
 
-
-export enum ImageType {
-	Existing = 1,
-	New = 2
-}
-
-interface FormImageDataFile {
-	id: number,
-	type: ImageType
-	src: File
-}
-
-export interface FormImageDataURL {
-	id: number,
-	type: ImageType
-	src: string
-}
-
-export class FormImageDataURL {
+export class FormImageDataURL implements IFormImageDataURL {
 	public constructor(id: number, type: ImageType, src: string) {
 		this.id = id
 		this.type = type
 		this.src = src
 	}
+	id: number;
+	type: ImageType;
+	src: string;
 
 	//for react list key
 	public getKey(): number {
@@ -119,16 +103,6 @@ export function FormMachine(props: FormMachineProps) {
 
 	const formRoundness: string | undefined = 'rounded-lg'
 	const { newImages, setNewImages, deleteImages, setDeleteImages, previews, setPreviews, brandId, setBrandId, model, setModel, boughtPrice, setBoughtPrice, note, setNote, onSubmit } = props.formControl
-	// const [fileImages, setFileImages] = useState<File[]>([])
-	// const [previews, setPreviews] = useState<string[]>([])
-	// const [brandId, setBrandId] = useState<Key>("");
-	// const [model, setModel] = useState("");
-	// const [boughtPrice, setBoughtPrice] = useState(0);
-	// const [note, setNote] = useState("");
-	//test modal
-
-
-	// const baseURL = "http://localhost:3002"
 
 	async function handleImagesInput(e: ChangeEvent<HTMLInputElement>) {
 
@@ -142,22 +116,28 @@ export function FormMachine(props: FormMachineProps) {
 				} as FormImageDataFile
 			))
 
-		setNewImages([...newImages, ...selectedFiles])
-
 		//Handle Image Preview
-		const newPreviews = await Promise.all(
+		const selectedImages = await Promise.all(
 			selectedFiles.map(async (imageData, i) => {
 
-				const url = URL.createObjectURL(imageData.src)
-				const resizedImageUrl = resizeImage(url, 600, 600, 0.9)
+				// const url = URL.createObjectURL(imageData.src)
+				const resizedImageUrl: ResizeImageResult = await resizeImage(imageData, 600, 600, 0.9)
 
 
-				const imageObj: FormImageDataURL = new FormImageDataURL(
-					imageData.id,
-					imageData.type,
-					await resizedImageUrl,
+				const imageObj: { url: FormImageDataURL, file: FormImageDataFile } =
 
-				)
+				{
+					url: new FormImageDataURL(
+						imageData.id,
+						imageData.type,
+						resizedImageUrl.url,
+					),
+					file: {
+						id: imageData.id,
+						type: imageData.type,
+						src: resizedImageUrl.file
+					}
+				}
 
 				return imageObj
 
@@ -166,7 +146,10 @@ export function FormMachine(props: FormMachineProps) {
 		)
 
 		e.target.value = ""
-		setPreviews([...previews, ...newPreviews])
+
+		setNewImages([...newImages, ...selectedImages.map((img) => (img.file))])
+
+		setPreviews([...previews, ...selectedImages.map((img) => (img.url))])
 	}
 
 	function handleImageDelete(e: React.MouseEvent<HTMLButtonElement>) {
