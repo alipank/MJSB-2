@@ -1,12 +1,14 @@
 'use client'
 
 import { MachineDetails } from "@/models/machineDetails"
-import { FormImageDataURL, FormInputProps, FormMachine, useFormControl } from "../../../components/Form"
+import { FormImageDataURL, FormInputProps, FormMachine, useFormControl } from "../../../../components/Form"
 import { Brand } from "./page"
 import { useEffect } from "react"
 import { ImageType } from "@/models/FormImageData"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@nextui-org/react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faTrash } from "@fortawesome/free-solid-svg-icons"
 
 
 
@@ -19,7 +21,7 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
   const router = useRouter()
 
   const onSubmit = (formInput: FormInputProps) => {
-    const { newImages, deleteImages, brandId, model, boughtPrice, note } = formInput
+    const { newImages, deleteImages, brandId, model, boughtPrice, note, ready } = formInput
 
     const formData = new FormData()
 
@@ -33,8 +35,9 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
     formData.append("model", model)
     formData.append("bought_price", boughtPrice)
     formData.append("note", note)
+    formData.append('is_ready', ready ? '1' : '0')
 
-    console.log(newImages, deleteImages, brandId, model, boughtPrice, note)
+    console.log(newImages, deleteImages, brandId, model, boughtPrice, note, ready)
 
 
     fetch(
@@ -69,25 +72,28 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
     formControl.setModel(details.model)
     formControl.setBoughtPrice(details.bought_price.toString())
     formControl.setNote(details.note)
+    formControl.setReady(details.is_ready)
   }, [props.machineDetails])
 
-  return (
-    <div className="flex flex-col items-center">
-      <FormMachine brands={props.brands} formControl={formControl} />
+  const deleteButton = <Button size="lg" color="danger" variant="flat" className="min-w-12 w-14 h-12 p-0" onPress={() => {
+    console.log(pathname.split('/'))
+    fetch(
+      baseURL + '/admin/' + pathname.split('/').at(-1),
+      {
+        method: 'DELETE'
+      }
+    ).then(
+      () => { console.log("DELETEEED") }
+    ).catch(
+      (err) => { console.log(err) }
+    )
+  }}>
+    <FontAwesomeIcon icon={faTrash} />
+  </Button >
 
-      <Button className="w-36 h-12 font-bold -mt-60" color="warning" onPress={() => {
-        console.log(pathname.split('/'))
-        fetch(
-          baseURL + '/admin/' + pathname.split('/').at(-1),
-          {
-            method: 'DELETE'
-          }
-        ).then(
-          () => {console.log("DELETEEED")}
-        ).catch(
-          (err) => {console.log(err)}
-        )
-      }}>Hapus</Button>
-    </div>
+  return (
+    // <div className="flex flex-col items-center">
+      <FormMachine brands={props.brands} formControl={formControl} submitText="Save Changes" deleteButton={deleteButton} />
+    // </div>
   )
 }

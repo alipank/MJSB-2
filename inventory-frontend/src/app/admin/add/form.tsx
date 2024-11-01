@@ -8,7 +8,7 @@ import { Brand } from "./page"
 export default function Form(props: { brands: Brand[] }) {
 
   const onSubmit = (formInput: FormInputProps) => {
-    const { newImages, deleteImages, brandId, model, boughtPrice, note } = formInput
+    const { newImages, deleteImages, brandId, model, boughtPrice, note, ready } = formInput
 
     // 	// const formData = new FormData(event.currentTarget);
     // 	formData.set("images", "") //reset images field to be used with useState value fileImages
@@ -38,6 +38,7 @@ export default function Form(props: { brands: Brand[] }) {
     formData.append("model", model)
     formData.append("bought_price", boughtPrice)
     formData.append("note", note)
+    formData.append('is_ready', ready ? '1' : '0')
 
     console.log(formData)
 
@@ -63,6 +64,6 @@ export default function Form(props: { brands: Brand[] }) {
   //formControl.setPreviews([])
 
   return (
-    <FormMachine brands={props.brands} formControl={formControl} />
+    <FormMachine brands={props.brands} formControl={formControl} submitText="Create New" />
   )
 }

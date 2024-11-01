@@ -7,6 +7,7 @@ export interface MachineDetails {
     updated_at: Date,
     bought_price: number,
     images: ImageDetails[]
+    is_ready: boolean
 }
 
 export interface ImageDetails {
