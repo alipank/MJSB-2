@@ -1,75 +1,19 @@
 'use client'
 
-import { Brand } from "@/app/admin/add/page";
+
 import { Autocomplete, AutocompleteItem, Button, cn, image, Input, LinkIcon, Modal, ModalBody, ModalContent, ModalHeader, Switch, Textarea, useDisclosure, UseDisclosureProps } from "@nextui-org/react";
 import { ChangeEvent, ChangeEventHandler, Dispatch, FormEvent, FormEventHandler, HTMLAttributes, Key, ReactElement, SetStateAction, useEffect, useMemo, useState } from "react";
 import { NewBrand } from "./NewBrand";
 import Image from "next/image";
-import { readFileAsDataURL } from "../app/utils/fileReader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus, faImage, faImages, faPlus, faPlusCircle, faPlusMinus, faTrash, faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { resizeImage, ResizeImageResult } from "../app/utils/resizeImage";
-import { faPlusSquare } from "@fortawesome/free-regular-svg-icons";
-import { inherits } from "util";
 import randomInt from "@/app/utils/randomInt";
 import { Label } from "./Label";
 import { FormImageDataFile, FormImageDataURL as IFormImageDataURL, ImageType } from "@/models/FormImageData";
-import { redirect } from "next/navigation";
+import { formControlProps, FormImageDataURL, FormInputProps, FormMachineProps } from "@/models/MachineProps";
 
-export class FormImageDataURL implements IFormImageDataURL {
-	public constructor(id: number, type: ImageType, src: string) {
-		this.id = id
-		this.type = type
-		this.src = src
-	}
-	id: number;
-	type: ImageType;
-	src: string;
 
-	//for react list key
-	public getKey(): number {
-		return Number(this.type.toString() + this.id)
-	}
-}
-
-export type FormInputProps = {
-	newImages: File[],
-	deleteImages: number[],
-	brandId: Key,
-	model: string,
-	boughtPrice: string,
-	note: string,
-	ready: boolean
-}
-
-export type formControlProps = {
-	newImages: FormImageDataFile[], setNewImages: Dispatch<SetStateAction<FormImageDataFile[]>>,
-
-	deleteImages: number[],
-
-	/**
-	 * state to store images that are to be deleted, this state is only used for the existing images (images that has been stored in the server), then you want to delete it
-	 */
-	setDeleteImages: Dispatch<SetStateAction<number[]>>
-	previews: FormImageDataURL[], setPreviews: Dispatch<SetStateAction<FormImageDataURL[]>>,
-	brandId: Key, setBrandId: Dispatch<SetStateAction<Key>>,
-	model: string, setModel: Dispatch<SetStateAction<string>>,
-	boughtPrice: string, setBoughtPrice: Dispatch<SetStateAction<string>>
-	note: string, setNote: Dispatch<SetStateAction<string>>,
-	ready: boolean, setReady: Dispatch<SetStateAction<boolean>>
-	onSubmit: (formInput: FormInputProps) => void
-}
-
-export interface PreviewMachineProps  {
-
-}
-
-export interface FormMachineProps extends PreviewMachineProps {
-	submitText: string
-	deleteButton?: ReactElement
-	brands: Brand[]
-	formControl: formControlProps
-}
 
 export const useFormControl = (onSubmit: (formInput: FormInputProps) => void): formControlProps => {
 	const [newImages, setNewImages] = useState<FormImageDataFile[]>([])

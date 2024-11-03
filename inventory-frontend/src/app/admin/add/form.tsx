@@ -1,6 +1,7 @@
 'use client'
 
-import { FormMachine, FormInputProps, useFormControl } from "../../../components/Form"
+import { FormInputProps } from "@/models/MachineProps"
+import { FormMachine,  useFormControl } from "../../../components/Form"
 import { Brand } from "./page"
 
 

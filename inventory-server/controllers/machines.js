@@ -27,7 +27,9 @@ exports.getMachine = async function (req, res, next) {
 
             return machineDetails
         }).catch(err => {
-            next(err)
+            next({
+                message: "Database failure, the machine probably didn't exist"
+            })
             // throw new Error(err)
             console.log(err)
         })
@@ -45,6 +47,8 @@ exports.getMachines = async function (req, res, next) {
 
 exports.postMachine = async function (req, res, next) {
     const { brand_id, model, bought_price, note, is_ready } = req.body;
+
+
 
     console.log(req.body)
 
