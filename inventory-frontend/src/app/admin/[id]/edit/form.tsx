@@ -76,25 +76,25 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
     formControl.setReady(details.is_ready)
   }, [props.machineDetails])
 
-  const deleteButton = <Button size="lg" color="danger" variant="flat" className="min-w-12 w-14 h-12 p-0" onPress={() => {
-    console.log(pathname.split('/'))
-    fetch(
-      baseURL + '/admin/' + pathname.split('/').at(-1),
-      {
-        method: 'DELETE'
-      }
-    ).then(
-      () => { console.log("DELETEEED") }
-    ).catch(
-      (err) => { console.log(err) }
-    )
-  }}>
-    <FontAwesomeIcon icon={faTrash} />
-  </Button >
+  // const deleteButton = <Button size="lg" color="danger" variant="flat" className="min-w-12 w-14 h-12 p-0" onPress={() => {
+  //   console.log(pathname.split('/'))
+  //   fetch(
+  //     baseURL + '/admin/' + pathname.split('/').at(-1),
+  //     {
+  //       method: 'DELETE'
+  //     }
+  //   ).then(
+  //     () => { console.log("DELETEEED") }
+  //   ).catch(
+  //     (err) => { console.log(err) }
+  //   )
+  // }}>
+  //   <FontAwesomeIcon icon={faTrash} />
+  // </Button >
 
   return (
     // <div className="flex flex-col items-center">
-      <FormMachine brands={props.brands} formControl={formControl} submitText="Save Changes" deleteButton={deleteButton} />
+      <FormMachine brands={props.brands} formControl={formControl} submitText="Save Changes" hideReadyField/>
     // </div>
   )
 }

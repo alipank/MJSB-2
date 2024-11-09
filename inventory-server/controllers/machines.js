@@ -109,6 +109,34 @@ exports.postMachine = async function (req, res, next) {
         });
 }
 
+exports.putMachineIsReady = function (req, res, next) {
+    const { is_ready } = req.body
+
+    // console.log(is_ready, is_ready === '1', is_ready === '0')
+
+    if (is_ready !== '0' && is_ready !== '1') {
+        throw {
+            status: 400,
+            message: "Wrong data value"
+        }
+    }
+
+    const putIsReadyQuery = `UPDATE machines SET is_ready=? WHERE id=?`
+
+    pool.query(putIsReadyQuery, [is_ready, req.params.id])
+        .then(
+            res.json({
+                status: 200,
+                message: 'changed successfully'
+            })
+        ).catch((err) => {
+            console.log(err)
+            next({
+                message: 'Database Error'
+            })
+        });
+}
+
 exports.putMachine = function (req, res, next) {
 
     const { delete_images_id, brand_id, model, bought_price, note, is_ready } = req.body;

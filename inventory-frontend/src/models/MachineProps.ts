@@ -54,6 +54,6 @@ export interface PreviewMachineProps  {
 
 export interface FormMachineProps extends PreviewMachineProps {
 	submitText: string
-	deleteButton?: ReactElement
-
+	// deleteButton?: ReactElement
+	hideReadyField: boolean
 }

@@ -165,7 +165,7 @@ export function FormMachine(props: FormMachineProps) {
 		}))
 	}
 
-	// const [errorFinish, setErrorFinish] = useState<boolean>(false)
+	// const [errorFinish, setErrorFinish] = useState<boolean>()
 
 	const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
@@ -218,7 +218,7 @@ export function FormMachine(props: FormMachineProps) {
 				</div>
 
 				<p className={`text-xs  -mt-3 pl-1 ${((isInvalid.images && touched.image) || previews.length > 10) ? "text-danger" : 'text-foreground-400'}`}>
-					<span className="text-inherit">Photos: {previews.length}/{MAX_IMAGE_LENGTH} </span>- {previews.length > 10 ? "foto terlalu banyak, tolong hapus foto yg kurang berguna":"Pilih Gambar yg menarik"}
+					<span className="text-inherit">Photos: {previews.length}/{MAX_IMAGE_LENGTH} </span>- {previews.length > 10 ? "foto terlalu banyak, tolong hapus foto yg kurang berguna" : "Pilih Gambar yg menarik"}
 				</p>
 				<div className={`flex gap-3 items-center`}>
 					<Autocomplete
@@ -336,19 +336,23 @@ export function FormMachine(props: FormMachineProps) {
 					errorMessage='Wajib diisi'
 				/>
 
-				<Switch color="success" isSelected={ready} onValueChange={(state) => { setReady(state) }} classNames={{
-					base: cn('border-2 max-w-none w-full h-16 p-4 flex flex-row-reverse justify-between transition-colors', formRoundness,
-						" border-2 border-default-200 hover:border-default-400 focus:border-default-foreground",
-						"data-[selected=true]:bg-success-100 data-[selected=true]:hover:bg-success-50 data-[selected=true]:border-green-500 data-[selected=true]:hover:border-green-400",
-						"bg-danger-100 hover:bg-danger-50 border-danger-500 hover:border-danger-400",
-						"text-danger-600 data-[selected=true]:text-success-600"
-					),
-					wrapper: 'bg-danger',
-					label: cn('text-inherit font-bold')
-				}}
-				>
-					{ready ? "Ready" : "Not Ready"}
-				</Switch>
+				{
+					!props.hideReadyField && (
+						<Switch color="success" isSelected={ready} onValueChange={(state) => { setReady(state) }} classNames={{
+							base: cn('border-2 max-w-none w-full h-16 p-4 flex flex-row-reverse justify-between transition-colors', formRoundness,
+								" border-2 border-default-200 hover:border-default-400 focus:border-default-foreground",
+								"data-[selected=true]:bg-success-100 data-[selected=true]:hover:bg-success-50 data-[selected=true]:border-green-500 data-[selected=true]:hover:border-green-400",
+								"bg-danger-100 hover:bg-danger-50 border-danger-500 hover:border-danger-400",
+								"text-danger-600 data-[selected=true]:text-success-600"
+							),
+							wrapper: 'bg-danger',
+							label: cn('text-inherit font-bold')
+						}}
+						>
+							{ready ? "Ready" : "Not Ready"}
+						</Switch>
+					)
+				}
 
 				<div className="flex flex-row gap-2 justify-between flex-wrap">
 					<Button onPress={() => {
@@ -371,13 +375,13 @@ export function FormMachine(props: FormMachineProps) {
 						size="lg"
 						color={!areFieldsValid && btnTouched ? "danger" : "primary"}
 						className="w-40	 h-12 font-bold shrink-0">
-							{props.submitText}
+						{props.submitText}
 					</Button>
 					<div className="flex flex-row gap-2 ">
 						<Button size="lg" color="primary" variant="flat" className="font-bold">
 							Cancel
 						</Button>
-						{props.deleteButton}
+						{/* {props.deleteButton} */}
 					</div>
 					<p className="text-xs text-danger" hidden={!(!areFieldsValid && btnTouched)}>Isi Semua Kolom Dulu</p>
 				</div>
