@@ -8,7 +8,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
 
 
-const inter = Inter({ subsets: ["latin"], display:"swap" });
+const inter = Inter({ subsets: ["latin"], display:"swap",weight:["100","200","300","400","500","600","700","800","900"] });
 
 export const metadata: Metadata = {
   title: "MJSB",
@@ -26,7 +26,7 @@ export default function RootLayout({
         <NextUIProvider>
           {children}
         </NextUIProvider>
-
+        
       </body>
     </html>
   );

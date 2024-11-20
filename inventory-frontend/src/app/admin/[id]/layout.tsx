@@ -1,6 +1,7 @@
 'use client'
 
-import { getData } from "@/app/utils/getData";
+import { baseURL } from "@/app/utils/constants";
+import { getMachineData } from "@/app/utils/getData";
 import { cn, Switch } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 
@@ -11,7 +12,6 @@ export default function MachineLayout({
     params: any
 }>) {
 
-    const baseURL = "http://localhost:3002"
 
     const formRoundness: string | undefined = 'rounded-lg'
 
@@ -21,7 +21,7 @@ export default function MachineLayout({
 
     useEffect(() => {
 
-        getData(params.id).then(data => {
+        getMachineData(params.id).then(data => {
             setReady(data.is_ready)
             setLoading(false)
         })
@@ -64,8 +64,10 @@ export default function MachineLayout({
     }
 
     return (
-        <div>
-            <Switch color="success" isSelected={ready} onValueChange={(state) => { handleValueChange(state) }} classNames={{
+        <>
+            <Switch color="success" isSelected={ready} onValueChange={(state) => { handleValueChange(state) }} 
+            className="fixed top-0 left-0 z-50"
+            classNames={{
                 base: cn('border-2 max-w-none w-full h-16 p-4 flex flex-row-reverse justify-between transition-colors', formRoundness,
                     " border-2 border-default-200 hover:border-default-400 focus:border-default-foreground",
                     "data-[selected=true]:bg-success-100 data-[selected=true]:hover:bg-success-50 data-[selected=true]:border-green-500 data-[selected=true]:hover:border-green-400",
@@ -79,9 +81,11 @@ export default function MachineLayout({
             >
                 {ready ? "Ready" : "Not Ready"}
             </Switch>
-
+            <div className="h-16"></div>
             {children}
-        </div>
+            <div className="h-[2px] w-full bg-default-200 my-6"></div>
+            <p className="text-sm">@2024 | Made by <span className="font-bold">Alipank</span> with &lt;3</p>
+        </>
     );
 }
-`` 
+``

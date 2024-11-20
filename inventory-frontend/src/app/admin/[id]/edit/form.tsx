@@ -10,14 +10,16 @@ import { Button } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FormImageDataURL, FormInputProps } from "@/models/MachineProps"
+import { baseURL } from "@/app/utils/constants"
+
 
 
 
 export default function Form(props: { brands: Brand[], machineDetails: MachineDetails }) {
 
-  const baseURL = "http://localhost:3002"
 
-  const pathname = usePathname()
+
+  const machineId = props.machineDetails.id
 
   const router = useRouter()
 
@@ -42,7 +44,7 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
 
 
     fetch(
-      baseURL + "/admin/" + props.machineDetails.id,
+      baseURL + "/admin/" + machineId,
       {
         // headers: { "Content-Type": "multipart/form-data" },  
         method: "PUT",
@@ -50,7 +52,7 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
       })
       .then(async (res) => {
         console.log(await res.json())
-        router.push('/admin/add')
+        router.push(`/admin/${machineId}`)
 
       })
       .catch((err) => console.log(err));

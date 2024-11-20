@@ -3,10 +3,15 @@
 import { FormInputProps } from "@/models/MachineProps"
 import { FormMachine,  useFormControl } from "../../../components/Form"
 import { Brand } from "./page"
+import { useRouter } from "next/navigation"
+import { baseURL } from "@/app/utils/constants"
 
 
 
 export default function Form(props: { brands: Brand[] }) {
+
+  const router = useRouter()
+
 
   const onSubmit = (formInput: FormInputProps) => {
     const { newImages, deleteImages, brandId, model, boughtPrice, note, ready } = formInput
@@ -43,8 +48,6 @@ export default function Form(props: { brands: Brand[] }) {
 
     console.log(formData)
 
-    const baseURL = "http://localhost:3002"
-
     fetch(
       baseURL + "/admin",
       {
@@ -53,7 +56,10 @@ export default function Form(props: { brands: Brand[] }) {
         body: formData,
       })
       .then(async (res) => {
-        console.log(await res.json())
+        // console.log(await res.json())
+        const json = await res.json()
+        console.log(json)
+        router.push(`/admin/${json.body.id}`)
       })
       .catch((err) => console.log(err));
   }
@@ -65,6 +71,6 @@ export default function Form(props: { brands: Brand[] }) {
   //formControl.setPreviews([])
 
   return (
-    <FormMachine brands={props.brands} formControl={formControl} submitText="Create New" />
+    <FormMachine brands={props.brands} formControl={formControl} submitText="Create New" hideReadyField />
   )
 }

@@ -8,6 +8,7 @@ export interface MachineDetails {
     bought_price: number,
     images: ImageDetails[]
     is_ready: boolean
+    is_on_working: boolean
 }
 
 export interface ImageDetails {

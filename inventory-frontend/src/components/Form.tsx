@@ -181,212 +181,214 @@ export function FormMachine(props: FormMachineProps) {
 	// }, [areFieldsValid])
 
 	return (
-		<div className="relative min-h-dvh flex justify-center items-center">
-			<form className="*:mb-4 max-w-md w-full p-4 border-2 border-gray-200 rounded-3xl">
-				<div className="relative block -mx-4 w-auto overflow-x-auto scrollbar-hide">
-					<div className="flex w-full flex-row-reverse justify-end gap-1 *:flex-shrink-0">
+		// <div className="relative min-h-dvh flex justify-center items-center">
+		// 	<div className="*:mb-4 max-w-md w-full p-4 border-2 border-gray-200 rounded-3xl">
+				<form className="*:mb-4">
+					<div className="relative block -mx-4 w-auto overflow-x-auto scrollbar-hide">
+						<div className="flex w-full flex-row-reverse justify-end gap-1 *:flex-shrink-0">
 
-						<Label htmlFor="images" isInvalid={isInvalid.images && touched.image} className={`flex justify-center items-center ${formRoundness} flex-col gap-1 h-36 aspect-[3/2] text-foreground-500 border-2 border-default-200 hover:border-default-400 focus:border-default-foreground `} >
-							<FontAwesomeIcon icon={faImage} size="xl" />
-							<p>Tambahkan Foto</p>
-						</Label>
+							<Label htmlFor="images" isInvalid={isInvalid.images && touched.image} className={`flex justify-center items-center ${formRoundness} flex-col gap-1 h-36 aspect-[3/2] text-foreground-500 border-2 border-default-200 hover:border-default-400 focus:border-default-foreground `} >
+								<FontAwesomeIcon icon={faImage} size="xl" />
+								<p>Tambahkan Foto</p>
+							</Label>
 
-						<Input id="images" name="images" type="file" onChange={handleImagesInput} accept="image/*" className="hidden" isInvalid={isInvalid.images} multiple onClick={() => { handleTouched("image") }}></Input>
+							<Input id="images" name="images" type="file" onChange={handleImagesInput} accept="image/*" className="hidden" isInvalid={isInvalid.images} multiple onClick={() => { handleTouched("image") }}></Input>
 
-						{
-							previews.map((imageSrc, i) => {
-								if (typeof imageSrc.src == 'string') {
+							{
+								previews.map((imageSrc, i) => {
+									if (typeof imageSrc.src == 'string') {
 
-									const key = imageSrc.type + imageSrc.id
+										const key = imageSrc.type + imageSrc.id
 
-									return (
-										<div key={imageSrc.getKey()} className="relative">
-											<Button data-img-id={imageSrc.id} data-img-type={imageSrc.type} className="absolute p-0 m-2 min-w-8 w-8 h-8 rounded-full bg-[#00000077]" onClick={handleImageDelete}>
-												<FontAwesomeIcon icon={faXmark} className="text-slate-200" />
-											</Button>
-											<Image key={imageSrc.getKey()} src={imageSrc.src} alt="Your image" width={1} height={1} className={`w-fit h-36 border-2 border-gray-200 ${formRoundness}`} />
-										</div>
-									)
+										return (
+											<div key={imageSrc.getKey()} className="relative">
+												<Button data-img-id={imageSrc.id} data-img-type={imageSrc.type} className="absolute p-0 m-2 min-w-8 w-8 h-8 rounded-full bg-[#00000077]" onClick={handleImageDelete}>
+													<FontAwesomeIcon icon={faXmark} className="text-slate-200" />
+												</Button>
+												<Image key={imageSrc.getKey()} src={imageSrc.src} alt="Your image" width={1} height={1} className={`w-fit h-36 border-2 border-gray-200 ${formRoundness}`} />
+											</div>
+										)
 
-								} else {
-									console.log(typeof imageSrc.src, "Seharusnya type imageSrc.src adalah string")
-								}
-							})
-						}
-						<div className="w-3"></div>
+									} else {
+										console.log(typeof imageSrc.src, "Seharusnya type imageSrc.src adalah string")
+									}
+								})
+							}
+							<div className="w-3"></div>
+						</div>
 					</div>
-				</div>
 
-				<p className={`text-xs  -mt-3 pl-1 ${((isInvalid.images && touched.image) || previews.length > 10) ? "text-danger" : 'text-foreground-400'}`}>
-					<span className="text-inherit">Photos: {previews.length}/{MAX_IMAGE_LENGTH} </span>- {previews.length > 10 ? "foto terlalu banyak, tolong hapus foto yg kurang berguna" : "Pilih Gambar yg menarik"}
-				</p>
-				<div className={`flex gap-3 items-center`}>
-					<Autocomplete
-						name="brand_id"
-						// placeholder="Brand Mesin Jahit"
-						size="lg"
-						variant="bordered"
-						label="Brand"
-						labelPlacement="inside"
-						// className={`max-w-72 ${formRoundness}`}
-						className={`${formRoundness}`}
+					<p className={`text-xs  -mt-3 pl-1 ${((isInvalid.images && touched.image) || previews.length > 10) ? "text-danger" : 'text-foreground-400'}`}>
+						<span className="text-inherit">Photos: {previews.length}/{MAX_IMAGE_LENGTH} </span>- {previews.length > 10 ? "foto terlalu banyak, tolong hapus foto yg kurang berguna" : "Pilih Gambar yg menarik"}
+					</p>
+					<div className={`flex gap-3 items-center`}>
+						<Autocomplete
+							name="brand_id"
+							// placeholder="Brand Mesin Jahit"
+							size="lg"
+							variant="bordered"
+							label="Brand"
+							labelPlacement="inside"
+							// className={`max-w-72 ${formRoundness}`}
+							className={`${formRoundness}`}
 
-						classNames={{
-							selectorButton: "text-medium",
+							classNames={{
+								selectorButton: "text-medium",
+							}}
+							description="Pilih merek Mesin Jahitnya"
+							inputProps={{
+								classNames: {
+									inputWrapper: `${formRoundness}`
+								}
+							}}
+							onSelectionChange={(e) => {
+								setBrandId(e || '');
+								// console.log(e);
+							}}
+							selectedKey={brandId.toString()}
+							listboxProps={{
+								emptyContent: <><Button onPress={onOpen} variant="bordered" className="-m-2">+ Tambahkan Brand</Button></>
+
+							}}
+							onClose={() => { handleTouched("brandId") }}
+							errorMessage="Harap pilih merek Mesin Jahitnya yang betul"
+							isInvalid={touched.brandId && isInvalid.brandId}
+						>
+
+							{props.brands.map((brand: any) => (
+								<AutocompleteItem
+									className="max-w-xs"
+									key={brand.id}
+									value={brand.id}
+								>
+									{brand.brand_name}
+								</AutocompleteItem>
+							))}
+
+						</Autocomplete>
+						<Button className="h-12 min-w-12 w-12 mb-6" variant="bordered" onPress={onOpen}>
+							<FontAwesomeIcon icon={faPlus} size="lg" />
+						</Button>
+					</div>
+
+					<Input
+						name="model"
+						onChange={(e) => {
+							setModel(e.currentTarget.value);
 						}}
-						description="Pilih merek Mesin Jahitnya"
-						inputProps={{
-							classNames: {
-								inputWrapper: `${formRoundness}`
+						// className={`max-w-72 `}
+						classNames={{
+							'inputWrapper': `${formRoundness}`
+						}}
+						value={model}
+						// placeholder="Model Mesin Jahit. Contoh: 8280, MYLOCK 3340"
+						variant="bordered"
+						size="lg"
+						label="Model"
+						labelPlacement="inside"
+						onBlur={() => {
+							handleTouched("model")
+							// console.log(isInvalid)
+						}}
+						isInvalid={isInvalid.model && touched.model}
+						errorMessage="Wajib diisi"
+					/>
+					<Input
+						name="bought_price"
+						// className={`max-w-72`}
+						classNames={{
+							'inputWrapper': `${formRoundness}`
+						}}
+						inputMode="numeric"
+						value={boughtPrice.toString()}
+						onChange={(e) => {
+							setBoughtPrice(e.currentTarget.value.match(/\D+/) ? boughtPrice : e.currentTarget.value)
+
+						}}
+						type="text"
+						// placeholder="Model Mesin Jahit. Contoh: 8280, MYLOCK 3340"
+						variant="bordered"
+						size="lg"
+						label="Bought Price"
+						labelPlacement="inside"
+						startContent={
+							<div className="pointer-events-none items-center">
+								<span className="text-default-500 ">Rp.</span>
+							</div>
+						}
+						onBlur={() => { handleTouched('boughtPrice') }}
+						isInvalid={isInvalid.boughtPrice && touched.boughtPrice}
+						errorMessage="Wajib diisi"
+					/>
+					<Textarea
+						name="note"
+						classNames={{
+							label: "text-medium", // to match regular input style
+							inputWrapper: `${formRoundness}`
+						}}
+						value={note}
+						onChange={(e) => setNote(e.currentTarget.value)}
+						placeholder="Catatan: Butuh sparepart apa. mau diperbaiki bagaimana."
+						variant="bordered"
+						size="lg"
+						label="Note"
+						labelPlacement="inside"
+						isInvalid={isInvalid.note && touched.note}
+						errorMessage='Wajib diisi'
+					/>
+
+					{
+						!props.hideReadyField && (
+							<Switch color="success" isSelected={ready} onValueChange={(state) => { setReady(state) }} classNames={{
+								base: cn('border-2 max-w-none w-full h-16 p-4 flex flex-row-reverse justify-between transition-colors', formRoundness,
+									" border-2 border-default-200 hover:border-default-400 focus:border-default-foreground",
+									"data-[selected=true]:bg-success-100 data-[selected=true]:hover:bg-success-50 data-[selected=true]:border-green-500 data-[selected=true]:hover:border-green-400",
+									"bg-danger-100 hover:bg-danger-50 border-danger-500 hover:border-danger-400",
+									"text-danger-600 data-[selected=true]:text-success-600"
+								),
+								wrapper: 'bg-danger',
+								label: cn('text-inherit font-bold')
+							}}
+							>
+								{ready ? "Ready" : "Not Ready"}
+							</Switch>
+						)
+					}
+
+					<div className="flex flex-row gap-2 justify-between flex-wrap">
+						<Button onPress={() => {
+							const newImagesFile = newImages.map(img => img.src)
+							setBtnTouched(true)
+							const formInput: FormInputProps = {
+								newImages: newImagesFile, deleteImages, brandId, model, boughtPrice, note, ready
+							}
+							if (areFieldsValid) {
+								onSubmit(formInput)
+							} else {
+								Object.keys(touched).forEach((key) => {
+									setTouched((prevState) => ({
+										...prevState,
+										[key]: true
+									}))
+								})
 							}
 						}}
-						onSelectionChange={(e) => {
-							setBrandId(e || '');
-							// console.log(e);
-						}}
-						selectedKey={brandId.toString()}
-						listboxProps={{
-							emptyContent: <><Button onPress={onOpen} variant="bordered" className="-m-2">+ Tambahkan Brand</Button></>
-
-						}}
-						onClose={() => { handleTouched("brandId") }}
-						errorMessage="Harap pilih merek Mesin Jahitnya yang betul"
-						isInvalid={touched.brandId && isInvalid.brandId}
-					>
-
-						{props.brands.map((brand: any) => (
-							<AutocompleteItem
-								className="max-w-xs"
-								key={brand.id}
-								value={brand.id}
-							>
-								{brand.brand_name}
-							</AutocompleteItem>
-						))}
-
-					</Autocomplete>
-					<Button className="h-12 min-w-12 w-12 mb-6" variant="bordered" onPress={onOpen}>
-						<FontAwesomeIcon icon={faPlus} size="lg" />
-					</Button>
-				</div>
-
-				<Input
-					name="model"
-					onChange={(e) => {
-						setModel(e.currentTarget.value);
-					}}
-					// className={`max-w-72 `}
-					classNames={{
-						'inputWrapper': `${formRoundness}`
-					}}
-					value={model}
-					// placeholder="Model Mesin Jahit. Contoh: 8280, MYLOCK 3340"
-					variant="bordered"
-					size="lg"
-					label="Model"
-					labelPlacement="inside"
-					onBlur={() => {
-						handleTouched("model")
-						// console.log(isInvalid)
-					}}
-					isInvalid={isInvalid.model && touched.model}
-					errorMessage="Wajib diisi"
-				/>
-				<Input
-					name="bought_price"
-					// className={`max-w-72`}
-					classNames={{
-						'inputWrapper': `${formRoundness}`
-					}}
-					inputMode="numeric"
-					value={boughtPrice.toString()}
-					onChange={(e) => {
-						setBoughtPrice(e.currentTarget.value.match(/\D+/) ? boughtPrice : e.currentTarget.value)
-
-					}}
-					type="text"
-					// placeholder="Model Mesin Jahit. Contoh: 8280, MYLOCK 3340"
-					variant="bordered"
-					size="lg"
-					label="Bought Price"
-					labelPlacement="inside"
-					startContent={
-						<div className="pointer-events-none items-center">
-							<span className="text-default-500 ">Rp.</span>
-						</div>
-					}
-					onBlur={() => { handleTouched('boughtPrice') }}
-					isInvalid={isInvalid.boughtPrice && touched.boughtPrice}
-					errorMessage="Wajib diisi"
-				/>
-				<Textarea
-					name="note"
-					classNames={{
-						label: "text-medium", // to match regular input style
-						inputWrapper: `${formRoundness}`
-					}}
-					value={note}
-					onChange={(e) => setNote(e.currentTarget.value)}
-					placeholder="Catatan: Butuh sparepart apa. mau diperbaiki bagaimana."
-					variant="bordered"
-					size="lg"
-					label="Note"
-					labelPlacement="inside"
-					isInvalid={isInvalid.note && touched.note}
-					errorMessage='Wajib diisi'
-				/>
-
-				{
-					!props.hideReadyField && (
-						<Switch color="success" isSelected={ready} onValueChange={(state) => { setReady(state) }} classNames={{
-							base: cn('border-2 max-w-none w-full h-16 p-4 flex flex-row-reverse justify-between transition-colors', formRoundness,
-								" border-2 border-default-200 hover:border-default-400 focus:border-default-foreground",
-								"data-[selected=true]:bg-success-100 data-[selected=true]:hover:bg-success-50 data-[selected=true]:border-green-500 data-[selected=true]:hover:border-green-400",
-								"bg-danger-100 hover:bg-danger-50 border-danger-500 hover:border-danger-400",
-								"text-danger-600 data-[selected=true]:text-success-600"
-							),
-							wrapper: 'bg-danger',
-							label: cn('text-inherit font-bold')
-						}}
-						>
-							{ready ? "Ready" : "Not Ready"}
-						</Switch>
-					)
-				}
-
-				<div className="flex flex-row gap-2 justify-between flex-wrap">
-					<Button onPress={() => {
-						const newImagesFile = newImages.map(img => img.src)
-						setBtnTouched(true)
-						const formInput: FormInputProps = {
-							newImages: newImagesFile, deleteImages, brandId, model, boughtPrice, note, ready
-						}
-						if (areFieldsValid) {
-							onSubmit(formInput)
-						} else {
-							Object.keys(touched).forEach((key) => {
-								setTouched((prevState) => ({
-									...prevState,
-									[key]: true
-								}))
-							})
-						}
-					}}
-						size="lg"
-						color={!areFieldsValid && btnTouched ? "danger" : "primary"}
-						className="w-40	 h-12 font-bold shrink-0">
-						{props.submitText}
-					</Button>
-					<div className="flex flex-row gap-2 ">
-						<Button size="lg" color="primary" variant="flat" className="font-bold">
-							Cancel
+							size="lg"
+							color={!areFieldsValid && btnTouched ? "danger" : "primary"}
+							className="w-40	 h-12 font-bold shrink-0">
+							{props.submitText}
 						</Button>
-						{/* {props.deleteButton} */}
+						<div className="flex flex-row gap-2 ">
+							<Button size="lg" color="primary" variant="flat" className="font-bold">
+								Cancel
+							</Button>
+							{/* {props.deleteButton} */}
+						</div>
+						<p className="text-xs text-danger" hidden={!(!areFieldsValid && btnTouched)}>Isi Semua Kolom Dulu</p>
 					</div>
-					<p className="text-xs text-danger" hidden={!(!areFieldsValid && btnTouched)}>Isi Semua Kolom Dulu</p>
-				</div>
-				<NewBrand isOpen={isOpen} onOpenChange={onOpenChange}></NewBrand>
-			</form>
-		</div>
+					<NewBrand isOpen={isOpen} onOpenChange={onOpenChange}></NewBrand>
+				</form>
+		// 	</div>
+		// </div>
 	);
 }
