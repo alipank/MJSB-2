@@ -5,6 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors")
 
+
 require("dotenv").config()
 
 const multer = require('multer')
@@ -24,7 +25,7 @@ const diskStorageOptions = {
     const random = randomInt(10000, 99999)
     const ext = path.extname(file.originalname) || mime.extension(file.mimetype)
 
-   
+
     let customName = date + '-' + random + ext
     //redundant if the name is duplicated
     //const customNameDuplicate = customName + '-' + '2' + ext
@@ -78,28 +79,30 @@ app.use('/', upload.array('new_images[]', 10), function (req, res, next) {
   next()
 })
 
-app.use('/', (req,res,next) => {
-  console.log(req.method, req.path)
-  next()
-})
+// app.use('/', (req,res,next) => {
+//   console.log(req.method, req.path)
+//   next()
+// })
 
 // temporarely not launching puppeteer, it's a memory hogger beast, so use <canvas> quickly or look for how to kill puppeteer when node killed
 
 // puppeteer.launch({ debuggingPort: 9222 }).then((b) => { console.log("puppeteer on debugging port 9222") });
-app.use((req, res, next) => {
-  res.append('Access-Control-Allow-Origin', ['http://localhost:3000']);
-  res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.append('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
+// app.use((req, res, next) => {
+//   res.append('Access-Control-Allow-Origin', 'http://localhost:3000');
+//   res.append('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//   res.append('Access-Control-Allow-Headers', 'Content-Type');
+//   next();
+// });
+app.use(cors({origin:['http://192.168.100.112:3000', 'http://localhost:3000']}))
 
-app.use("/card", require("./routes/card"));
 app.use("/admin", require("./routes/admin/machines"))
+app.use("/card", require("./routes/card"));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
+
 
 // error handler
 app.use(function (err, req, res, next) {
@@ -132,5 +135,7 @@ app.use(function (err, req, res, next) {
   // console.log(err)
   res.json(err)
 });
+
+
 
 module.exports = app;

@@ -11,7 +11,7 @@ exports.getMachine = async function (req, res, next) {
     const machine = await pool.query(sqlQuery, id)
         .then(json => {
             // transform duplicated, because of one to many rel
-            console.log(json)
+            // console.log(json)
             if (!json.length) {
                 throw { status: 404 }
             }
@@ -39,10 +39,47 @@ exports.getMachine = async function (req, res, next) {
 }
 
 exports.getMachines = async function (req, res, next) {
-    const sqlQuery = "SELECT * FROM machines;";
-    await pool.query(sqlQuery).then((machines) => {
-        res.json(machines);
-    });
+    // const sqlQuery = "SELECT * FROM machines;";
+    const sqlQuery = `
+    SELECT 
+        m.*, 
+        img.id AS image_id, 
+        img.image_path
+    FROM 
+        machines AS m
+    JOIN 
+        machine_images AS img ON m.id = img.machine_id
+    WHERE 
+        img.id = (
+            SELECT MIN(sub_img.id)
+            FROM machine_images AS sub_img
+            WHERE sub_img.machine_id = m.id
+        );
+  `;
+
+    await pool.query(sqlQuery)
+        .then(async (json) => {
+
+            // console.log(await json())
+
+            const parse = json.map((data) => {
+                const { image_id, image_path, ...rest } = data
+
+                const images = [
+                    {
+                        image_id,
+                        image_path
+                    }
+                ]
+
+                const machineDetails = { ...rest, images }
+
+                return machineDetails
+            })
+
+            res.json(parse)
+        })
+        .catch(err => { console.log(err) });
 }
 
 exports.postMachine = async function (req, res, next) {
@@ -67,37 +104,43 @@ exports.postMachine = async function (req, res, next) {
     }
 
     const sqAddMachine =
-        "INSERT INTO machines (brand_id, model, bought_price, note, is_ready) VALUES (?, ?, ?, ?, ?);"
+        "INSERT INTO machines (brand_id, model, bought_price, note, is_ready, is_on_working) VALUES (?, ?, ?, ?, ?, 0);"
 
     let sqAddImages = "INSERT INTO machine_images (machine_id, image_path) VALUES"
 
     // console.log(sqAddImages)
+    let insertedMachineId = null
 
     // console.log(req.body, req.files)
     pool
         .query(sqAddMachine, [brand_id, model, bought_price, note, is_ready])
         .then((success) => {
             //      console.log(Object.entries(success))
-            const machineId = Number(success.insertId)
+            insertedMachineId = Number(success.insertId)
+
+            console.log('???', insertedMachineId)
 
             //EHH SALAH COK HARUSNYA INSERT KE MACHINES IMAGES DULU BARU BUAT KAYAK GINI,, AH BODO LAH
 
             req.files.forEach((file, i) => {
                 // console.log(file)
-                sqAddImages += `(${machineId}, "${file.filename}") ${i + 1 >= req.files.length ? ';' : ','}`
+                sqAddImages += `(${insertedMachineId}, "${file.filename}") ${i + 1 >= req.files.length ? ';' : ','}`
             })
 
             console.log("sqAddImages", sqAddImages)
 
-            console.log(req.files)
+            // console.log(req.files)
 
             return pool.query(sqAddImages)
         })
         .then((success => {
-            console.log(success)
+            console.log(success.insertId)
             res.status(201).json({
                 status: 201,
-                message: "berhasil eaks"
+                message: "berhasil eaks",
+                body: {
+                    id:insertedMachineId
+                }
             })
         }))
         .catch((err) => {
@@ -106,6 +149,33 @@ exports.postMachine = async function (req, res, next) {
                 status: err.status || 500,
                 message: "Failed to create new machine. // " + err.message
             });
+        });
+}
+
+exports.putMachineIsOnWorking = function (req, res, next) {
+    const { is_on_working } = req.body
+
+    if (is_on_working !== '0' && is_on_working !== '1') {
+        throw {
+            status: 400,
+            message: "Wrong data value"
+        }
+    }
+
+    const putIsOnWorkingQuery = `UPDATE machines SET is_on_working=? WHERE id=?`
+
+    pool.query(putIsOnWorkingQuery, [is_on_working, req.params.id])
+        .then(
+            res.json({
+                status: 200,
+                message: 'changed successfully'
+            })
+        ).catch((err) => {
+            console.log(err)
+            next({
+                status: 500,
+                message: 'Database Error'
+            })
         });
 }
 
@@ -129,6 +199,7 @@ exports.putMachineIsReady = function (req, res, next) {
                 status: 200,
                 message: 'changed successfully'
             })
+
         ).catch((err) => {
             console.log(err)
             next({
@@ -239,11 +310,11 @@ exports.putMachine = function (req, res, next) {
         });
 }
 exports.deleteMachine = function (req, res, next) {
-    const sqlQuery = `DELETE FROM machines WHERE id=${req.params.id}`
+    const sqlQuery = `DELETE FROM machines WHERE id=${req.body.id}`
     pool.query(sqlQuery)
         .then((res) => {
             console.log(res)
-            res.status(200).json({
+            res.json({
                 status: 200,
                 message: 'Remove machine successfully'
             })

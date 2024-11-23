@@ -1,4 +1,3 @@
-import { PathParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime"
 import Form from "./form"
 import { MachineDetails } from "@/models/MachineDetails"
 import { getMachineData } from "@/app/utils/getData"

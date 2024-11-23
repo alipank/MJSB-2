@@ -1,3 +1,5 @@
+'use client'
+
 import { MachineDetails } from "@/models/MachineDetails";
 import Image from "next/image";
 import { Brand } from "./add/page";
@@ -6,11 +8,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { baseURL } from "../utils/constants";
+import { useRouter } from "next/navigation";
 
 export default function Item(props: { machineDetails: MachineDetails, brands: Brand[] }) {
 
-
-    console.log('item', props.machineDetails)
+    const router = useRouter()
 
     const { id, brand_id, model, bought_price, images, is_ready, is_on_working, note, updated_at, added_at } = props.machineDetails
 
@@ -19,9 +21,11 @@ export default function Item(props: { machineDetails: MachineDetails, brands: Br
         return val.id === brand_id
     })?.brand_name
 
+
     return (
-        <Link
-            href={'/admin/' + id}
+        <div
+            onClick={() => { router.push('/admin/' + id) }}
+            // href={'/admin/' + id}
             className="flex flex-row justify-start gap-3 hover:opacity-90 hover:bg-default-200 py-2 px-4 transition-all duration-200 ease-in"
         >
             <Image src={imagePath} alt="" width={0} height={0} className="w-1/6 aspect-square rounded-lg"></Image>
@@ -46,9 +50,12 @@ export default function Item(props: { machineDetails: MachineDetails, brands: Br
                     </div>
                 </div>
             </div>
-            <div className="flex-1 flex justify-end items-center pr-3">
-                <FontAwesomeIcon icon={faEllipsis}></FontAwesomeIcon>
+            <div className="flex-1 flex justify-end items-center pr-3" >
+                <FontAwesomeIcon icon={faEllipsis} className="px-1 py-1" onClick={(e) => {
+                    e.stopPropagation()
+                    console.log('clicked')
+                }}></FontAwesomeIcon>
             </div>
-        </Link>
+        </div>
     )
 }

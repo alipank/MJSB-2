@@ -193,10 +193,12 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                         </p>
                     </Switch>
                     <div className="*:text-center *:text-default-800 *:*:text-default-800 flex flex-row justify-around w-full max-w-80">
-                        <Link href={`/admin/${machineId}/edit`} className="w-1/5 flex flex-col gap-1 items-center font-bold text-sm">
-                            <Button className="min-w-12 w-12 h-12 p-0 rounded-full"><FontAwesomeIcon size="lg" icon={faPen} /></Button>
+                        <div className="w-1/5 flex flex-col gap-1 items-center font-bold text-sm">
+                            <Button onPress={() => {
+                                router.push(`/admin/${machineId}/edit`)
+                            }} className="min-w-12 w-12 h-12 p-0 rounded-full"><FontAwesomeIcon size="lg" icon={faPen} /></Button>
                             Edit item
-                        </Link>
+                        </div>
                         <div className="w-1/5 flex flex-col gap-1  items-center font-bold text-sm">
                             <Button onPress={() => { handleDeleteButton() }} className="min-w-12 w-12 h-12 p-0 rounded-full"><FontAwesomeIcon size="lg" icon={faTrash} /></Button>
                             Delete Item
