@@ -9,17 +9,44 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { baseURL } from "../utils/constants";
 import { useRouter } from "next/navigation";
+import { useContext, useState } from "react";
+import { ModalMachineContext } from "./ModalMachine";
 
 export default function Item(props: { machineDetails: MachineDetails, brands: Brand[] }) {
 
+
     const router = useRouter()
 
-    const { id, brand_id, model, bought_price, images, is_ready, is_on_working, note, updated_at, added_at } = props.machineDetails
+    const modalMachine = useContext(ModalMachineContext)
+
+    const [machineDetails, setMachineDetails] = useState<MachineDetails>(props.machineDetails)
+
+    // modalMachine
+
+    const { id, brand_id, model, bought_price, images, is_ready, is_working_on, note, updated_at, added_at } = machineDetails
 
     const imagePath = `${baseURL}/images/${images[0].image_path}`
     const brand = props.brands.find((val) => {
         return val.id === brand_id
     })?.brand_name
+
+    const setItemIsWorkingOn = (value:boolean) => {
+        console.log('ItemIsWorkingOn Func')
+        machineDetails.is_working_on = value
+        setMachineDetails({...machineDetails})
+    }
+
+    const setItemIsReady = (value:boolean) => {
+        console.log('ItemIsReady Func')
+        machineDetails.is_ready = value
+        setMachineDetails({...machineDetails})
+    }
+
+    const openModalProps = {
+        id: id.toString(),
+        machineData: machineDetails,
+      
+    }
 
 
     return (
@@ -35,7 +62,7 @@ export default function Item(props: { machineDetails: MachineDetails, brands: Br
                 </h3>
                 <div className="flex flex-row">
                     <div className="text-default-600 text-sm font-medium">
-                        {is_on_working ?
+                        {is_working_on ?
                             <><div className="inline-block w-4 h-4 mr-1 bg-warning-400 rounded-full align-middle"></div><span className="align-middle">On Working</span></>
                             : ''
                             // <><div className="inline-block w-4 h-4 mr-1 bg-danger-500 rounded-full align-middle"></div><span className="align-middle ">Not Ready</span></>
@@ -43,18 +70,22 @@ export default function Item(props: { machineDetails: MachineDetails, brands: Br
                     </div>
                     <div className="text-default-600 text-sm font-medium">
                         {is_ready ?
-                            <><div className={`${is_on_working && "ml-2"} inline-block w-4 h-4 mr-1 bg-success-400 rounded-full align-middle p-0`}></div><span className="align-middle">Ready</span></>
+                            <><div className={`${is_working_on && "ml-2"} inline-block w-4 h-4 mr-1 bg-success-400 rounded-full align-middle p-0`}></div><span className="align-middle">Ready</span></>
                             :
-                            <><div className={`${is_on_working && "ml-2"} inline-block w-4 h-4 mr-1  bg-danger-400 rounded-full align-middle p-0`}></div><span className="align-middle ">Not Ready</span></>
+                            <><div className={`${is_working_on && "ml-2"} inline-block w-4 h-4 mr-1  bg-danger-400 rounded-full align-middle p-0`}></div><span className="align-middle ">Not Ready</span></>
                         }
                     </div>
                 </div>
             </div>
-            <div className="flex-1 flex justify-end items-center pr-3" >
-                <FontAwesomeIcon icon={faEllipsis} className="px-1 py-1" onClick={(e) => {
-                    e.stopPropagation()
+            <div className="flex-1 flex justify-end items-center pr-3">
+                <Button onPress={(e) => {
                     console.log('clicked')
-                }}></FontAwesomeIcon>
+                    modalMachine.setUseItemIsWorkingOn(() => setItemIsWorkingOn)
+                    modalMachine.setUseItemIsReady(() => setItemIsReady)
+                    modalMachine.openModal(openModalProps)
+                }} className="bg-transparent hover:bg-default-100" isIconOnly>
+                    <FontAwesomeIcon icon={faEllipsis} ></FontAwesomeIcon>
+                </Button>
             </div>
         </div>
     )

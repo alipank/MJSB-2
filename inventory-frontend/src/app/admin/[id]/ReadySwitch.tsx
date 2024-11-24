@@ -1,4 +1,5 @@
 'use client'
+import { putMachineReady } from "@/app/utils/alterData"
 import { baseURL } from "@/app/utils/constants"
 import { cn, Switch } from "@nextui-org/react"
 import { useEffect, useState } from "react"
@@ -16,21 +17,11 @@ export default function ReadySwitch(props: { id: string, is_ready: boolean }) {
     // const [loading, setLoading] = useState<boolean>(true)
 
     const handleValueChange = (state: boolean) => {
-
-        const formData = new FormData()
-
-        formData.append('is_ready', state ? '1' : '0')
-
         setReady(state)
         console.log(state)
 
-        fetch(
-            baseURL + "/admin/" + props.id + "/is_ready",
-            {
-                // headers: { "Content-Type": "multipart/form-data" },  
-                method: "PUT",
-                body: formData,
-            })
+        putMachineReady({ id: props.id, value: state })
+
             .then(async (res) => {
                 const json = await res.json()
 
@@ -52,7 +43,7 @@ export default function ReadySwitch(props: { id: string, is_ready: boolean }) {
 
     return (
         <Switch color="success" isSelected={ready} onClick={() => { handleValueChange(!ready) }}
-            className="fixed top-0 left-0 z-50"
+            className="fixed  top-0 left-0 z-50 shadow-md"
             classNames={{
                 base: cn('border-2 max-w-none w-full h-16 p-4 flex flex-row-reverse justify-between transition-colors', formRoundness,
                     " border-2 border-default-200 hover:border-default-400 focus:border-default-foreground",

@@ -1,4 +1,3 @@
-
 import { MachineDetails } from "@/models/MachineDetails"
 import { getMachinesData } from "../utils/getData"
 import { Brand } from "./add/page"
@@ -9,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 // import { useState } from "react"
 
+// TODO MAKE THIS SHIT CLIENT COMP, RECEIVING DATA FROM PAGE. SO THE MODAL CAN  FETCH/UPDATE THE CLIENT  DATA.
 export default async function ItemList() {
 
   try {
@@ -34,7 +34,7 @@ export default async function ItemList() {
               return (
                 <>
                   {/* Item(data, brands) */}
-                  <Item machineDetails={data} brands={brands} />
+                  <Item key={data.id} machineDetails={data} brands={brands} />
                   {/* <Item2 machineDetails={data} brands={brands} /> */}
                 </>
 

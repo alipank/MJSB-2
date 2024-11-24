@@ -1,7 +1,7 @@
 import { baseURL } from "./constants"
 
 export async function getMachineData(id: number | string) {
-    const res = await fetch(`${baseURL}/admin/` + id, {})
+    const res = await fetch(`${baseURL}/admin/` + id, {cache:'no-store'})
 
     if (!res.ok) {
       throw new Error('Failed to fetch data' + id)
@@ -11,7 +11,7 @@ export async function getMachineData(id: number | string) {
   }
 
   export async function getMachinesData(pagination?:string) {
-    const res = await fetch(`${baseURL}/admin/`, {})
+    const res = await fetch(`${baseURL}/admin/`, {cache:'no-store'})
 
     if (!res.ok) {
       // console.log(await res.json())

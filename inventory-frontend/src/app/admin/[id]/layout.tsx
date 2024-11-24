@@ -33,8 +33,8 @@ export default async function MachineLayout({
                 <ReadySwitch id={params.id} is_ready={data.is_ready}/>
                 <div className="h-16"></div>
                 {children}
-                <div className="h-[2px] w-full bg-default-200 my-6"></div>
-                <p className="text-sm">@2024 | Made by <span className="font-bold">Alipank</span> with &lt;3</p>
+                {/* <div className="h-[2px] w-full bg-default-200 my-6"></div>
+                <p className="text-sm">@2024 | Made by <span className="font-bold">Alipank</span> with &lt;3</p> */}
             </>
         );
      })

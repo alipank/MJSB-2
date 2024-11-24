@@ -104,7 +104,7 @@ exports.postMachine = async function (req, res, next) {
     }
 
     const sqAddMachine =
-        "INSERT INTO machines (brand_id, model, bought_price, note, is_ready, is_on_working) VALUES (?, ?, ?, ?, ?, 0);"
+        "INSERT INTO machines (brand_id, model, bought_price, note, is_ready, is_working_on) VALUES (?, ?, ?, ?, ?, 0);"
 
     let sqAddImages = "INSERT INTO machine_images (machine_id, image_path) VALUES"
 
@@ -153,18 +153,18 @@ exports.postMachine = async function (req, res, next) {
 }
 
 exports.putMachineIsOnWorking = function (req, res, next) {
-    const { is_on_working } = req.body
+    const { is_working_on } = req.body
 
-    if (is_on_working !== '0' && is_on_working !== '1') {
+    if (is_working_on !== '0' && is_working_on !== '1') {
         throw {
             status: 400,
             message: "Wrong data value"
         }
     }
 
-    const putIsOnWorkingQuery = `UPDATE machines SET is_on_working=? WHERE id=?`
+    const putIsOnWorkingQuery = `UPDATE machines SET is_working_on=? WHERE id=?`
 
-    pool.query(putIsOnWorkingQuery, [is_on_working, req.params.id])
+    pool.query(putIsOnWorkingQuery, [is_working_on, req.params.id])
         .then(
             res.json({
                 status: 200,

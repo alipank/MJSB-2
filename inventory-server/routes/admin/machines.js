@@ -3,7 +3,7 @@ var router = express.Router();
 
 const { getMachine, putMachineIsReady, putMachine, postMachine, getMachines, deleteMachine, putMachineIsOnWorking } = require("../../controllers/machines");
 
-router.put('/:id/is_on_working', putMachineIsOnWorking)
+router.put('/:id/is_working_on', putMachineIsOnWorking)
 
 router.put("/:id/is_ready", putMachineIsReady);
 

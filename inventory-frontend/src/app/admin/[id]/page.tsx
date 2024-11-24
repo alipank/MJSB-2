@@ -1,3 +1,5 @@
+'use client'
+
 import { MachineDetails } from "@/models/MachineDetails";
 import { Brand } from "../add/page";
 import Preview from "./preview";

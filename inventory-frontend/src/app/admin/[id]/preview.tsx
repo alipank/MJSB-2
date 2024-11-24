@@ -14,6 +14,7 @@ import { faDiceThree, faEllipsis, faListDots, faPen, faPenToSquare, faQrcode, fa
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { baseURL } from "@/app/utils/constants"
+import { deleteMachine, putMachineWorkingOn } from "@/app/utils/alterData"
 
 export default function Preview(props: { brands: Brand[], machineDetails: MachineDetails }) {
 
@@ -25,11 +26,11 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
     const [isLoaded, setIsLoaded] = useState(false)
     const [updatedAt, setUpdatedAt] = useState('')
     const [addedAt, setAddedAt] = useState('')
-    const [onWorking, setOnWorking] = useState(false)
+    const [workingOn, setWorkingOn] = useState(false)
 
     const machineId = props.machineDetails.id.toString()
 
-    const isOnWorking = props.machineDetails.is_on_working
+    const isWorkingOn = props.machineDetails.is_working_on
 
     const router = useRouter()
 
@@ -37,7 +38,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
 
         const details: MachineDetails = props.machineDetails
 
-        setOnWorking(isOnWorking)
+        setWorkingOn(isWorkingOn)
 
         const existingImages: FormImageDataURL[] = details.images.map((img) => (
             new FormImageDataURL(img.image_id, ImageType.Existing, baseURL + '/images/' + img.image_path)
@@ -59,67 +60,38 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
         setIsLoaded(true)
     }, [])
 
-    const { previews, brandId, model, boughtPrice, note, ready, onSubmit } = formControl
+    const { previews, brandId, model, boughtPrice, note, onSubmit } = formControl
 
     const brandName = (props.brands.find(val => (val.id === brandId)))?.brand_name
 
 
-    const handleValueChangeOnWorking = (state: boolean) => {
-        const formData = new FormData()
+    const handleWorkingOn = (state: boolean) => {
+        setWorkingOn(state)
 
-        formData.append('is_on_working', state ? '1' : '0')
-
-        setOnWorking(state)
-        console.log(state)
-
-        fetch(
-            baseURL + "/admin/" + machineId + "/is_on_working",
-            {
-                // headers: { "Content-Type": "multipart/form-data" },  
-                method: "PUT",
-                body: formData,
-            })
+        putMachineWorkingOn({ id: machineId, value: state })
             .then(async (res) => {
                 const json = await res.json()
-
                 console.log('success', json)
 
                 if (!res.ok) {
-                    console.log('gagal')
                     throw json
                 }
-
             })
             .catch((err) => {
                 console.log(err)
                 setTimeout(() => {
-                    // setOnWorking(!state)
-
+                    setWorkingOn(!state)
                 }, 200)
-                console.log('success', err)
-
             });
     }
 
     const handleDeleteButton = () => {
-
-        console.log('teset')
-        const url = `${baseURL}/admin/machines`
-        console.log(url)
-        const formData = new FormData()
-
-        formData.append('id', machineId)
-
-        fetch(
-            url, {
-            method: 'DELETE',
-            body: formData
-        }
-        ).then(async (res) => {
-            console.log(await res.json())
-            router.push('/admin')
-
-        })
+        deleteMachine({id:machineId})
+            .then(res => (res.json()))
+            .then(json => {
+                console.log(json)
+                router.push('/admin')
+            })
             .catch(err => console.log(err))
     }
 
@@ -174,8 +146,8 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                     </div>
                     {/* <div className="w-full max-w-80"> */}
                     <Switch color="warning"
-                        isSelected={onWorking}
-                        onValueChange={(state) => { handleValueChangeOnWorking(state) }}
+                        isSelected={workingOn}
+                        onClick={() => { handleWorkingOn(!workingOn) }}
                         size="sm"
                         className="mb-3"
                         classNames={{

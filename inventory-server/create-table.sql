@@ -143,6 +143,7 @@ CREATE TABLE
     `bought_price` int (11) DEFAULT NULL,
     `note` text DEFAULT NULL,
     `is_ready` boolean DEFAULT 0,
+    `is_working_on` boolean DEFAULT 0,
     `added_at` date NOT NULL DEFAULT current_timestamp(),
     `updated_at` date NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`id`),
