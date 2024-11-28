@@ -1,6 +1,6 @@
 import Form from "./form"
 import { MachineDetails } from "@/models/MachineDetails"
-import { getMachineData } from "@/app/utils/getData"
+import { getBrands, getMachineData } from "@/app/utils/getData"
 
 export type Brand = {
   id: number
@@ -19,15 +19,17 @@ export default async function Page({ params }: any) {
   try {
     const machineDetails: MachineDetails = await getMachineData(params.id )
     console.log(machineDetails)
-    const brands: Brand[] = [
-      {
-        id: 1,
-        brand_name: "tes"
-      }
-    ]
+    // const brands: Brand[] = [
+    //   {
+    //     id: 1,
+    //     brand_name: "tes"
+    //   }
+    // ]
+
+    const brands:Brand[] = await getBrands()
 
     if(machineDetails.images[0].image_id === null) {
-      throw {message: "This error shouldnt be happened (just jaga jaga :P), this error is caused by no image exist on the database."}
+      throw {message: "This error shouldnt be happened (just jaga jaga :P), this error is caused by the image path doesnt exist on the database."}
     }
 
     return (

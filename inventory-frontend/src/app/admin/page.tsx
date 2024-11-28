@@ -1,5 +1,6 @@
 import ItemList from "./ItemList";
-import ModalMachineTask from "./ModalMachine";
+import ModalMachine from "./ModalMachine";
+ "./ModalMachine";
 
 export default function Page() {
 
@@ -10,8 +11,8 @@ export default function Page() {
   
     return (
       // <ModalMachineContext.Provider value={{ isOpen, onOpen, onOpenChange, modalMachineId, setModalMachineId }}>
-      <ModalMachineTask>
+      <ModalMachine>
         <ItemList/>
-      </ModalMachineTask>
+      </ModalMachine>
     )
   } 

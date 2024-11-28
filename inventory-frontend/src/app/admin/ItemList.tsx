@@ -1,18 +1,57 @@
+'use client'
+
 import { MachineDetails } from "@/models/MachineDetails"
 import { getMachinesData } from "../utils/getData"
 import { Brand } from "./add/page"
 import Item from "./Item"
-import { Button, Input, Modal, ModalContent, useDisclosure } from "@nextui-org/react"
-import { faSearch } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { Button, Input} from "@nextui-org/react"
 import Link from "next/link"
-// import { useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
-// TODO MAKE THIS SHIT CLIENT COMP, RECEIVING DATA FROM PAGE. SO THE MODAL CAN  FETCH/UPDATE THE CLIENT  DATA.
-export default async function ItemList() {
+export default function ItemList() {
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [pages, setPages] = useState(1)
+  const [items, setItems] = useState<MachineDetails[]>([])
+
+  const observer = useRef<IntersectionObserver>()
+
+  const sentinelRef = useCallback((node: Element | null) => {
+    if (isLoading) return
+    if (observer.current) observer.current.disconnect()
+
+    observer.current = new IntersectionObserver((entries) => {
+      const entry = entries[0]
+      if (entry.isIntersecting) {
+        setPages(pages + 1)
+        console.log('intersect')
+      }
+    })
+
+    if (node) {
+      observer.current.observe(node)
+    }
+
+  }, [isLoading])
+
+  useEffect(() => {
+    // console.log(pages)
+    setIsLoading(true)
+
+    getMachinesData(pages)
+      .then(
+        (newItems) => {
+          console.log(newItems)
+          setItems([...items, ...newItems])
+        }
+      )
+      .then(() => { setIsLoading(false) })
+      .catch(err => console.log('error fetching new items', err))
+  }, [pages])
+
 
   try {
-    const machinesDetails: MachineDetails[] = await getMachinesData()
+    // const items: MachineDetails[] = await getMachinesData()
     const brands: Brand[] = [
       {
         id: 1,
@@ -30,7 +69,9 @@ export default async function ItemList() {
         </Input>
         <div className="flex flex-col -mx-4">
           {
-            machinesDetails.map((data) => {
+            items.map((data) => {
+              console.log(data)
+
               return (
                 <>
                   {/* Item(data, brands) */}
@@ -41,7 +82,9 @@ export default async function ItemList() {
               )
             })
           }
+
         </div>
+        <div ref={sentinelRef} className="h-1"></div>
       </div>
     )
   }

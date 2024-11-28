@@ -35,7 +35,7 @@ DROP TABLE IF EXISTS `machine_brands`;
 CREATE TABLE
   `machine_brands` (
     `id` int (11) NOT NULL AUTO_INCREMENT,
-    `brand_name` varchar(30) NOT NULL,
+    `brand_name` varchar(30) UNIQUE NOT NULL,
     `added_at` date NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`id`)
   ) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
@@ -68,7 +68,7 @@ DROP TABLE IF EXISTS `machine_buyers`;
 /*!40101 SET character_set_client = utf8 */;
 
 CREATE TABLE
-  `machine_buyers` (
+  `customers` (
     `id` int (11) NOT NULL AUTO_INCREMENT,
     `machine_id` int (11) NOT NULL,
     `name` varchar(30) NOT NULL,

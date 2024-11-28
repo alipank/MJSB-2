@@ -1,9 +1,7 @@
-'use client'
-
 import { MachineDetails } from "@/models/MachineDetails";
 import { Brand } from "../add/page";
 import Preview from "./preview";
-import { getMachineData } from "@/app/utils/getData";
+import { getBrands, getMachineData } from "@/app/utils/getData";
 import { GetServerSidePropsContext } from "next";
 
 // export const getServerSideProps = (async (context: GetServerSidePropsContext) => {
@@ -22,6 +20,7 @@ import { GetServerSidePropsContext } from "next";
 
 //   return {props:data}
 // })
+// TODO: THIS MACHINE PREVIEW WILL TAKING MACHINE DATA FROM THE MODAL MACHINE CONTEXT
 
 export default async function Page({params}: {params:{id:string}}) {
   // const machineDetails:MachineDetails = { "id": 33, "brand_id": 1, "model": "123", "bought_price": 123, "note": "123", "is_ready": 1 && true, "added_at": new Date("2024-11-01T17:00:00.000Z"), "updated_at": new Date("2024-11-01T17:00:00.000Z"), "images": [{ "image_id": 27, "image_path": "2024-11-02-52468.png" }] }
@@ -33,12 +32,7 @@ export default async function Page({params}: {params:{id:string}}) {
   try {
     const machineDetails: MachineDetails = await getMachineData(params.id)
     console.log(machineDetails)
-    const brands: Brand[] = [
-      {
-        id: 1,
-        brand_name: "tes"
-      }
-    ]
+    const brands: Brand[] = await getBrands() 
 
     if (machineDetails.images[0].image_id === null) {
       throw { message: "This error shouldnt be happened (just jaga jaga :P), this error is caused by no image exist on the database." }

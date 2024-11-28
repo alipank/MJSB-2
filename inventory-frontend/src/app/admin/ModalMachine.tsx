@@ -52,14 +52,13 @@ export function ModalItemButton({ icon, onPress, children }: { icon: IconProp, o
   )
 }
 
-export default function ModalMachineTask({ children }: { children: React.ReactNode }) {
+export default function ModalMachine({ children }: { children: React.ReactNode }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [modalMachineId, setModalMachineId] = useState('')
   const [modalMachineData, setModalMachineData] = useState<MachineDetails>()
   const [useItemIsWorkingOn, setUseItemIsWorkingOn] = useState<(value: boolean) => void>(() => { })
   const [useItemsIsReady, setUseItemIsReady] = useState<(value:boolean) => void>(() => {})
 
-  const modalMachine = useContext(ModalMachineContext)
   const router = useRouter()
 
   async function openModal({ id, machineData }: OpenModalProps) {

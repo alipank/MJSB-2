@@ -95,7 +95,9 @@ app.use('/', upload.array('new_images[]', 10), function (req, res, next) {
 // });
 app.use(cors({origin:['http://192.168.100.112:3000', 'http://localhost:3000']}))
 
+
 app.use("/admin", require("./routes/admin/machines"))
+app.use("/brands", require("./routes/admin/brands"))
 app.use("/card", require("./routes/card"));
 
 // catch 404 and forward to error handler
@@ -110,30 +112,34 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
+  let json
+
   if (err.errno == 1054) {
-    res.statusMessage = "Wrong object key {brand_id: required, model: required, note}"
-    res.status(400).end()
-    return
+    json = {
+      status: 400,
+      message: "Wrong object key {brand_id: required, model: required, note}"
+    }
+
   }
   if (err.errno == 1452) {
-    res.statusMessage = "Brand is not registered in database";
-    res.status(400).end();
-    return;
+    json = {
+      status: 400,
+      message:"Brand is not registered in database"
+    }
   }
   if (err.errno == 1062) {
-    res.statusMessage = "Brand already in the database";
-    res.status(400).end();
-    console.log(res.statusMessage);
-    return;
-  }
+    json ={ 
+      status: 400,
+      message:"Brand is already registered in the database"}
+    }
 
   console.log(err)
 
   // render the error page
-  res.status(err.status || 500);
+  res.status(err.status || json.status || 500);
   // res.render("error", {error : err});
   // console.log(err)
-  res.json(err)
+  res.json(json || err) //returns the err if the error is unhandled
 });
 
 

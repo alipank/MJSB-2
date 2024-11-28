@@ -7,7 +7,6 @@ import { Brand } from "../add/page"
 import { useFormControl } from "@/components/Form"
 import { useEffect, useState } from "react"
 import { ImageType } from "@/models/FormImageData"
-import { brands } from "@fortawesome/fontawesome-svg-core/import.macro"
 import { Button, CircularProgress, cn, divider, Skeleton, Spacer, Switch } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faDiceThree, faEllipsis, faListDots, faPen, faPenToSquare, faQrcode, faTrash } from "@fortawesome/free-solid-svg-icons"
@@ -15,6 +14,8 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { baseURL } from "@/app/utils/constants"
 import { deleteMachine, putMachineWorkingOn } from "@/app/utils/alterData"
+import revalidateAdmin from "@/app/utils/revalidate"
+// import { revalidatePath } from "next/cache"
 
 export default function Preview(props: { brands: Brand[], machineDetails: MachineDetails }) {
 
@@ -25,7 +26,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
 
     const [isLoaded, setIsLoaded] = useState(false)
     const [updatedAt, setUpdatedAt] = useState('')
-    const [addedAt, setAddedAt] = useState('')
+    // const [addedAt, setAddedAt] = useState('')
     const [workingOn, setWorkingOn] = useState(false)
 
     const machineId = props.machineDetails.id.toString()
@@ -66,6 +67,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
 
 
     const handleWorkingOn = (state: boolean) => {
+
         setWorkingOn(state)
 
         putMachineWorkingOn({ id: machineId, value: state })
@@ -76,7 +78,9 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                 if (!res.ok) {
                     throw json
                 }
+                return revalidateAdmin()
             })
+            .then(done => {console.log('/admin revalidated')})
             .catch((err) => {
                 console.log(err)
                 setTimeout(() => {
@@ -86,7 +90,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
     }
 
     const handleDeleteButton = () => {
-        deleteMachine({id:machineId})
+        deleteMachine({ id: machineId })
             .then(res => (res.json()))
             .then(json => {
                 console.log(json)

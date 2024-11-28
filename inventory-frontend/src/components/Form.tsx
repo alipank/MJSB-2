@@ -12,6 +12,7 @@ import randomInt from "@/app/utils/randomInt";
 import { Label } from "./Label";
 import { FormImageDataFile, FormImageDataURL as IFormImageDataURL, ImageType } from "@/models/FormImageData";
 import { formControlProps, FormImageDataURL, FormInputProps, FormMachineProps } from "@/models/MachineProps";
+import { Brand } from "@/app/admin/add/page";
 
 
 
@@ -54,12 +55,17 @@ const randomId: { usedIds: number[], generate: () => number } = {
 	}
 }
 
+export const Required = (value: any) => useMemo(() => {
+	return !Boolean(value)
+}, [value])
+
 export function FormMachine(props: FormMachineProps) {
 
 	const MAX_IMAGE_LENGTH = 10;
 
 	const formRoundness: string | undefined = 'rounded-lg'
 	const { newImages, setNewImages, deleteImages, setDeleteImages, previews, setPreviews, brandId, setBrandId, model, setModel, boughtPrice, setBoughtPrice, note, setNote, ready, setReady, onSubmit } = props.formControl
+
 
 	async function handleImagesInput(e: ChangeEvent<HTMLInputElement>) {
 
@@ -138,9 +144,6 @@ export function FormMachine(props: FormMachineProps) {
 
 	}
 
-	const Required = (value: any) => useMemo(() => {
-		return !Boolean(value)
-	}, [value])
 
 	const isInvalid = {
 		images: Required(previews.length && previews.length <= 10),
@@ -171,7 +174,11 @@ export function FormMachine(props: FormMachineProps) {
 
 	const areFieldsValid = !Object.values(isInvalid).includes(true)
 	const [btnTouched, setBtnTouched] = useState(false)
+	const [brandList, setBrandList] = useState(props.brands)
 
+	const addNewBrand = (newBrand:Brand) => {
+		setBrandList([...brandList, newBrand])
+	}
 	// useEffect(() => {
 	// 	if (disableFinish) {
 	// 		console.log("set finish")
@@ -255,7 +262,7 @@ export function FormMachine(props: FormMachineProps) {
 							isInvalid={touched.brandId && isInvalid.brandId}
 						>
 
-							{props.brands.map((brand: any) => (
+							{brandList.map((brand: any) => (
 								<AutocompleteItem
 									className="max-w-xs"
 									key={brand.id}
@@ -386,7 +393,7 @@ export function FormMachine(props: FormMachineProps) {
 						</div>
 						<p className="text-xs text-danger" hidden={!(!areFieldsValid && btnTouched)}>Isi Semua Kolom Dulu</p>
 					</div>
-					<NewBrand isOpen={isOpen} onOpenChange={onOpenChange}></NewBrand>
+					<NewBrand isOpen={isOpen} onOpenChange={onOpenChange} addNewBrandFunc={addNewBrand}></NewBrand>
 				</form>
 		// 	</div>
 		// </div>

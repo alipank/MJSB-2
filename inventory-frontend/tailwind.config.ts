@@ -10,6 +10,16 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        wiggle: {
+          '0%, 100%': {transform: 'translateX(0px)'},
+          '30%': {transform: 'translateX(4px)'},
+          '70%': {transform: 'translateX(-4px)'},
+        }
+      },
+      animation: {
+        wiggle: 'wiggle 0.2s linear'
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
