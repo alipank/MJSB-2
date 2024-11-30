@@ -1,7 +1,7 @@
 // 'use client'
 
-import { baseURL } from "@/app/utils/constants";
-import { getMachineData, getMachinesData } from "@/app/utils/getData";
+import { baseURL } from "@/utils/constants";
+import { getMachineData, getMachinesData } from "@/utils/getData";
 import { cn, Switch } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import ReadySwitch from "./ReadySwitch";

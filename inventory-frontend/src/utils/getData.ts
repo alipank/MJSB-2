@@ -1,5 +1,7 @@
-import { Brand } from "../admin/add/page"
+import { Brand } from "../app/admin/add/page"
 import { baseURL } from "./constants"
+
+const mURL = `${baseURL}/machines`
 
 export async function getBrands():Promise<Brand[]> {
   const res = await fetch(`${baseURL}/brands`)
@@ -13,7 +15,7 @@ export async function getBrands():Promise<Brand[]> {
 }
 
 export async function getMachineData(id: number | string) {
-    const res = await fetch(`${baseURL}/admin/` + id, {cache:'no-store'})
+    const res = await fetch(`${mURL}/` + id, {cache:'no-store'})
 
     if (!res.ok) {
       throw new Error('Failed to fetch data' + id)
@@ -23,7 +25,7 @@ export async function getMachineData(id: number | string) {
   }
 
   export async function getMachinesData(pagination?:number) {
-    const res = await fetch(`${baseURL}/admin/`)
+    const res = await fetch(mURL)
 
     if (!res.ok) {
       // console.log(await res.json())

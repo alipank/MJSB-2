@@ -1,13 +1,13 @@
 'use client'
 
-import { MachineDetails } from "@/models/MachineDetails";
+import { MachineDetails } from "@/models/machines/MachineDetails";
 import Image from "next/image";
 import { Brand } from "./add/page";
 import { Button, Chip } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import { baseURL } from "../utils/constants";
+import { baseURL } from "../../utils/constants";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { ModalMachineContext } from "./ModalMachine";

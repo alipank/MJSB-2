@@ -1,6 +1,6 @@
 import Form from "./form"
-import { MachineDetails } from "@/models/MachineDetails"
-import { getBrands, getMachineData } from "@/app/utils/getData"
+import { MachineDetails } from "@/models/machines/MachineDetails"
+import { getBrands, getMachineData } from "@/utils/getData"
 
 export type Brand = {
   id: number

@@ -2,8 +2,9 @@
 
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
 import { useState } from "react";
-import { Required } from "./Form";
+import {  } from "./Form";
 import { Brand } from "@/app/admin/add/page";
+import { useRequired } from "@/utils/validate";
 
 
 type NewBrandProps = {
@@ -28,7 +29,7 @@ export function NewBrand(props: NewBrandProps) {
     const [isInputInvalid, setIsInputInvalid] = useState<boolean>(false)
 
     // const [touched, setTouched] = useState<boolean>(false)
-    const isInvalid = Required(newBrand)
+    const isInvalid = useRequired(newBrand)
 
     function onSubmit(onClose: () => void) {
 
@@ -108,7 +109,6 @@ export function NewBrand(props: NewBrandProps) {
                                     setIsInputInvalid(false)
                                     setError(undefined)
                                     setNewBrand(e.target.value)
-                                    console.log(newBrand)
                                 }}></Input>
                         </ModalBody>
                         <ModalFooter>

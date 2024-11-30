@@ -1,3 +1,5 @@
+import { CustomerDetails } from "../customers/Customer"
+
 export interface MachineDetails {
     id: number,
     brand_id: number,
@@ -6,9 +8,11 @@ export interface MachineDetails {
     added_at: Date,
     updated_at: Date,
     bought_price: number,
-    images: ImageDetails[]
-    is_ready: boolean
-    is_working_on: boolean
+    is_ready: boolean,
+    is_working_on: boolean,
+    images: ImageDetails[],
+    customer: CustomerDetails
+
 }
 
 export interface ImageDetails {

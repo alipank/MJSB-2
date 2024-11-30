@@ -1,4 +1,4 @@
-import { FormImageDataFile } from "@/models/FormImageData"
+import { FormImageDataFile } from "@/models/machines/FormImageData"
 
 export interface ResizeImageResult {
     url: string,

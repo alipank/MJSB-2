@@ -95,9 +95,9 @@ app.use('/', upload.array('new_images[]', 10), function (req, res, next) {
 // });
 app.use(cors({origin:['http://192.168.100.112:3000', 'http://localhost:3000']}))
 
-
-app.use("/admin", require("./routes/admin/machines"))
-app.use("/brands", require("./routes/admin/brands"))
+app.use('/customers', require("./routes/customers"))
+app.use("/machines", require("./routes/machines"))
+app.use("/brands", require("./routes/brands"))
 app.use("/card", require("./routes/card"));
 
 // catch 404 and forward to error handler

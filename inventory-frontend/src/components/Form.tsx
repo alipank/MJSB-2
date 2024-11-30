@@ -1,18 +1,19 @@
 'use client'
 
 
-import { Autocomplete, AutocompleteItem, Button, cn, image, Input, LinkIcon, Modal, ModalBody, ModalContent, ModalHeader, Switch, Textarea, useDisclosure, UseDisclosureProps } from "@nextui-org/react";
-import { ChangeEvent, ChangeEventHandler, Dispatch, FormEvent, FormEventHandler, HTMLAttributes, Key, ReactElement, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Autocomplete, AutocompleteItem, Button, cn, Input, Switch, Textarea, useDisclosure } from "@nextui-org/react";
+import { ChangeEvent, Key, useState } from "react";
 import { NewBrand } from "./NewBrand";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCirclePlus, faImage, faImages, faPlus, faPlusCircle, faPlusMinus, faTrash, faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { resizeImage, ResizeImageResult } from "../app/utils/resizeImage";
-import randomInt from "@/app/utils/randomInt";
+import { faCirclePlus, faImage,faPlus,faXmark } from "@fortawesome/free-solid-svg-icons";
+import { resizeImage, ResizeImageResult } from "../utils/resizeImage";
+import randomInt from "@/utils/randomInt";
 import { Label } from "./Label";
-import { FormImageDataFile, FormImageDataURL as IFormImageDataURL, ImageType } from "@/models/FormImageData";
-import { formControlProps, FormImageDataURL, FormInputProps, FormMachineProps } from "@/models/MachineProps";
+import { FormImageDataFile, FormImageDataURL as IFormImageDataURL, ImageType } from "@/models/machines/FormImageData";
+import { formControlProps, FormImageDataURL, FormInputProps, FormMachineProps } from "@/models/machines/MachineProps";
 import { Brand } from "@/app/admin/add/page";
+import { useRequired } from "@/utils/validate";
 
 
 
@@ -55,13 +56,12 @@ const randomId: { usedIds: number[], generate: () => number } = {
 	}
 }
 
-export const Required = (value: any) => useMemo(() => {
-	return !Boolean(value)
-}, [value])
+
 
 export function FormMachine(props: FormMachineProps) {
 
 	const MAX_IMAGE_LENGTH = 10;
+
 
 	const formRoundness: string | undefined = 'rounded-lg'
 	const { newImages, setNewImages, deleteImages, setDeleteImages, previews, setPreviews, brandId, setBrandId, model, setModel, boughtPrice, setBoughtPrice, note, setNote, ready, setReady, onSubmit } = props.formControl
@@ -146,11 +146,11 @@ export function FormMachine(props: FormMachineProps) {
 
 
 	const isInvalid = {
-		images: Required(previews.length && previews.length <= 10),
-		brandId: Required(brandId),
-		model: Required(model),
-		boughtPrice: Required(boughtPrice),
-		note: Required(note)
+		images: useRequired(previews.length && previews.length <= 10),
+		brandId: useRequired(brandId),
+		model: useRequired(model),
+		boughtPrice: useRequired(boughtPrice),
+		note: useRequired(note)
 	}
 
 	const [touched, setTouched] = useState({
@@ -212,7 +212,7 @@ export function FormMachine(props: FormMachineProps) {
 												<Button data-img-id={imageSrc.id} data-img-type={imageSrc.type} className="absolute p-0 m-2 min-w-8 w-8 h-8 rounded-full bg-[#00000077]" onClick={handleImageDelete}>
 													<FontAwesomeIcon icon={faXmark} className="text-slate-200" />
 												</Button>
-												<Image key={imageSrc.getKey()} src={imageSrc.src} alt="Your image" width={1} height={1} className={`w-fit h-36 border-2 border-gray-200 ${formRoundness}`} />
+												<Image key={imageSrc.getKey()} src={imageSrc.src} alt="Your image" width={1} height={1} className={`w-auto h-36 border-2 border-gray-200 ${formRoundness}`} />
 											</div>
 										)
 
@@ -225,8 +225,8 @@ export function FormMachine(props: FormMachineProps) {
 						</div>
 					</div>
 
-					<p className={`text-xs  -mt-3 pl-1 ${((isInvalid.images && touched.image) || previews.length > 10) ? "text-danger" : 'text-foreground-400'}`}>
-						<span className="text-inherit">Photos: {previews.length}/{MAX_IMAGE_LENGTH} </span>- {previews.length > 10 ? "foto terlalu banyak, tolong hapus foto yg kurang berguna" : "Pilih Gambar yg menarik"}
+					<p className={`text-xs  -mt-3 pl-1 ${((isInvalid.images && touched.image) || previews.length > MAX_IMAGE_LENGTH) ? "text-danger" : 'text-foreground-400'}`}>
+						<span className="text-inherit">Photos: {previews.length}/{MAX_IMAGE_LENGTH} </span>- {previews.length > MAX_IMAGE_LENGTH ? "foto terlalu banyak, tolong hapus foto yg kurang berguna" : "Pilih Gambar yg menarik"}
 					</p>
 					<div className={`flex gap-3 items-center`}>
 						<Autocomplete

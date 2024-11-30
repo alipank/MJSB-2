@@ -1,6 +1,6 @@
 'use client'
-import { putMachineReady } from "@/app/utils/alterData"
-import { baseURL } from "@/app/utils/constants"
+import { putMachineReady } from "@/utils/alterData"
+import { baseURL } from "@/utils/constants"
 import { cn, Switch } from "@nextui-org/react"
 import { useEffect, useState } from "react"
 

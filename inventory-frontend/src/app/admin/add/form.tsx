@@ -1,10 +1,10 @@
 'use client'
 
-import { FormInputProps } from "@/models/MachineProps"
+import { FormInputProps } from "@/models/machines/MachineProps"
 import { FormMachine,  useFormControl } from "../../../components/Form"
 import { Brand } from "./page"
 import { useRouter } from "next/navigation"
-import { baseURL } from "@/app/utils/constants"
+import { baseURL } from "@/utils/constants"
 
 
 

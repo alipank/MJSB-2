@@ -1,16 +1,16 @@
 'use client'
 
-import { MachineDetails } from "@/models/MachineDetails"
+import { MachineDetails } from "@/models/machines/MachineDetails"
 import { FormMachine, useFormControl } from "../../../../components/Form"
 import { Brand } from "./page"
 import { useEffect } from "react"
-import { ImageType } from "@/models/FormImageData"
+import { ImageType } from "@/models/machines/FormImageData"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTrash } from "@fortawesome/free-solid-svg-icons"
-import { FormImageDataURL, FormInputProps } from "@/models/MachineProps"
-import { baseURL } from "@/app/utils/constants"
+import { FormImageDataURL, FormInputProps } from "@/models/machines/MachineProps"
+import { baseURL } from "@/utils/constants"
 
 
 

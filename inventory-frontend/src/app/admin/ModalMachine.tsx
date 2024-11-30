@@ -7,9 +7,9 @@ import ItemList from "./ItemList"
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconProp } from "@fortawesome/fontawesome-svg-core"
-import { deleteMachine, putMachineReady, putMachineWorkingOn } from "../utils/alterData"
-import { MachineDetails } from "@/models/MachineDetails"
-import { getMachineData } from "../utils/getData"
+import { deleteMachine, putMachineReady, putMachineWorkingOn } from "../../utils/alterData"
+import { MachineDetails } from "@/models/machines/MachineDetails"
+import { getMachineData } from "../../utils/getData"
 
 
 // interface MMContext {

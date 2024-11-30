@@ -1,7 +1,7 @@
-import { MachineDetails } from "@/models/MachineDetails";
+import { MachineDetails } from "@/models/machines/MachineDetails";
 import { Brand } from "../add/page";
 import Preview from "./preview";
-import { getBrands, getMachineData } from "@/app/utils/getData";
+import { getBrands, getMachineData } from "@/utils/getData";
 import { GetServerSidePropsContext } from "next";
 
 // export const getServerSideProps = (async (context: GetServerSidePropsContext) => {

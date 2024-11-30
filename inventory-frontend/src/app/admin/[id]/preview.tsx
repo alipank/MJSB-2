@@ -1,23 +1,31 @@
 'use client'
 
-import { MachineDetails } from "@/models/MachineDetails"
-import { FormImageDataURL } from "@/models/MachineProps"
+import { MachineDetails } from "@/models/machines/MachineDetails"
+import { FormImageDataURL } from "@/models/machines/MachineProps"
 import Image from "next/image"
 import { Brand } from "../add/page"
 import { useFormControl } from "@/components/Form"
 import { useEffect, useState } from "react"
-import { ImageType } from "@/models/FormImageData"
-import { Button, CircularProgress, cn, divider, Skeleton, Spacer, Switch } from "@nextui-org/react"
+import { ImageType } from "@/models/machines/FormImageData"
+import { Button, cn, Popover, PopoverContent, PopoverTrigger, Switch, useDisclosure } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faDiceThree, faEllipsis, faListDots, faPen, faPenToSquare, faQrcode, faTrash } from "@fortawesome/free-solid-svg-icons"
-import Link from "next/link"
+import { faCheck, faDiceThree, faEllipsis, faListDots, faPen, faPenToSquare, faQrcode, faSackXmark, faSquareXmark, faTrash, faTrashArrowUp, faTrashCan, faX, faXmark, faXmarksLines } from "@fortawesome/free-solid-svg-icons"
 import { useRouter } from "next/navigation"
-import { baseURL } from "@/app/utils/constants"
-import { deleteMachine, putMachineWorkingOn } from "@/app/utils/alterData"
-import revalidateAdmin from "@/app/utils/revalidate"
+import { baseURL } from "@/utils/constants"
+import { deleteMachine, putMachineWorkingOn } from "@/utils/alterData"
+import revalidateAdmin from "@/utils/revalidate"
+import NewCustomer from "@/components/SetBuyer"
+import { CustomerDetails } from "@/models/customers/Customer"
+import SetBuyer from "@/components/SetBuyer"
+import ViewBuyer from "@/components/ViewBuyer"
+import { faTrashRestore } from "@fortawesome/free-solid-svg-icons/faTrashRestore"
+import { faTrashAlt } from "@fortawesome/free-regular-svg-icons"
 // import { revalidatePath } from "next/cache"
 
 export default function Preview(props: { brands: Brand[], machineDetails: MachineDetails }) {
+
+    const { isOpen: isOpenSetBuyer, onOpenChange: onOpenChangeSetBuyer } = useDisclosure()
+    const { isOpen: isOpenViewBuyer, onOpenChange: onOpenChangeViewBuyer } = useDisclosure()
 
 
     const formRoundness: string | undefined = 'rounded-lg'
@@ -28,6 +36,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
     const [updatedAt, setUpdatedAt] = useState('')
     // const [addedAt, setAddedAt] = useState('')
     const [workingOn, setWorkingOn] = useState(false)
+    const [customer, setCustomer] = useState<CustomerDetails>()
 
     const machineId = props.machineDetails.id.toString()
 
@@ -53,6 +62,8 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
         formControl.setNote(details.note)
         formControl.setReady(details.is_ready)
 
+        setCustomer(details.customer)
+
         // setUpdatedAt(details.updated_at)
         if (typeof details.updated_at === 'string') {
             setUpdatedAt(details.updated_at)
@@ -65,6 +76,9 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
 
     const brandName = (props.brands.find(val => (val.id === brandId)))?.brand_name
 
+    const isCustomerExist = Object.values(customer ? customer : {}).length !== 0
+
+    console.log(customer, isCustomerExist)
 
     const handleWorkingOn = (state: boolean) => {
 
@@ -80,7 +94,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                 }
                 return revalidateAdmin()
             })
-            .then(done => {console.log('/admin revalidated')})
+            .then(done => { console.log('/admin revalidated') })
             .catch((err) => {
                 console.log(err)
                 setTimeout(() => {
@@ -119,7 +133,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
 
                                     return (
                                         <div key={key} className="relative">
-                                            <Image key={key} src={imageSrc.src} alt="Your image" width={1} height={1} className={`w-fit h-36 border-2 border-gray-200 ${formRoundness}`} />
+                                            <Image key={key} src={imageSrc.src} alt="Your image" width={1} height={1} className={`h-36 w-auto border-2 border-gray-200 ${formRoundness} `} />
                                         </div>
                                     )
 
@@ -132,6 +146,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                         }
                     </div>
                 </div>
+                <div className="h-4" />
                 <div className="flex basis-full flex-shrink-0 flex-col justify-center items-center ">
                     {/* <div className=""> */}
                     <h1 className="text-2xl font-bold text-foreground-800">
@@ -141,12 +156,40 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                         {updatedAt}
                     </p>
                     <div className="flex flex-row items-center  w-full max-w-80 gap-1 mt-4 mb-2">
-                        <Button className=" h-12 font-bold w-full text-md" size="lg" color="primary">
-                            Tandai Sudah Terjual
+                        <Button className=" h-12 font-bold w-full text-md" size="lg" color={isCustomerExist ? 'default' : 'primary'} onPress={
+                            () => {
+                                if (isCustomerExist) {
+                                    onOpenChangeViewBuyer()
+                                } else {
+                                    onOpenChangeSetBuyer()
+                                }
+                            }
+                        }>
+                            {isCustomerExist ? "View Buyer's Details" : "Mark as Sold"}
                         </Button>
-                        <Button className="min-w-16 w-14 h-12 rounded-xl"> {/* mt-1 to align it with its sibling button */}
+                        <Popover placement="top-end">
+                            <PopoverTrigger>
+                                <Button variant='flat' className={` min-w-16 w-14 h-12 rounded-xl ${!isCustomerExist && 'hidden'}`}>
+                                    <FontAwesomeIcon icon={faTrashCan} size="lg" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                <div className="px-1 py-2">
+                                    <div className="te font-bold">Yakin ?</div>
+                                    {/* <div className="text-tiny">This is the popover content</div> */}
+                                    <div className="h-2" />
+
+                                    <div className="flex flex-row gap-3 justify-end">
+                                        <Button size="sm" color="primary" isIconOnly><FontAwesomeIcon icon={faCheck} /></Button>
+                                        <Button size="sm" color="danger" isIconOnly><FontAwesomeIcon icon={faXmark} /></Button>
+                                    </div>
+
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                        {/* <Button className={`min-w-16 w-14 h-12 rounded-xl ${!isCustomerExist && 'hidden'}`}>
                             .icon
-                        </Button>
+                        </Button> */}
                     </div>
                     {/* <div className="w-full max-w-80"> */}
                     <Switch color="warning"
@@ -176,7 +219,25 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                             Edit item
                         </div>
                         <div className="w-1/5 flex flex-col gap-1  items-center font-bold text-sm">
-                            <Button onPress={() => { handleDeleteButton() }} className="min-w-12 w-12 h-12 p-0 rounded-full"><FontAwesomeIcon size="lg" icon={faTrash} /></Button>
+                            <Popover>
+                                <PopoverTrigger>
+                                    <Button className="min-w-12 w-12 h-12 p-0 rounded-full"><FontAwesomeIcon size="lg" icon={faTrash} /></Button>
+                                </PopoverTrigger>
+                                <PopoverContent>
+                                    ( (
+                                        <div className="px-1 py-2">
+                                        <div className="te font-bold">Yakin ?</div>
+                                        {/* <div className="text-tiny">This is the popover content</div> */}
+                                        <div className="h-2" />
+
+                                        <div className="flex flex-row gap-3 justify-end">
+                                            <Button size="sm" color="primary" isIconOnly onPress={handleDeleteButton}><FontAwesomeIcon icon={faCheck} /></Button>
+                                        </div>
+
+                                    </div>
+                                    )))
+                                </PopoverContent>
+                            </Popover>
                             Delete Item
                         </div>
                         <div className="w-1/5 flex flex-col gap-1 items-center font-bold text-sm">
@@ -194,7 +255,10 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                     {/* </div> */}
                     <div className="h-[2px] w-full mt-6 mb-4 bg-default-200 "></div>
                     <p>{note}</p>
+
                 </div>
+                <SetBuyer isOpen={isOpenSetBuyer} onOpenChange={onOpenChangeSetBuyer} machineId={machineId} setCustomer={setCustomer}/>
+                <ViewBuyer isOpen={isOpenViewBuyer} onOpenChange={onOpenChangeViewBuyer} customerDetails={customer} />
 
                 {/* </div>
             </div> */}

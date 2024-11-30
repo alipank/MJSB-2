@@ -5,8 +5,10 @@ const { unlink } = require('fs/promises');
 
 exports.getMachine = async function (req, res, next) {
     const id = req.params.id;
-    const sqlQuery =
-        "SELECT m.*, img.id as image_id, img.image_path FROM machines AS m LEFT JOIN machine_images as img ON m.id = img.machine_id WHERE m.id=?;";
+    // const sqlQuery =
+    //     "SELECT m.*, img.id as image_id, img.image_path FROM machines AS m INNER JOIN machine_images as img ON m.id = img.machine_id INNER JOIN customers ON m.id = customers.machine_id WHERE m.id=?;";
+
+    const sqlQuery = "SELECT m.*, img.id as image_id, img.image_path, c.id as customer_id, c.name, c.sold_price, c.phone, c.added_at as customer_added_at FROM machines AS m LEFT JOIN machine_images as img ON m.id = img.machine_id LEFT JOIN customers as c ON m.id = c.machine_id WHERE m.id=?;"
 
     const machine = await pool.query(sqlQuery, id)
         .then(json => {
@@ -16,14 +18,26 @@ exports.getMachine = async function (req, res, next) {
                 throw { status: 404 }
             }
 
-            const { image_id, image_path, ...rest } = json[0]
+            const { image_id, image_path, customer_id, name ,sold_price, phone, customer_added_at , ...rest } = json[0]
 
             let images = json.map((row) => {
                 const { image_id, image_path } = row
                 return { image_id, image_path }
             })
 
-            const machineDetails = { ...rest, images }
+            let customer = {}
+
+            if (customer_id) {
+                customer = {
+                    id: customer_id,
+                    name,
+                    phone: Number(phone),
+                    sold_price,
+                    added_at: customer_added_at
+                }
+            }
+
+            const machineDetails = { ...rest, images, customer }
 
             return machineDetails
         }).catch(err => {
