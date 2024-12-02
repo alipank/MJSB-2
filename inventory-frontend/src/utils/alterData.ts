@@ -49,7 +49,11 @@ export function putMachineReady(props: { id: string, value: boolean }) {
 
 export function postCustomer(props: PostBuyerProps) {
 
-    const {machineId,name,phone, sold_price} = props
+    // if (Object.values(props).find(e => e == false)) {
+    //     console.log('props value(s) are falsy')
+    // }
+
+    const {machineId ,name , phone, sold_price} = props
 
     const formData = new FormData()
 
@@ -58,12 +62,25 @@ export function postCustomer(props: PostBuyerProps) {
     formData.append('phone', phone)
     formData.append('sold_price', sold_price)
 
-
     return fetch(
         cURL,
         {
             // headers: { "Content-Type": "multipart/form-data" },  
             method: "POST",
             body: formData,
-        })
+        }
+    )
+}
+
+export function deleteCustomer (props: {id: string}) {
+    const formData = new FormData()
+    formData.append('id', props.id)
+
+    return fetch(
+        cURL,
+        {
+            method: "DELETE",
+            body:formData
+        }
+    )
 }

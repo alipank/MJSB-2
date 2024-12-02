@@ -5,7 +5,7 @@ export default function ViewBuyer(props: ViewBuyerProps) {
 
     const { isOpen, onOpenChange, customerDetails } = props
 
-    const { name, phone, sold_price, added_at } = customerDetails!
+    // const { name, phone, sold_price, added_at } = customerDetails?
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} >
@@ -30,13 +30,13 @@ export default function ViewBuyer(props: ViewBuyerProps) {
                                 <p >:</p>
                             </div>
                             <div>
-                                <p >{name}</p>
-                                <p >{phone}</p>
-                                <p >{sold_price}</p>
+                                <p >{customerDetails?.name}</p>
+                                <p >{customerDetails?.phone}</p>
+                                <p >{customerDetails?.sold_price}</p>
                             </div>
                         </ModalBody>
                         <ModalFooter className="justify-between">
-                            <p className="text-sm font-light">{new Date(added_at).toLocaleDateString()}</p>
+                            <p className="text-sm font-light">{new Date(customerDetails?.added_at || '').toLocaleDateString()}</p>
                             <Button color="primary" onPress={onClose} className="font-bold">Close</Button>
                         </ModalFooter>
                     </>

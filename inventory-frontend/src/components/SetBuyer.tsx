@@ -80,13 +80,13 @@ export default function SetBuyer(props: SetBuyerProps) {
             setLoading(false)
             onClose()
         })
-        .catch((err) => {
-            setErrorMsg(new Error(err))
-            setLoading(false)
-            setDisable(true)
-            setTimeout(() => { setDisable(false) }, 2000)
-            console.log(err)
-        })
+            .catch((err) => {
+                setErrorMsg(new Error(err))
+                setLoading(false)
+                setDisable(true)
+                setTimeout(() => { setDisable(false) }, 2000)
+                console.log(err)
+            })
     }
 
     function onCloseHandler() {
@@ -101,7 +101,7 @@ export default function SetBuyer(props: SetBuyerProps) {
     }
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onCloseHandler}>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onCloseHandler} classNames={{wrapper:"absolute left-0 top-0"}}>
             <ModalContent>
                 {(onClose) => {
                     return (
@@ -111,6 +111,7 @@ export default function SetBuyer(props: SetBuyerProps) {
                             </ModalHeader>
                             <ModalBody>
                                 <Input
+                                    size="lg"
                                     label={'Name'}
                                     // placeholder=""
                                     description='(Atas) Nama pembeli'
@@ -122,6 +123,7 @@ export default function SetBuyer(props: SetBuyerProps) {
                                 >
                                 </Input>
                                 <Input
+                                    size="lg"
                                     label={'Phone'}
                                     // inputMode="numeric"
                                     errorMessage="Wajib diisi dan 9 < Nilai < 15"
@@ -132,6 +134,7 @@ export default function SetBuyer(props: SetBuyerProps) {
                                 >
                                 </Input>
                                 <Input
+                                    size="lg"
                                     label={'Sold Price'}
                                     // inputMode="numeric"
                                     isInvalid={error.soldPrice}
@@ -140,7 +143,7 @@ export default function SetBuyer(props: SetBuyerProps) {
                                     }}
                                 >
                                 </Input>
-                                <p hidden={errorMsg?true:false}>{errorMsg?.message}</p>
+                                <p hidden={errorMsg ? true : false}>{errorMsg?.message}</p>
                             </ModalBody>
                             <ModalFooter>
                                 <Button onPress={() => { onClose() }} >Cancel</Button>

@@ -5,14 +5,14 @@ import { FormImageDataURL } from "@/models/machines/MachineProps"
 import Image from "next/image"
 import { Brand } from "../add/page"
 import { useFormControl } from "@/components/Form"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { ImageType } from "@/models/machines/FormImageData"
 import { Button, cn, Popover, PopoverContent, PopoverTrigger, Switch, useDisclosure } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCheck, faDiceThree, faEllipsis, faListDots, faPen, faPenToSquare, faQrcode, faSackXmark, faSquareXmark, faTrash, faTrashArrowUp, faTrashCan, faX, faXmark, faXmarksLines } from "@fortawesome/free-solid-svg-icons"
 import { useRouter } from "next/navigation"
 import { baseURL } from "@/utils/constants"
-import { deleteMachine, putMachineWorkingOn } from "@/utils/alterData"
+import { deleteCustomer, deleteMachine, putMachineWorkingOn } from "@/utils/alterData"
 import revalidateAdmin from "@/utils/revalidate"
 import NewCustomer from "@/components/SetBuyer"
 import { CustomerDetails } from "@/models/customers/Customer"
@@ -24,8 +24,13 @@ import { faTrashAlt } from "@fortawesome/free-regular-svg-icons"
 
 export default function Preview(props: { brands: Brand[], machineDetails: MachineDetails }) {
 
+    //modal for creating customer and modal for viewing customer details
     const { isOpen: isOpenSetBuyer, onOpenChange: onOpenChangeSetBuyer } = useDisclosure()
     const { isOpen: isOpenViewBuyer, onOpenChange: onOpenChangeViewBuyer } = useDisclosure()
+
+    //popover control
+    const { isOpen: isOpenPDelMachine, onOpenChange: onOpenCPDelMachine, onClose: onClosePDelMachine } = useDisclosure()
+    const { isOpen: isOpenPDelCustomer, onOpenChange: onOpenCPDelCustomer, onClose: onClosePdelMachine } = useDisclosure()
 
 
     const formRoundness: string | undefined = 'rounded-lg'
@@ -76,9 +81,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
 
     const brandName = (props.brands.find(val => (val.id === brandId)))?.brand_name
 
-    const isCustomerExist = Object.values(customer ? customer : {}).length !== 0
-
-    console.log(customer, isCustomerExist)
+    const isCustomerExist = useMemo(() => (Object.values(customer ? customer : {}).length !== 0), [customer])
 
     const handleWorkingOn = (state: boolean) => {
 
@@ -111,6 +114,20 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                 router.push('/admin')
             })
             .catch(err => console.log(err))
+    }
+
+    const handleCustomerDeleteButton = () => {
+        if (customer?.id) {
+            deleteCustomer({ id: customer?.id })
+                .then(res => res.json())
+                .then(json => {
+                    setCustomer(undefined);
+                    onOpenCPDelCustomer()
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
     }
 
     if (isLoaded) {
@@ -167,9 +184,9 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                         }>
                             {isCustomerExist ? "View Buyer's Details" : "Mark as Sold"}
                         </Button>
-                        <Popover placement="top-end">
+                        <Popover placement="top-end" isOpen={isOpenPDelCustomer} onOpenChange={onOpenCPDelCustomer}>
                             <PopoverTrigger>
-                                <Button variant='flat' className={` min-w-16 w-14 h-12 rounded-xl ${!isCustomerExist && 'hidden'}`}>
+                                <Button variant='flat' className={` min-w-16 w-14 h-12 rounded-xl ${!isCustomerExist && 'hidden'}`} onPress={() => { onOpenCPDelCustomer() }}>
                                     <FontAwesomeIcon icon={faTrashCan} size="lg" />
                                 </Button>
                             </PopoverTrigger>
@@ -180,12 +197,12 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                                     <div className="h-2" />
 
                                     <div className="flex flex-row gap-3 justify-end">
-                                        <Button size="sm" color="primary" isIconOnly><FontAwesomeIcon icon={faCheck} /></Button>
-                                        <Button size="sm" color="danger" isIconOnly><FontAwesomeIcon icon={faXmark} /></Button>
+                                        <Button size="sm" color="primary" isIconOnly onPress={handleCustomerDeleteButton}><FontAwesomeIcon icon={faCheck} /></Button>
+                                        {/* <Button size="sm" color="danger" isIconOnly onPress={}><FontAwesomeIcon icon={faXmark} /></Button> */}
                                     </div>
-
                                 </div>
                             </PopoverContent>
+
                         </Popover>
                         {/* <Button className={`min-w-16 w-14 h-12 rounded-xl ${!isCustomerExist && 'hidden'}`}>
                             .icon
@@ -219,15 +236,14 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                             Edit item
                         </div>
                         <div className="w-1/5 flex flex-col gap-1  items-center font-bold text-sm">
-                            <Popover>
+                            <Popover isOpen={isOpenPDelMachine} onOpenChange={onOpenCPDelMachine}>
                                 <PopoverTrigger>
-                                    <Button className="min-w-12 w-12 h-12 p-0 rounded-full"><FontAwesomeIcon size="lg" icon={faTrash} /></Button>
+                                    <Button className="min-w-12 w-12 h-12 p-0 rounded-full" onPress={onOpenCPDelMachine}><FontAwesomeIcon size="lg" icon={faTrash} /></Button>
                                 </PopoverTrigger>
                                 <PopoverContent>
-                                    ( (
-                                        <div className="px-1 py-2">
+
+                                    <div className="px-1 py-2">
                                         <div className="te font-bold">Yakin ?</div>
-                                        {/* <div className="text-tiny">This is the popover content</div> */}
                                         <div className="h-2" />
 
                                         <div className="flex flex-row gap-3 justify-end">
@@ -235,7 +251,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                                         </div>
 
                                     </div>
-                                    )))
+
                                 </PopoverContent>
                             </Popover>
                             Delete Item
@@ -257,7 +273,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                     <p>{note}</p>
 
                 </div>
-                <SetBuyer isOpen={isOpenSetBuyer} onOpenChange={onOpenChangeSetBuyer} machineId={machineId} setCustomer={setCustomer}/>
+                <SetBuyer isOpen={isOpenSetBuyer} onOpenChange={onOpenChangeSetBuyer} machineId={machineId} setCustomer={setCustomer} />
                 <ViewBuyer isOpen={isOpenViewBuyer} onOpenChange={onOpenChangeViewBuyer} customerDetails={customer} />
 
                 {/* </div>

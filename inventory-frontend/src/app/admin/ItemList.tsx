@@ -4,11 +4,11 @@ import { MachineDetails } from "@/models/machines/MachineDetails"
 import { getMachinesData } from "../../utils/getData"
 import { Brand } from "./add/page"
 import Item from "./Item"
-import { Button, Input} from "@nextui-org/react"
+import { Button, Input } from "@nextui-org/react"
 import Link from "next/link"
 import { useCallback, useEffect, useRef, useState } from "react"
 
-export default function ItemList() {
+export default function ItemList(props:{brands:Brand[]}) {
 
   const [isLoading, setIsLoading] = useState(false)
   const [pages, setPages] = useState(1)
@@ -50,48 +50,37 @@ export default function ItemList() {
   }, [pages])
 
 
-  try {
-    // const items: MachineDetails[] = await getMachinesData()
-    const brands: Brand[] = [
-      {
-        id: 1,
-        brand_name: "tes"
-      }
-    ]
 
-    return (
-      <div>
-        <Link href={'/admin/add'}>
-          <Button className="w-full mb-2">
-            Create New Machine
-          </Button></Link>
-        <Input className="w-full mb-3" placeholder="Search">
-        </Input>
-        <div className="flex flex-col -mx-4">
-          {
-            items.map((data) => {
-              console.log(data)
 
-              return (
-                <>
-                  {/* Item(data, brands) */}
-                  <Item key={data.id} machineDetails={data} brands={brands} />
-                  {/* <Item2 machineDetails={data} brands={brands} /> */}
-                </>
+  return (
+    <div>
+      <Link href={'/admin/add'}>
+        <Button className="w-full mb-2">
+          Create New Machine
+        </Button></Link>
+      <Input className="w-full mb-3" placeholder="Search">
+      </Input>
+      <div className="flex flex-col -mx-4">
+        {
+          items.map((data) => {
+            console.log(data)
 
-              )
-            })
-          }
+            return (
+              <>
+                {/* Item(data, brands) */}
+                <Item key={data.id} machineDetails={data} brands={props.brands} />
+                {/* <Item2 machineDetails={data} brands={brands} /> */}
+              </>
 
-        </div>
-        <div ref={sentinelRef} className="h-1"></div>
+            )
+          })
+        }
+
       </div>
-    )
-  }
-  catch (error: any) {
-    console.log(error)
-    return <p>{error.message}</p>
-  }
+      <div ref={sentinelRef} className="h-1"></div>
+    </div>
+  )
+
 
 
 } 

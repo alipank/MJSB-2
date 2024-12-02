@@ -326,8 +326,8 @@ exports.putMachine = function (req, res, next) {
 exports.deleteMachine = function (req, res, next) {
     const sqlQuery = `DELETE FROM machines WHERE id=${req.body.id}`
     pool.query(sqlQuery)
-        .then((res) => {
-            console.log(res)
+        .then((success) => {
+            console.log(success)
             res.json({
                 status: 200,
                 message: 'Remove machine successfully'

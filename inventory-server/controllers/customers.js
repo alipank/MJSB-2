@@ -4,7 +4,7 @@ exports.postCustomer = (req, res, next) => {
 
     const { machine_id, name, sold_price, phone } = req.body
 
-    console.log(req.body, machine_id.match(/\D+/), sold_price.match(/\D+/), phone.match(/\D+/) )
+    console.log(req.body, machine_id.match(/\D+/), sold_price.match(/\D+/), phone.match(/\D+/))
 
     if (!machine_id || !name || !sold_price || !phone) {
         throw {
@@ -35,5 +35,41 @@ exports.postCustomer = (req, res, next) => {
         }))
         .catch(
 
-        )
+    )
+}
+
+exports.deleteCustomer = (req, res, next) => {
+
+    console.log('id', req.body.id)
+
+    if (!req.body.id) {
+        throw {
+            status: 400,
+            message: "Error required data is not sufficed"
+        }
+    }
+    // .id.match(/\D+/)
+    if (res.body) {
+        throw {
+            status: 400,
+            message: "Wrong Data Type"
+        }
+    }
+
+    const sqlQuery = `DELETE FROM customers WHERE id=${req.body.id}`
+    pool.query(sqlQuery)
+        .then((success) => {
+            console.log(success)
+            res.json({
+                status: 200,
+                message: 'Customer/Buyer Removed successfully'
+            })
+        })
+        .catch((err) => {
+            console.log(err)
+            next({
+                status: 500,
+                message: "Failed to Remove Customer/Buyer"
+            })
+        })
 }

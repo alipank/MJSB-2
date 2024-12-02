@@ -93,7 +93,7 @@ app.use('/', upload.array('new_images[]', 10), function (req, res, next) {
 //   res.append('Access-Control-Allow-Headers', 'Content-Type');
 //   next();
 // });
-app.use(cors({origin:['http://192.168.100.112:3000', 'http://localhost:3000']}))
+app.use(cors({origin:['http://192.168.100.112:3000', 'http://localhost:3000', 'http://172.20.10.14:3000']}))
 
 app.use('/customers', require("./routes/customers"))
 app.use("/machines", require("./routes/machines"))
@@ -112,7 +112,7 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  let json
+  let json = {}
 
   if (err.errno == 1054) {
     json = {
@@ -136,7 +136,7 @@ app.use(function (err, req, res, next) {
   console.log(err)
 
   // render the error page
-  res.status(err.status || json.status || 500);
+  res.status(json.status || (err.status || 500));
   // res.render("error", {error : err});
   // console.log(err)
   res.json(json || err) //returns the err if the error is unhandled
