@@ -3,12 +3,19 @@
 import { MachineDetails } from "@/models/machines/MachineDetails"
 import { getMachinesData } from "../../utils/getData"
 import { Brand } from "./add/page"
-import Item from "./Item"
+import Item, { MMItemProps } from "./Item"
 import { Button, Input } from "@nextui-org/react"
 import Link from "next/link"
 import { useCallback, useEffect, useRef, useState } from "react"
 
-export default function ItemList(props:{brands:Brand[]}) {
+interface ItemListProps {
+  brands:Brand[]
+  MMItemProps: MMItemProps
+}
+
+export default function ItemList(props:ItemListProps) {
+
+  const {openModal, setUseItemIsReady, setUseItemIsWorkingOn} = props.MMItemProps
 
   const [isLoading, setIsLoading] = useState(false)
   const [pages, setPages] = useState(1)
@@ -68,7 +75,9 @@ export default function ItemList(props:{brands:Brand[]}) {
             return (
               <>
                 {/* Item(data, brands) */}
-                <Item key={data.id} machineDetails={data} brands={props.brands} />
+                <Item key={data.id} machineDetails={data} brands={props.brands} 
+                // openModal={openModal} setUseItemIsReady={setUseItemIsReady} setUseItemIsWorkingOn={setUseItemIsWorkingOn} 
+                />
                 {/* <Item2 machineDetails={data} brands={brands} /> */}
               </>
 

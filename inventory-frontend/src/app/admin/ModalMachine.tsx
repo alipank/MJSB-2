@@ -4,12 +4,14 @@ import { faCircleDollarToSlot, faDisplay, faFileLines, faPen, faPenAlt, faPenToS
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 import ItemList from "./ItemList"
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react"
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconProp } from "@fortawesome/fontawesome-svg-core"
 import { deleteMachine, putMachineReady, putMachineWorkingOn } from "../../utils/alterData"
 import { MachineDetails } from "@/models/machines/MachineDetails"
 import { getMachineData } from "../../utils/getData"
+import { ModalMachineContext } from "./ModalContext"
+
 
 
 // interface MMContext {
@@ -20,24 +22,28 @@ import { getMachineData } from "../../utils/getData"
 //   setModalMachineId: Dispatch<SetStateAction<string>>
 // }
 // const ModalMachineContext = createContext<{isOpen: boolean, onOpen:()=> void, onOpenChange: () => void}>({isOpen: false, onOpen : () => {}, onOpenChange : () => {}})
-interface OpenModalProps {
+export interface OpenModalProps {
   id: string,
-  machineData: MachineDetails
+  machineData?: MachineDetails
 }
 
-export const ModalMachineContext = createContext<{
-  openModal: (props: OpenModalProps) => void,
-  modalMachineId: string,
-  modalMachineData?: MachineDetails,
-  setUseItemIsWorkingOn: Dispatch<SetStateAction<(value: boolean) => void>>
-  setUseItemIsReady: Dispatch<SetStateAction<(value: boolean) => void>>
-
-}>({
-  openModal: () => { },
-  modalMachineId: '',
-  setUseItemIsWorkingOn: () => { },
-  setUseItemIsReady: () => { }
-})
+export interface MMProps {
+  setOpenModal: Dispatch<SetStateAction<(value: OpenModalProps) => void>>,
+  useItemIsWorkingOn: boolean
+  useItemIsReady: boolean
+}
+// export const ModalMachineContext = createContext<{
+//   openModal: (props: OpenModalProps) => void,
+//   // modalMachineId: string,
+//   // modalMachineData?: MachineDetails,
+//   setUseItemIsWorkingOn: Dispatch<SetStateAction<(value: boolean) => void>>
+//   setUseItemIsReady: Dispatch<SetStateAction<(value: boolean) => void>>
+// }>({
+//   openModal: () => { },
+//   modalMachineId: '',
+//   setUseItemIsWorkingOn: () => { },
+//   setUseItemIsReady: () => { }
+// })
 
 export function ModalItemButton({ icon, onPress, children }: { icon: IconProp, onPress: () => void, children: React.ReactNode }) {
 
@@ -52,22 +58,26 @@ export function ModalItemButton({ icon, onPress, children }: { icon: IconProp, o
   )
 }
 
-export default function ModalMachine({ children }: { children: React.ReactNode }) {
+
+export default function ModalMachine() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [modalMachineId, setModalMachineId] = useState('')
   const [modalMachineData, setModalMachineData] = useState<MachineDetails>()
-  const [useItemIsWorkingOn, setUseItemIsWorkingOn] = useState<(value: boolean) => void>(() => { })
-  const [useItemsIsReady, setUseItemIsReady] = useState<(value:boolean) => void>(() => {})
+  // const [useItemIsWorkingOn, setUseItemIsWorkingOn] = useState<(value: boolean) => void>(() => { })
+  // const [useItemsIsReady, setUseItemIsReady] = useState<(value:boolean) => void>(() => {})
 
   const router = useRouter()
 
-  async function openModal({ id, machineData }: OpenModalProps) {
+  const mm = useContext(ModalMachineContext)
 
-    console.log('open', id)
+
+  async function openModal(machineData: MachineDetails) {
+
+    console.log('open', machineData?.id || 'ID NOT FOUND')
 
     // const data = await getMachineData(id)
 
-    setModalMachineId(id)
+    setModalMachineId(machineData?.id.toString() || '')
     // setModalMachineData(await data)
     setModalMachineData(machineData)
 
@@ -77,10 +87,17 @@ export default function ModalMachine({ children }: { children: React.ReactNode }
     }
   }
 
-  return (
-    <ModalMachineContext.Provider value={{ openModal, modalMachineId, setUseItemIsWorkingOn, setUseItemIsReady }}>
-      {children}
+  //CREATE DEFAULT VALUES ?????????????
+  useEffect(() => {
+    if (mm.modalMachineDetails) {
+      openModal(mm.modalMachineDetails)
 
+    }
+  }, [])
+
+  return (
+    // <ModalMachineContext.Provider value={{ openModal, modalMachineId, setUseItemIsWorkingOn, setUseItemIsReady }}>
+    <div>
       <Modal isOpen={isOpen} placement="bottom-center" className="rounded-b-none -mb-1 " hideCloseButton onOpenChange={() => {
         setModalMachineId('')
         onOpenChange()
@@ -109,7 +126,8 @@ export default function ModalMachine({ children }: { children: React.ReactNode }
                   onPress={() => {
                     putMachineWorkingOn({ id: modalMachineId, value: !modalMachineData?.is_working_on })
                       .then(() => {
-                        useItemIsWorkingOn(!modalMachineData?.is_working_on)
+                        // useItemIsWorkingOn(!modalMachineData?.is_working_on)
+                        mm.setItemIsWorkingOn(!modalMachineData?.is_working_on)
                         onClose()
                       })
                   }}
@@ -120,11 +138,12 @@ export default function ModalMachine({ children }: { children: React.ReactNode }
                 <ModalItemButton
                   icon={faTag}
                   onPress={() => {
-                    putMachineReady({id: modalMachineId, value: !modalMachineData?.is_ready})
-                    .then(() => {
-                      useItemsIsReady(!modalMachineData?.is_ready)
-                      onClose()
-                    })
+                    putMachineReady({ id: modalMachineId, value: !modalMachineData?.is_ready })
+                      .then(() => {
+                        // useItemIsReady(!modalMachineData?.is_ready)
+                        mm.setItemIsReady(!modalMachineData?.is_ready)
+                        onClose()
+                      })
                   }}
                 >Mark as Ready</ModalItemButton>
 
@@ -139,7 +158,8 @@ export default function ModalMachine({ children }: { children: React.ReactNode }
 
       </Modal>
 
-    </ModalMachineContext.Provider >
+    </div>
+    // </ModalMachineContext.Provider >
 
   )
 }

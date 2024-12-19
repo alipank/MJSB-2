@@ -9,15 +9,34 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { baseURL } from "../../utils/constants";
 import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
-import { ModalMachineContext } from "./ModalMachine";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
+import { OpenModalProps } from "./ModalMachine";
+import { ModalMachineContext } from "./ModalContext";
 
-export default function Item(props: { machineDetails: MachineDetails, brands: Brand[] }) {
+// interface modalData {
+//     openModal: (props: OpenModalProps) => void,
+//     modalMachineId: string,
+//     modalMachineData?: MachineDetails,
+//     setUseItemIsWorkingOn: Dispatch<SetStateAction<(value: boolean) => void>>
+//     setUseItemIsReady: Dispatch<SetStateAction<(value: boolean) => void>>
+// }
+export interface MMItemProps {
+    openModal: (value: OpenModalProps) => void,
+    setUseItemIsWorkingOn: Dispatch<SetStateAction<boolean>>,
+    setUseItemIsReady: Dispatch<SetStateAction<boolean>>
+}
+
+interface ItemProps {
+    machineDetails: MachineDetails,
+    brands: Brand[]
+}
+
+export default function Item(props: ItemProps) {
 
 
     const router = useRouter()
 
-    const modalMachine = useContext(ModalMachineContext)
+    const mm = useContext(ModalMachineContext)
 
     const [machineDetails, setMachineDetails] = useState<MachineDetails>(props.machineDetails)
 
@@ -30,22 +49,22 @@ export default function Item(props: { machineDetails: MachineDetails, brands: Br
         return val.id === brand_id
     })?.brand_name
 
-    const setItemIsWorkingOn = (value:boolean) => {
+    const setItemIsWorkingOn = (value: boolean) => {
         console.log('ItemIsWorkingOn Func')
         machineDetails.is_working_on = value
-        setMachineDetails({...machineDetails})
+        setMachineDetails({ ...machineDetails })
     }
 
-    const setItemIsReady = (value:boolean) => {
+    const setItemIsReady = (value: boolean) => {
         console.log('ItemIsReady Func')
         machineDetails.is_ready = value
-        setMachineDetails({...machineDetails})
+        setMachineDetails({ ...machineDetails })
     }
 
     const openModalProps = {
         id: id.toString(),
         machineData: machineDetails,
-      
+
     }
 
 
@@ -80,9 +99,15 @@ export default function Item(props: { machineDetails: MachineDetails, brands: Br
             <div className="flex-1 flex justify-end items-center pr-3">
                 <Button onPress={(e) => {
                     console.log('clicked')
-                    modalMachine.setUseItemIsWorkingOn(() => setItemIsWorkingOn)
-                    modalMachine.setUseItemIsReady(() => setItemIsReady)
-                    modalMachine.openModal(openModalProps)
+                    router.push('/admin/modal')
+                    // setUseItemIsWorkingOn(() => setItemIsWorkingOn)
+                    // setUseItemIsReady(() => setItemIsReady)
+                    
+                    mm.setItemIsReady = () => setItemIsReady
+                    mm.setItemIsWorkingOn = () => setItemIsWorkingOn
+
+                    // mm.openModal(openModalProps)
+                    mm.modalMachineDetails = machineDetails
                 }} className="bg-transparent hover:bg-default-100" isIconOnly>
                     <FontAwesomeIcon icon={faEllipsis} ></FontAwesomeIcon>
                 </Button>
