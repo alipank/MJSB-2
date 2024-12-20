@@ -1,27 +1,14 @@
 'use client'
-import { Button, Input, Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/react"
-import { faCircleDollarToSlot, faDisplay, faFileLines, faPen, faPenAlt, faPenToSquare, faScrewdriverWrench, faSearch, faTag, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { Button, Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/react"
+import { faCircleDollarToSlot, faFileLines, faPenToSquare, faScrewdriverWrench, faTag, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import Link from "next/link"
-import ItemList from "./ItemList"
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from "react"
+import { Dispatch, SetStateAction, useContext, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconProp } from "@fortawesome/fontawesome-svg-core"
 import { deleteMachine, putMachineReady, putMachineWorkingOn } from "../../utils/alterData"
 import { MachineDetails } from "@/models/machines/MachineDetails"
-import { getMachineData } from "../../utils/getData"
 import { ModalMachineContext } from "./ModalContext"
 
-
-
-// interface MMContext {
-//   isOpen: boolean,
-//   onOpen: () => void,
-//   onOpenChange: () => void,
-//   modalMachineId: string,
-//   setModalMachineId: Dispatch<SetStateAction<string>>
-// }
-// const ModalMachineContext = createContext<{isOpen: boolean, onOpen:()=> void, onOpenChange: () => void}>({isOpen: false, onOpen : () => {}, onOpenChange : () => {}})
 export interface OpenModalProps {
   id: string,
   machineData?: MachineDetails
@@ -32,18 +19,6 @@ export interface MMProps {
   useItemIsWorkingOn: boolean
   useItemIsReady: boolean
 }
-// export const ModalMachineContext = createContext<{
-//   openModal: (props: OpenModalProps) => void,
-//   // modalMachineId: string,
-//   // modalMachineData?: MachineDetails,
-//   setUseItemIsWorkingOn: Dispatch<SetStateAction<(value: boolean) => void>>
-//   setUseItemIsReady: Dispatch<SetStateAction<(value: boolean) => void>>
-// }>({
-//   openModal: () => { },
-//   modalMachineId: '',
-//   setUseItemIsWorkingOn: () => { },
-//   setUseItemIsReady: () => { }
-// })
 
 export function ModalItemButton({ icon, onPress, children }: { icon: IconProp, onPress: () => void, children: React.ReactNode }) {
 
@@ -78,7 +53,6 @@ export default function ModalMachine() {
     // const data = await getMachineData(id)
 
     setModalMachineId(machineData?.id.toString() || '')
-    // setModalMachineData(await data)
     setModalMachineData(machineData)
 
     // setModalMachineData
@@ -87,13 +61,7 @@ export default function ModalMachine() {
     }
   }
 
-  //CREATE DEFAULT VALUES ?????????????
-  useEffect(() => {
-    if (mm.modalMachineDetails) {
-      openModal(mm.modalMachineDetails)
-
-    }
-  }, [])
+  mm.openModal = openModal
 
   return (
     // <ModalMachineContext.Provider value={{ openModal, modalMachineId, setUseItemIsWorkingOn, setUseItemIsReady }}>
@@ -145,7 +113,9 @@ export default function ModalMachine() {
                         onClose()
                       })
                   }}
-                >Mark as Ready</ModalItemButton>
+                >
+                  {!modalMachineData?.is_ready? 'Mark as Ready' : 'Mark as Not Ready'}
+                </ModalItemButton>
 
                 <ModalItemButton
                   icon={faCircleDollarToSlot}

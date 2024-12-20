@@ -3,28 +3,13 @@
 import { MachineDetails } from "@/models/machines/MachineDetails";
 import Image from "next/image";
 import { Brand } from "./add/page";
-import { Button, Chip } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
 import { baseURL } from "../../utils/constants";
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { OpenModalProps } from "./ModalMachine";
+import { useContext, useState } from "react";
 import { ModalMachineContext } from "./ModalContext";
-
-// interface modalData {
-//     openModal: (props: OpenModalProps) => void,
-//     modalMachineId: string,
-//     modalMachineData?: MachineDetails,
-//     setUseItemIsWorkingOn: Dispatch<SetStateAction<(value: boolean) => void>>
-//     setUseItemIsReady: Dispatch<SetStateAction<(value: boolean) => void>>
-// }
-export interface MMItemProps {
-    openModal: (value: OpenModalProps) => void,
-    setUseItemIsWorkingOn: Dispatch<SetStateAction<boolean>>,
-    setUseItemIsReady: Dispatch<SetStateAction<boolean>>
-}
 
 interface ItemProps {
     machineDetails: MachineDetails,
@@ -42,7 +27,7 @@ export default function Item(props: ItemProps) {
 
     // modalMachine
 
-    const { id, brand_id, model, bought_price, images, is_ready, is_working_on, note, updated_at, added_at } = machineDetails
+    const { id, brand_id, model, images, is_ready, is_working_on } = machineDetails
 
     const imagePath = `${baseURL}/images/${images[0].image_path}`
     const brand = props.brands.find((val) => {
@@ -59,12 +44,6 @@ export default function Item(props: ItemProps) {
         console.log('ItemIsReady Func')
         machineDetails.is_ready = value
         setMachineDetails({ ...machineDetails })
-    }
-
-    const openModalProps = {
-        id: id.toString(),
-        machineData: machineDetails,
-
     }
 
 
@@ -99,15 +78,14 @@ export default function Item(props: ItemProps) {
             <div className="flex-1 flex justify-end items-center pr-3">
                 <Button onPress={(e) => {
                     console.log('clicked')
-                    router.push('/admin/modal')
                     // setUseItemIsWorkingOn(() => setItemIsWorkingOn)
                     // setUseItemIsReady(() => setItemIsReady)
+                    console.log(is_ready, is_working_on)
                     
-                    mm.setItemIsReady = () => setItemIsReady
-                    mm.setItemIsWorkingOn = () => setItemIsWorkingOn
+                    mm.setItemIsReady = setItemIsReady
+                    mm.setItemIsWorkingOn = setItemIsWorkingOn
 
-                    // mm.openModal(openModalProps)
-                    mm.modalMachineDetails = machineDetails
+                    mm.openModal(machineDetails)
                 }} className="bg-transparent hover:bg-default-100" isIconOnly>
                     <FontAwesomeIcon icon={faEllipsis} ></FontAwesomeIcon>
                 </Button>
