@@ -324,7 +324,7 @@ exports.putMachine = function (req, res, next) {
         });
 }
 exports.deleteMachine = function (req, res, next) {
-    const sqlQuery = `DELETE FROM machines WHERE id=${req.body.id}`
+    const sqlQuery = `DELETE FROM machines WHERE id=${req.params.id}`
     pool.query(sqlQuery)
         .then((success) => {
             console.log(success)

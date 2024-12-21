@@ -3,9 +3,6 @@ var router = express.Router();
 const QRCode = require("qrcode");
 const puppeteer = require("puppeteer");
 const pool = require("../util/database");
-const PDFDocument = require('pdfkit');
-
-
 
 router.get("/generate", async (req, res, next) => {
   const sqlQuery = "SELECT * FROM machines WHERE id=?;";
@@ -14,7 +11,7 @@ router.get("/generate", async (req, res, next) => {
 
   console.log("current id ", req.body.id);
 
-  QRCode.toDataURL(String(req.body.id), { width: 400 }).then((data) => {
+  QRCode.toDataURL(String(req.body.id), { width: 400, errorCorrectionLevel: "H",  }).then((data) => {
     res.render("genIdCard", {
       qrSrc: data,
       qrText: req.body.id,
@@ -47,7 +44,7 @@ router.get("/print-cards", async function (req, res, next) {
     await page.setRequestInterception(true);
     await page.setViewport({ width: 1348, height: 458 });
 
-     page.on("request", (interceptedRequest) => {
+    page.on("request", (interceptedRequest) => {
       interceptedRequest.continue({
         headers: { "Content-Type": "application/json" },
         method: "GET",

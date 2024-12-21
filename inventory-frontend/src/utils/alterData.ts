@@ -12,9 +12,9 @@ export function deleteMachine({ id }: { id: string }) {
     formData.append('id', id)
 
     return fetch(
-        mURL, {
+        `${mURL}/${id}`, {
         method: 'DELETE',
-        body: formData
+        body: formData //some kind of auth for later
     }
     )
 }

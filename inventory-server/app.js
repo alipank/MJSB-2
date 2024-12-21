@@ -98,7 +98,7 @@ app.use(cors({origin:['http://192.168.100.112:3000', 'http://localhost:3000', 'h
 app.use('/customers', require("./routes/customers"))
 app.use("/machines", require("./routes/machines"))
 app.use("/brands", require("./routes/brands"))
-app.use("/card", require("./routes/card"));
+app.use("/card", require("./routes/card2"));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

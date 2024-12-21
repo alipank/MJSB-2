@@ -1,6 +1,6 @@
 import { MachineDetails } from "@/models/machines/MachineDetails";
 import { Brand } from "../add/page";
-import Preview from "./preview";
+import Preview from "./Preview";
 import { getBrands, getMachineData } from "@/utils/getData";
 import { GetServerSidePropsContext } from "next";
 
