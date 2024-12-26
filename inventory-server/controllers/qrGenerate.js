@@ -1,24 +1,12 @@
-const express = require('express')
-const { default: jsPDF } = require('jspdf')
+const { default: jsPDF } = require("jspdf");
 const QRcode = require('qrcode')
 
-const router = express.Router()
-
-//Pesan: QR Code ini digunakan untuk inventarisasi oleh MesinJahitSekenBatam
-//id:
-
-router.post('/generate-card', async (req, res, next) => {
-
-  
-
+exports.generateQr = async (req, res, next) => {
     try {
 
         const idArr = req.body.id
 
-        console.log(idArr)
-
-
-        if (!Array.isArray(idArr)) {
+        if (!Array.isArray(idArr) || idArr.length === 0) {
             throw {
                 status: '400',
                 message: 'Wrong data value'
@@ -111,6 +99,4 @@ router.post('/generate-card', async (req, res, next) => {
         console.log(err)
         next(err)
     }
-})
-
-module.exports = router
+}

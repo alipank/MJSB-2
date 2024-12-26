@@ -5,6 +5,7 @@ import { useState } from "react";
 import {  } from "./Form";
 import { Brand } from "@/app/admin/add/page";
 import { useRequired } from "@/utils/validate";
+import { postBrand } from "@/utils/alterData";
 
 
 type NewBrandProps = {
@@ -15,12 +16,10 @@ type NewBrandProps = {
 }
 
 export function NewBrand(props: NewBrandProps) {
-
-    const baseURL = "http://localhost:3002"
     const { isOpen, onOpenChange } = props
 
 
-    const [newBrand, setNewBrand] = useState<string>()
+    const [newBrand, setNewBrand] = useState<string>('')
 
     const [loading, setLoading] = useState<boolean>(false)
     const [disable, setDisable] = useState<boolean>(false)
@@ -40,18 +39,8 @@ export function NewBrand(props: NewBrandProps) {
         }
 
         setLoading(true)
-
-        const formData = {
-            brand_name: newBrand
-        }
-
-        fetch(
-            baseURL + "/brands",
-            {
-                headers: { "Content-Type": "application/json" },
-                method: "POST",
-                body: JSON.stringify(formData),
-            })
+        
+        postBrand(newBrand)
             .then(async (res) => {
                 const json = await (res.json())
                 if(!res.ok || res.status === 400) {

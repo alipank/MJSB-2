@@ -1,11 +1,11 @@
 'use client'
 import { Button, Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/react"
-import { faCircleDollarToSlot, faFileLines, faPenToSquare, faScrewdriverWrench, faTag, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faCircleDollarToSlot, faFileLines, faPenToSquare, faQrcode, faScrewdriverWrench, faTag, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Dispatch, SetStateAction, useContext, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconProp } from "@fortawesome/fontawesome-svg-core"
-import { deleteMachine, putMachineReady, putMachineWorkingOn } from "../../utils/alterData"
+import { deleteMachine, putMachineReady, putMachineWorkingOn, putQrBatch } from "../../utils/alterData"
 import { MachineDetails } from "@/models/machines/MachineDetails"
 import { ModalMachineContext } from "./ModalContext"
 
@@ -86,15 +86,31 @@ export default function ModalMachine() {
 
                 <ModalItemButton
                   icon={faTrash}
-                  onPress={() => { deleteMachine({ id: modalMachineId }) }}
+                  onPress={() => {
+                    deleteMachine({ id: modalMachineId })
+                      .then((res) => {
+                        mm.removeItem(modalMachineId)
+                        onClose()
+                      })
+                  }}
                 >Delete Machine</ModalItemButton>
+
+                <ModalItemButton
+                  icon={faQrcode}
+                  onPress={() => {
+                    putQrBatch({ id: [modalMachineId] })
+                      .then(() => {
+                        mm.setIsInBatch(!modalMachineData?.is_in_qr_batch)
+                        onClose()
+                      })
+                  }}
+                >{!modalMachineData?.is_in_qr_batch ? 'Add to Batch' : 'Remove from Batch'}</ModalItemButton>
 
                 <ModalItemButton
                   icon={faScrewdriverWrench}
                   onPress={() => {
                     putMachineWorkingOn({ id: modalMachineId, value: !modalMachineData?.is_working_on })
                       .then(() => {
-                        // useItemIsWorkingOn(!modalMachineData?.is_working_on)
                         mm.setItemIsWorkingOn(!modalMachineData?.is_working_on)
                         onClose()
                       })
@@ -114,7 +130,7 @@ export default function ModalMachine() {
                       })
                   }}
                 >
-                  {!modalMachineData?.is_ready? 'Mark as Ready' : 'Mark as Not Ready'}
+                  {!modalMachineData?.is_ready ? 'Mark as Ready' : 'Mark as Not Ready'}
                 </ModalItemButton>
 
                 <ModalItemButton

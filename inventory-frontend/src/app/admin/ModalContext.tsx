@@ -6,14 +6,18 @@ import { MachineDetails } from "@/models/machines/MachineDetails"
 interface MMContext {
   openModal: (value: MachineDetails) => void,
   setItemIsWorkingOn: (value: boolean) => void,
-  setItemIsReady: (value: boolean) => void
+  setItemIsReady: (value: boolean) => void,
+  removeItem: (id:string) => void,
+  setIsInBatch: (value: boolean) => void
 }
 
 export const ModalMachineContext = createContext<MMContext>({
-    openModal: () => { },
-    setItemIsWorkingOn: () => { },
-    setItemIsReady: () => { }
-  })
+  openModal: () => { },
+  setItemIsWorkingOn: () => { },
+  setItemIsReady: () => { },
+  setIsInBatch: () => {},
+    removeItem: () => { }
+})
 
 
 export default function ModalMachineProvider({ children }: { children: ReactNode }) {
@@ -23,7 +27,10 @@ export default function ModalMachineProvider({ children }: { children: ReactNode
     <ModalMachineContext.Provider value={{
       openModal: () => { },
       setItemIsWorkingOn: () => { },
-      setItemIsReady: () => { }
+      setItemIsReady: () => { },
+      setIsInBatch: () => {},
+      removeItem: () => { }
+
     }}>
 
       {children}

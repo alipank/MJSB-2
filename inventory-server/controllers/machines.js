@@ -8,7 +8,15 @@ exports.getMachine = async function (req, res, next) {
     // const sqlQuery =
     //     "SELECT m.*, img.id as image_id, img.image_path FROM machines AS m INNER JOIN machine_images as img ON m.id = img.machine_id INNER JOIN customers ON m.id = customers.machine_id WHERE m.id=?;";
 
-    const sqlQuery = "SELECT m.*, img.id as image_id, img.image_path, c.id as customer_id, c.name, c.sold_price, c.phone, c.added_at as customer_added_at FROM machines AS m LEFT JOIN machine_images as img ON m.id = img.machine_id LEFT JOIN customers as c ON m.id = c.machine_id WHERE m.id=?;"
+    const sqlQuery =
+        `SELECT m.*, qr_batch.machine_id AS is_in_qr_batch, img.id as image_id, img.image_path, c.id as customer_id, c.name, c.sold_price, c.phone, c.added_at as customer_added_at 
+        FROM 
+            machines AS m
+        LEFT JOIN
+            qr_batch on m.id = qr_batch.machine_id
+        LEFT JOIN
+            machine_images as img ON m.id = img.machine_id LEFT JOIN customers as c ON m.id = c.machine_id WHERE m.id=?;`
+
 
     const machine = await pool.query(sqlQuery, id)
         .then(json => {
@@ -18,7 +26,7 @@ exports.getMachine = async function (req, res, next) {
                 throw { status: 404 }
             }
 
-            const { image_id, image_path, customer_id, name ,sold_price, phone, customer_added_at , ...rest } = json[0]
+            const { image_id, image_path, customer_id, name, sold_price, phone, customer_added_at, ...rest } = json[0]
 
             let images = json.map((row) => {
                 const { image_id, image_path } = row
@@ -57,27 +65,32 @@ exports.getMachines = async function (req, res, next) {
     const sqlQuery = `
     SELECT 
         m.*, 
+        qr_batch.machine_id AS is_in_qr_batch,
         img.id AS image_id, 
         img.image_path
     FROM 
         machines AS m
     JOIN 
         machine_images AS img ON m.id = img.machine_id
+    LEFT JOIN
+         qr_batch on m.id = qr_batch.machine_id
     WHERE 
         img.id = (
             SELECT MIN(sub_img.id)
             FROM machine_images AS sub_img
             WHERE sub_img.machine_id = m.id
         );
+        
+
   `;
 
     await pool.query(sqlQuery)
         .then(async (json) => {
 
-            // console.log(await json())
+            console.log(await json[0])
 
             const parse = json.map((data) => {
-                const { image_id, image_path, ...rest } = data
+                const { image_id, image_path, is_in_qr_batch, ...rest } = data
 
                 const images = [
                     {
@@ -86,14 +99,22 @@ exports.getMachines = async function (req, res, next) {
                     }
                 ]
 
-                const machineDetails = { ...rest, images }
+                const isInQrBatch = is_in_qr_batch ? true : false
+
+                const machineDetails = { ...rest, images, is_in_qr_batch: isInQrBatch }
 
                 return machineDetails
             })
 
             res.json(parse)
         })
-        .catch(err => { console.log(err) });
+        .catch(err => {
+            console.log(err)
+            next({
+                status: 500,
+                message: err
+            })
+        });
 }
 
 exports.postMachine = async function (req, res, next) {
@@ -106,7 +127,7 @@ exports.postMachine = async function (req, res, next) {
     if (!brand_id || !model || !bought_price || !req.files.length) {
         throw {
             status: 400,
-            message: "Error required data is not sufficed"
+            message: "Error required data is insufficient"
         }
     }
 
@@ -153,7 +174,7 @@ exports.postMachine = async function (req, res, next) {
                 status: 201,
                 message: "berhasil eaks",
                 body: {
-                    id:insertedMachineId
+                    id: insertedMachineId
                 }
             })
         }))

@@ -1,8 +1,8 @@
 import { CustomerDetails } from "../customers/Customer"
 
 export interface MachineDetails {
-    id: number,
-    brand_id: number,
+    id: string,
+    brand_id: string,
     model: string,
     note: string,
     added_at: Date,
@@ -10,9 +10,9 @@ export interface MachineDetails {
     bought_price: number,
     is_ready: boolean,
     is_working_on: boolean,
+    is_in_qr_batch: boolean,
     images: ImageDetails[],
-    customer: CustomerDetails
-
+    customer: CustomerDetails,
 }
 
 export interface ImageDetails {

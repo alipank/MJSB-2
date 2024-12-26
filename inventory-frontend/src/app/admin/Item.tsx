@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Brand } from "./add/page";
 import { Button } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faQrcode, faScrewdriverWrench, faTag } from "@fortawesome/free-solid-svg-icons";
 import { baseURL } from "../../utils/constants";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
@@ -27,7 +27,7 @@ export default function Item(props: ItemProps) {
 
     // modalMachine
 
-    const { id, brand_id, model, images, is_ready, is_working_on } = machineDetails
+    const { id, brand_id, model, images, is_ready, is_working_on, is_in_qr_batch } = machineDetails
 
     const imagePath = `${baseURL}/images/${images[0].image_path}`
     const brand = props.brands.find((val) => {
@@ -46,6 +46,12 @@ export default function Item(props: ItemProps) {
         setMachineDetails({ ...machineDetails })
     }
 
+    const setIsInBatch = (value: boolean) => {
+        console.log('ItemIsReady Func')
+        machineDetails.is_in_qr_batch = value
+        setMachineDetails({ ...machineDetails })
+    }
+
 
     return (
         <div
@@ -61,16 +67,22 @@ export default function Item(props: ItemProps) {
                 <div className="flex flex-row">
                     <div className="text-default-600 text-sm font-medium">
                         {is_working_on ?
-                            <><div className="inline-block w-4 h-4 mr-1 bg-warning-400 rounded-full align-middle"></div><span className="align-middle">On Working</span></>
-                            : ''
-                            // <><div className="inline-block w-4 h-4 mr-1 bg-danger-500 rounded-full align-middle"></div><span className="align-middle ">Not Ready</span></>
+                            <div className="flex justify-center items-center size-6 mr-1 bg-warning-400 rounded-full align-middle">
+                                <FontAwesomeIcon icon={faScrewdriverWrench} color="white" />
+                            </div> : ''
                         }
                     </div>
                     <div className="text-default-600 text-sm font-medium">
-                        {is_ready ?
-                            <><div className={`${is_working_on && "ml-2"} inline-block w-4 h-4 mr-1 bg-success-400 rounded-full align-middle p-0`}></div><span className="align-middle">Ready</span></>
-                            :
-                            <><div className={`${is_working_on && "ml-2"} inline-block w-4 h-4 mr-1  bg-danger-400 rounded-full align-middle p-0`}></div><span className="align-middle ">Not Ready</span></>
+                        <div className={`flex justify-center items-center size-6 mr-1 ${is_ready ? 'bg-success-400' : 'bg-danger-400'}  rounded-full align-middle`}>
+                            <FontAwesomeIcon icon={faTag} color="white" />
+
+                        </div>
+                    </div>
+                    <div className="text-default-600 text-sm font-medium">
+                        {is_in_qr_batch ?
+                            <div className="flex justify-center items-center size-6 mr-1 bg-sky-400 rounded-full align-middle">
+                                <FontAwesomeIcon icon={faQrcode} color="white" />
+                            </div> : ''
                         }
                     </div>
                 </div>
@@ -81,9 +93,10 @@ export default function Item(props: ItemProps) {
                     // setUseItemIsWorkingOn(() => setItemIsWorkingOn)
                     // setUseItemIsReady(() => setItemIsReady)
                     console.log(is_ready, is_working_on)
-                    
+
                     mm.setItemIsReady = setItemIsReady
                     mm.setItemIsWorkingOn = setItemIsWorkingOn
+                    mm.setIsInBatch = setIsInBatch
 
                     mm.openModal(machineDetails)
                 }} className="bg-transparent hover:bg-default-100" isIconOnly>

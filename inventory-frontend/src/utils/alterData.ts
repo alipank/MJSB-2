@@ -3,8 +3,8 @@ import { baseURL } from "./constants"
 import { CustomerData } from "@/models/customers/Customer"
 import { PostBuyerProps } from "@/models/customers/Customer"
 
-const mURL = baseURL+'/machines'
-const cURL = baseURL+'/customers'
+const mURL = baseURL + '/machines'
+const cURL = baseURL + '/customers'
 
 export function deleteMachine({ id }: { id: string }) {
     const formData = new FormData()
@@ -47,13 +47,25 @@ export function putMachineReady(props: { id: string, value: boolean }) {
         })
 }
 
+export function postBrand(value: string) {
+    const formData = new FormData()
+
+    formData.append('brand_name', value)
+    return fetch(
+        baseURL + "/brands",
+        {
+            method: "POST",
+            body: formData,
+        })
+}
+
 export function postCustomer(props: PostBuyerProps) {
 
     // if (Object.values(props).find(e => e == false)) {
     //     console.log('props value(s) are falsy')
     // }
 
-    const {machineId ,name , phone, sold_price} = props
+    const { machineId, name, phone, sold_price } = props
 
     const formData = new FormData()
 
@@ -72,7 +84,7 @@ export function postCustomer(props: PostBuyerProps) {
     )
 }
 
-export function deleteCustomer (props: {id: string}) {
+export function deleteCustomer(props: { id: string }) {
     const formData = new FormData()
     formData.append('id', props.id)
 
@@ -80,7 +92,37 @@ export function deleteCustomer (props: {id: string}) {
         cURL,
         {
             method: "DELETE",
-            body:formData
+            body: formData
+        }
+    )
+}
+
+export function deleteQrBatch(props: { id: string[] }) {
+    const formData = new FormData()
+    for (const id in props.id) {
+        formData.append('id[]', props.id[id])
+    }
+
+    return fetch(
+        `${baseURL}/qr-batch`,
+        {
+            method: 'DELETE',
+            body: formData
+        }
+    )
+}
+
+export function putQrBatch(props: {id: string[]}) {
+    const formData = new FormData()
+    for (const id in props.id) {
+        formData.append('id[]', props.id[id])
+    }
+
+    return fetch(
+        `${baseURL}/qr-batch`,
+        {
+            method: 'PUT',
+            body: formData
         }
     )
 }

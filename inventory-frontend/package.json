@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_EXTRA_CA_CERTS=/home/alipank/Documents/MJSB-2-old/inventory-server/bin/express.pem NODE_OPTIONS=--use-openssl-ca next dev ",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

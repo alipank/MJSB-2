@@ -93,12 +93,12 @@ app.use('/', upload.array('new_images[]', 10), function (req, res, next) {
 //   res.append('Access-Control-Allow-Headers', 'Content-Type');
 //   next();
 // });
-app.use(cors({origin:['http://192.168.100.112:3000', 'http://localhost:3000', 'http://172.20.10.14:3000']}))
+app.use(cors({origin:['https://192.168.100.112', 'https://192.168.100.112:3000', 'https://localhost:3000']}))
 
 app.use('/customers', require("./routes/customers"))
 app.use("/machines", require("./routes/machines"))
 app.use("/brands", require("./routes/brands"))
-app.use("/card", require("./routes/card2"));
+app.use("/qr-batch", require('./routes/qrBatch'))
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -139,7 +139,8 @@ app.use(function (err, req, res, next) {
   res.status(json.status || (err.status || 500));
   // res.render("error", {error : err});
   // console.log(err)
-  res.json(json || err) //returns the err if the error is unhandled
+  
+  res.json(!Object.values(json).length === 0 ? json : err) //returns the err if the error is unhandled
 });
 
 

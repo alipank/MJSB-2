@@ -4,9 +4,14 @@
  * Module dependencies.
  */
 
+const fs = require('fs');
+
 var app = require('../app');
 var debug = require('debug')('server:server');
-var http = require('http');
+var https = require('https');
+
+const key = fs.readFileSync(__dirname + '/../../certs/express-key.pem', {encoding:"utf-8", flag:'r'});
+const cert = fs.readFileSync(__dirname + '/../../certs/express.pem', {encoding: "utf-8", flag:'r'});
 
 /**
  * Get port from environment and store in Express.
@@ -19,7 +24,9 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+console.log(key, cert)
+
+var server = https.createServer({key, cert}, app);
 
 /**
  * Listen on provided port, on all network interfaces.

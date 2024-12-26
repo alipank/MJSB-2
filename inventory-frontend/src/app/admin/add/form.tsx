@@ -49,7 +49,7 @@ export default function Form(props: { brands: Brand[] }) {
     console.log(formData)
 
     fetch(
-      baseURL + "/admin",
+      baseURL + "/machines",
       {
         // headers: { "Content-Type": "multipart/form-data" },  
         method: "POST",
