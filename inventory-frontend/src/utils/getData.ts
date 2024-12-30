@@ -1,6 +1,7 @@
-import { QrBatchMachineDetails } from "@/app/admin/qr-batch/Item"
-import { Brand } from "../app/admin/add/page"
+import { QrBatchMachineDetails } from "@/app/admin/(admin)/qr-batch/Item"
+import { Brand } from "../app/admin/(admin)/add/page"
 import { baseURL } from "./constants"
+import { notFound } from "next/navigation"
 
 const mURL = `${baseURL}/machines`
 
@@ -15,15 +16,21 @@ export async function getBrands(): Promise<Brand[]> {
 
 }
 
-export async function getMachineData(id: number | string) {
-  const res = await fetch(`${mURL}/` + id, { cache: 'no-store' })
+export function getMachineData(id: number | string) {
+  return fetch(`${mURL}/` + id, { cache: 'no-store' })
+    .then(res => {
 
-  if (!res.ok) {
-    console.log(id)
-    throw new Error('Failed to fetch data' + id)
-  }
+      if (!res.ok) {
+        console.log(id)
+        throw new Error('Failed to fetch data' + id)
+      }
 
-  return res.json()
+      return res.json()
+    })
+    .catch(err => {
+      notFound()
+    })
+
 }
 
 export async function getMachinesData(pagination?: number) {

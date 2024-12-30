@@ -93,7 +93,7 @@ app.use('/', upload.array('new_images[]', 10), function (req, res, next) {
 //   res.append('Access-Control-Allow-Headers', 'Content-Type');
 //   next();
 // });
-app.use(cors({origin:['https://192.168.100.112', 'https://192.168.100.112:3000', 'https://localhost:3000']}))
+app.use(cors({origin:['https://192.168.100.112', 'https://192.168.100.112:3000', 'http://localhost:3000']}))
 
 app.use('/customers', require("./routes/customers"))
 app.use("/machines", require("./routes/machines"))

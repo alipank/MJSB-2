@@ -6,7 +6,7 @@ import { Brand } from "./add/page";
 import { Button } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faQrcode, faScrewdriverWrench, faTag } from "@fortawesome/free-solid-svg-icons";
-import { baseURL } from "../../utils/constants";
+import { baseURL } from "../../../utils/constants";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { ModalMachineContext } from "./ModalContext";

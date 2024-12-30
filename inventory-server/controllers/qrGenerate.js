@@ -1,5 +1,35 @@
 const { default: jsPDF } = require("jspdf");
 const QRcode = require('qrcode')
+const { exec } = require('child_process');
+const path = require('path');
+
+// Path to the pipx environment activation script
+const activateScript = process.env.HOME + '/.local/share/pipx/venvs/segno/bin/activate';
+const pythonScriptPath = __dirname + '/../qr-micro.py'
+
+function generateMicroQR(data, callback) {
+    const command = `source ${activateScript} && python ${pythonScriptPath} "${data}"`;
+
+    return new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error: ${error.message}`);
+                reject(error)
+            }
+
+            if (stderr) {
+                console.error(`stderr: ${stderr}`);
+                // return callback(new Error(stderr));
+                reject(new Error(error))
+            }
+
+            const base64Image = stdout.trim();
+            const dataUrl = `data:image/png;base64,${base64Image}`;
+            resolve(dataUrl)
+        })
+    })
+}
+
 
 exports.generateQr = async (req, res, next) => {
     try {
@@ -12,21 +42,23 @@ exports.generateQr = async (req, res, next) => {
                 message: 'Wrong data value'
             }
         }
-    
+
 
         const doc = new jsPDF()
 
-        const qrSize = 20;
-
-        doc.setFontSize = 12
+        const qrSize = 14;
 
         const margin = 5
-        const gap = 1
+        const gap = 0.7
+
+        const fontSize = 12
 
         let x = margin, y = margin
 
-
-        const textH = doc.getTextDimensions('Measure').h
+        doc.setFontSize(fontSize)
+        const textH = doc.getTextDimensions('Measure', {
+            fontSize: fontSize
+        }).h
 
 
         const paperWidth = doc.internal.pageSize.getWidth()
@@ -35,36 +67,42 @@ exports.generateQr = async (req, res, next) => {
         for (id in idArr) {
 
             const box = {
-                y: y + textH / 2 + gap + gap / 2,
-                width: qrSize + gap * 2 * 2, //biar agak lebah * 2 lagi karena kanan kiri
-                height: qrSize + textH + gap + gap / 2,
+                y: y + textH / 2 + gap * 2,
+                width: qrSize + gap, //biar agak lebah * 2 lagi karena kanan kiri
+                height: qrSize + textH / 2 + gap,
                 gap: 4
             }
 
+            const QRContent = `MJSB-${idArr[id]}`
+
             const currentCenter = x + box.width / 2
             const qrX = currentCenter - qrSize / 2
-            const qrY = y + textH + gap * 2
+            const qrY = y + textH + gap 
 
-            const titleY = qrY - gap
-            const titleD = doc.getTextDimensions('MJSB')
+            const titleY = qrY + textH / 2 - gap * 2
+            const titleD = doc.getTextDimensions('MJSB', { fontSize: fontSize })
 
-            const rectTitleX = currentCenter - titleD.w / 2 - gap
+            const rectTitleX = currentCenter - titleD.w / 2 - 1
             const rectTitleY = titleY - titleD.h
-            const rectTitleW = titleD.w + gap * 2
+            const rectTitleW = titleD.w + 2
 
-            let idY = qrY + qrSize + textH
-            const idD = doc.getTextDimensions(idArr[id])
+            let idY = qrY + qrSize + textH / 2 + gap
+            const idD = doc.getTextDimensions(idArr[id], { fontSize: fontSize })
 
-            let rectIdX = currentCenter - idD.w / 2 - gap
-            let rectIdY = idY - idD.h
-            let rectIdW = idD.w + gap * 2
+            let rectIdX = currentCenter - idD.w / 2 - 1
+            let rectIdY = idY - idD.h + textH / 2
+            let rectIdW = idD.w + 2 
 
-            const qrCodeDataUrl = await QRcode.toDataURL(
-                idArr[id], {
-                margin: 0,
-                version: 1,
-                errorCorrectionLevel: 'H',
-            })
+            // const qrCodeDataUrl = await QRcode.toDataURL(
+            //     idArr[id], {
+            //     margin: 0,
+            //     version: 1,
+            //     errorCorrectionLevel: 'H',
+            // })
+
+            const qrCodeDataUrl = await generateMicroQR(QRContent)
+            doc.addImage(qrCodeDataUrl, qrX, qrY, qrSize, qrSize)
+
 
             doc.rect(x, box.y, box.width, box.height)
 
@@ -74,17 +112,19 @@ exports.generateQr = async (req, res, next) => {
             doc.setFont('helvetica', 'bold')
             doc.text('MJSB', currentCenter, titleY, { align: 'center' })
 
-            doc.addImage(qrCodeDataUrl, qrX, qrY, qrSize, qrSize)
-
             doc.setFillColor(255, 255, 255); //whiteeeee
             doc.rect(rectIdX, rectIdY, rectIdW, idD.h, 'F')
             doc.text(idArr[id], currentCenter, idY, { align: 'center' })
 
-            if (x + box.width < paperWidth) {
+
+
+            if (x + (box.width + box.gap) * 2 < paperWidth) {
                 x += box.width + box.gap
                 console.log('true')
 
             } else {
+                x = margin
+                y += box.height + box.gap * 1.5
                 console.log('false')
             }
         }

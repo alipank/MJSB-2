@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Dispatch, SetStateAction, useContext, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconProp } from "@fortawesome/fontawesome-svg-core"
-import { deleteMachine, putMachineReady, putMachineWorkingOn, putQrBatch } from "../../utils/alterData"
+import { deleteMachine, putMachineReady, putMachineWorkingOn, putQrBatch } from "../../../utils/alterData"
 import { MachineDetails } from "@/models/machines/MachineDetails"
 import { ModalMachineContext } from "./ModalContext"
 

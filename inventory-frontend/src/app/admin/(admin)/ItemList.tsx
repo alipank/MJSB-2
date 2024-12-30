@@ -1,7 +1,7 @@
 'use client'
 
 import { MachineDetails } from "@/models/machines/MachineDetails"
-import { getMachinesData } from "../../utils/getData"
+import { getMachinesData } from "../../../utils/getData"
 import { Brand } from "./add/page"
 import { Button, Input } from "@nextui-org/react"
 import Link from "next/link"

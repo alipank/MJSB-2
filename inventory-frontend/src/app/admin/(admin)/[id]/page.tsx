@@ -3,6 +3,7 @@ import { Brand } from "../add/page";
 import Preview from "./Preview";
 import { getBrands, getMachineData } from "@/utils/getData";
 import { GetServerSidePropsContext } from "next";
+import { notFound } from "next/navigation";
 
 // export const getServerSideProps = (async (context: GetServerSidePropsContext) => {
 //   const { id } = context.params ? context.params : { id: 0 }
@@ -31,7 +32,7 @@ export default async function Page({params}: {params:{id:string}}) {
   // console.log('fetched data: ',params)
   try {
     const machineDetails: MachineDetails = await getMachineData(params.id)
-    console.log(machineDetails)
+
     const brands: Brand[] = await getBrands() 
 
     if (machineDetails.images[0].image_id === null) {
@@ -43,9 +44,9 @@ export default async function Page({params}: {params:{id:string}}) {
     )
   } catch (error: any) {
 
-    // console.log(error)
-
+    console.log(error)
     return <p>{error.message}</p>
+    // notFound()
   }
 
 }

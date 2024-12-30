@@ -12,7 +12,7 @@ export default function AdminLayout({
     <div id="MadeByAlipaaankkk">
 
         <div className=" min-h-dvh flex justify-center items-start">
-          <div className="max-w-md w-full p-4 border-2 border-gray-200 rounded-3xl">
+          <div className="max-w-md w-full p-4 border-2 border-gray-200 rounded-3xl relative">
             
             {children}
             <div className="h-[2px] w-full bg-default-200 my-6"></div>

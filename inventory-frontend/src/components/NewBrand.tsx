@@ -3,7 +3,7 @@
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
 import { useState } from "react";
 import {  } from "./Form";
-import { Brand } from "@/app/admin/add/page";
+import { Brand } from "@/app/admin/(admin)/add/page";
 import { useRequired } from "@/utils/validate";
 import { postBrand } from "@/utils/alterData";
 

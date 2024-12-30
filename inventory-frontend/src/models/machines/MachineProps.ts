@@ -1,6 +1,6 @@
 import { Dispatch, Key, ReactElement, SetStateAction } from "react";
 import { FormImageDataFile, ImageType, FormImageDataURL as IFormImageDataURL } from "./FormImageData";
-import { Brand } from "@/app/admin/add/page";
+import { Brand } from "@/app/admin/(admin)/add/page";
 
 
 export class FormImageDataURL implements IFormImageDataURL {

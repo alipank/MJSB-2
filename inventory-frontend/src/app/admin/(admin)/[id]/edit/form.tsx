@@ -1,7 +1,7 @@
 'use client'
 
 import { MachineDetails } from "@/models/machines/MachineDetails"
-import { FormMachine, useFormControl } from "../../../../components/Form"
+import { FormMachine, useFormControl } from "../../../../../components/Form"
 import { Brand } from "./page"
 import { useEffect } from "react"
 import { ImageType } from "@/models/machines/FormImageData"
