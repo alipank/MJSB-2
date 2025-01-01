@@ -15,7 +15,7 @@ router.delete("/:id", deleteMachine);
 
 router.post("/", getMachines);
 
-router.post("/", postMachine);
+router.post("/add", postMachine);
 
 
 module.exports = router;

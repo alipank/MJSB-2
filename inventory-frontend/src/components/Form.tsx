@@ -24,7 +24,7 @@ export const useFormControl = (onSubmit: (formInput: FormInputProps) => void): f
 	// const [previews, addPreviews, subPreviews] = useStateMax(10, () => {})
 	const [brandId, setBrandId] = useState<Key>('')
 	const [model, setModel] = useState<string>('')
-	const [boughtPrice, setBoughtPrice] = useState<string>('')
+	const [boughtPrice, setBoughtPrice] = useState<string>('500000')
 	const [note, setNote] = useState<string>('')
 	const [ready, setReady] = useState<boolean>(false)
 

@@ -14,14 +14,14 @@ export default function Layout({ children }: { children: ReactNode }) {
     return (
         <div>
             {children}
-            <nav className="fixed bottom-2 left-0 w-full">
+            <nav className="fixed bottom-2 left-0 w-full z-50">
                 <ButtonGroup className="flex justify-center">
                     <Button onPress={() => router.push('/admin')}>
                         <FontAwesomeIcon size="lg" icon={faVault} />
                     </Button>
                     <Button
                         onPress={() => router.push('/admin/qr-scan')}
-                        className="h-12 !rounded-lg -mx-2 z-50">
+                        className="h-12 !rounded-lg -mx-2 ">
                         <FontAwesomeIcon size="lg" icon={faCamera} />
                     </Button>
                     <Button

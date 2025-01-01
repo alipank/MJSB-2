@@ -57,7 +57,9 @@ export default function Item(props: ItemProps) {
         <div
             onClick={() => { router.push('/admin/' + id) }}
             // href={'/admin/' + id}
-            className="flex flex-row justify-start gap-3 hover:opacity-90 hover:bg-default-200 py-2 px-4 transition-all duration-200 ease-in"
+            className={`flex flex-row justify-start gap-3 
+                hover:opacity-90 hover:bg-default-200
+                py-2 px-4 transition-all duration-200 ease-in`}
         >
             <Image src={imagePath} alt="" width={0} height={0} className="w-1/6 aspect-square rounded-lg"></Image>
             <div>

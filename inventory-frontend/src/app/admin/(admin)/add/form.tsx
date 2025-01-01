@@ -1,7 +1,7 @@
 'use client'
 
 import { FormInputProps } from "@/models/machines/MachineProps"
-import { FormMachine,  useFormControl } from "../../../../components/Form"
+import { FormMachine, useFormControl } from "../../../../components/Form"
 import { Brand } from "./page"
 import { useRouter } from "next/navigation"
 import { baseURL } from "@/utils/constants"
@@ -50,7 +50,7 @@ export default function Form(props: { brands: Brand[] }) {
     console.log(formData)
 
     fetch(
-      baseURL + "/machines",
+      baseURL + "/machines/add",
       {
         // headers: { "Content-Type": "multipart/form-data" },  
         method: "POST",
@@ -58,6 +58,9 @@ export default function Form(props: { brands: Brand[] }) {
       })
       .then(async (res) => {
         // console.log(await res.json())
+        if (!res.ok) {
+          throw new Error("Failed to post")
+        }
         const json = await res.json()
         console.log(json)
         toast.success('Created successfully')
@@ -65,7 +68,8 @@ export default function Form(props: { brands: Brand[] }) {
       })
       .catch((err) => {
         toast.error('Failed to create the item')
-        console.log(err)}
+        console.log(err)
+      }
       );
   }
 

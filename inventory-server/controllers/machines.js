@@ -62,7 +62,7 @@ exports.getMachine = async function (req, res, next) {
 
 exports.getMachines = async function (req, res, next) {
     // const sqlQuery = "SELECT * FROM machines;";
-
+    console.log(req.body.pagination)
 
     const pagination = req.body.pagination && !req.body.pagination.match(/\D+/) ? req.body.pagination : '0'
     const offset = pagination * 20
@@ -126,7 +126,7 @@ exports.postMachine = async function (req, res, next) {
 
 
 
-    console.log(req.body)
+    console.log("body:", req.body)
 
     if (!brand_id || !model || !bought_price || !req.files.length) {
         throw {

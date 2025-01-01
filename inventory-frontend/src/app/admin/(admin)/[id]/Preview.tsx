@@ -77,7 +77,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
         }
 
         setIsLoaded(true)
-    }, [props.machineDetails, formControl])
+    }, [props.machineDetails])
 
     //why put it in a useState ? not just destructuring it directly ? if i destructure it directly it will be rerendered every changes, even if the formControl didnt changed
 
