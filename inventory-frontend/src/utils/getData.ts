@@ -6,7 +6,7 @@ import { notFound } from "next/navigation"
 const mURL = `${baseURL}/machines`
 
 export async function getBrands(): Promise<Brand[]> {
-  const res = await fetch(`${baseURL}/brands`, {cache:"no-cache"})
+  const res = await fetch(`${baseURL}/brands`, {cache:"no-store"})
   .catch((err) => console.log(err))
 
   if (!res?.ok) {

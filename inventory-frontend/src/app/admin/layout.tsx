@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, ButtonGroup } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
-import { toast, ToastContainer } from "react-toastify";
 
 export default function Layout({ children }: { children: ReactNode }) {
 

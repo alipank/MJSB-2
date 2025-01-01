@@ -4,11 +4,11 @@ import { MachineDetails } from "@/models/machines/MachineDetails"
 import { getMachinesData } from "../../../utils/getData"
 import { Brand } from "./add/page"
 import { Button, Input, Listbox, ListboxItem } from "@nextui-org/react"
-import Link from "next/link"
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
 import Item from "./Item"
 import { ModalMachineContext } from "./ModalContext"
 import { toast } from "react-toastify"
+import { useRouter } from "next/navigation"
 
 interface ItemListProps {
   brands: Brand[]
@@ -22,6 +22,8 @@ export default function ItemList(props: ItemListProps) {
   const [pages, setPages] = useState(0)
   const [items, setItems] = useState<MachineDetails[]>([])
   const [hasMore, setHasMore] = useState(true)
+
+  const router = useRouter()
 
   const removeItem = (id: string) => {
     const newItems = items.filter(item => item.id !== id)
@@ -98,10 +100,11 @@ export default function ItemList(props: ItemListProps) {
 
   return (
     <div>
-      <Link href={'/admin/add'}>
-        <Button color="primary" size="lg" className="w-full mb-2 font-bold">
+      {/* <Link href={'/admin/add'}> */}
+        <Button onPress={() => {router.push('/admin/add')}} color="primary" size="lg" className="w-full mb-2 font-bold">
           Create New Machine
-        </Button></Link>
+        </Button>
+        {/* </Link> */}
       <Input className="w-full mb-3" placeholder="Search">
       </Input>
       <Listbox className="-mx-4 p-0 gap-0 w-screen md:max-w-md" >
