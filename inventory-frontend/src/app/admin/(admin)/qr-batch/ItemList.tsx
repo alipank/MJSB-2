@@ -61,7 +61,7 @@ export default function ItemList({ brands }: { brands: Brand[] }) {
     }
 
     const handlePrintButton = (idBatch: Set<string>) => {
-        printQrBatch({id: Array.from(idBatch)})
+        printQrBatch({ id: Array.from(idBatch) })
     }
     // const setMachineState = (id: string, state: boolean) => {
     //     // let item = qrCodeBatch.find((val) => val.id === id)

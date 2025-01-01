@@ -5,6 +5,7 @@ import { FormMachine,  useFormControl } from "../../../../components/Form"
 import { Brand } from "./page"
 import { useRouter } from "next/navigation"
 import { baseURL } from "@/utils/constants"
+import { toast } from "react-toastify"
 
 
 
@@ -59,9 +60,13 @@ export default function Form(props: { brands: Brand[] }) {
         // console.log(await res.json())
         const json = await res.json()
         console.log(json)
+        toast.success('Created successfully')
         router.push(`/admin/${json.body.id}`)
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        toast.error('Failed to create the item')
+        console.log(err)}
+      );
   }
 
   const formControl = useFormControl((formInput) => { onSubmit(formInput) })

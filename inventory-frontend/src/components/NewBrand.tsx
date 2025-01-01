@@ -6,6 +6,7 @@ import {  } from "./Form";
 import { Brand } from "@/app/admin/(admin)/add/page";
 import { useRequired } from "@/utils/validate";
 import { postBrand } from "@/utils/alterData";
+import { toast } from "react-toastify";
 
 
 type NewBrandProps = {
@@ -52,6 +53,7 @@ export function NewBrand(props: NewBrandProps) {
                 console.log(json)
                 setLoading(false)
                 props.addNewBrandFunc(json)
+                toast.success("Added New Brand " + newBrand.toUpperCase())
                 onClose()
             })
             .catch((err) => {

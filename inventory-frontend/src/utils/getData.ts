@@ -6,13 +6,14 @@ import { notFound } from "next/navigation"
 const mURL = `${baseURL}/machines`
 
 export async function getBrands(): Promise<Brand[]> {
-  const res = await fetch(`${baseURL}/brands`)
+  const res = await fetch(`${baseURL}/brands`).catch((err) => console.log(err))
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch data (brands)')
+  if (!res?.ok) {
+    // throw new Error('Failed to fetch data (brands)')
+    console.log(new Error('Failed to fetch data (brands)'))
   }
 
-  return res.json()
+  return res?.json()
 
 }
 
@@ -28,13 +29,21 @@ export function getMachineData(id: number | string) {
       return res.json()
     })
     .catch(err => {
+      console.log(err)
       notFound()
     })
 
 }
 
 export async function getMachinesData(pagination?: number) {
-  const res = await fetch(mURL)
+  
+  const formData = new FormData()
+  formData.append("pagination", pagination?.toString() || '0')
+
+  const res = await fetch(mURL, {
+    method: 'POST',
+    body: formData
+  })
 
   if (!res.ok) {
     // console.log(await res.json())

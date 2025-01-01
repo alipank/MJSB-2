@@ -30,9 +30,15 @@ export default function Page() {
 
   const [scannerView, setScannerView] = useState<string>('')
 
-  const startScanning = (video: HTMLVideoElement) => {
+  const startScanning = useCallback((video: HTMLVideoElement) => {
 
-    const scannerArea = 2/3//relative to the shortest width ot height 
+    const readerOptions: ReaderOptions = {
+      tryHarder: false,
+      formats: ["MicroQRCode"],
+  };
+
+
+    const scannerArea = 2 / 3//relative to the shortest width ot height 
 
     const cWidth = video.clientWidth
     const cHeight = video.clientHeight
@@ -40,14 +46,14 @@ export default function Page() {
 
     const width = video.videoWidth
     const height = video.videoHeight
-    const cropDimension = height >= width ? width * scannerArea : height *scannerArea
+    const cropDimension = height >= width ? width * scannerArea : height * scannerArea
 
 
     setVideoDimension({
-        cWidth: cWidth,
-        cHeight: cHeight,
-        videoToClientBoxDimensionScale : boxDimension / cropDimension,
-        boxDimension
+      cWidth: cWidth,
+      cHeight: cHeight,
+      videoToClientBoxDimensionScale: boxDimension / cropDimension,
+      boxDimension
     })
 
     const cropX = width / 2 - cropDimension / 2
@@ -60,34 +66,66 @@ export default function Page() {
     const ctx = new OffscreenCanvas(cropDimension, cropDimension).getContext('2d') as OffscreenCanvasRenderingContext2D
 
     setInterval(() => {
-        ctx.drawImage(video,
-            cropX, cropY, cropDimension, cropDimension,
-            0, 0, cropDimension, cropDimension
-        )
+      ctx.drawImage(video,
+        cropX, cropY, cropDimension, cropDimension,
+        0, 0, cropDimension, cropDimension
+      )
 
-        const imageData = ctx.getImageData(
-            0, 0, cropDimension, cropDimension
-        )
+      const imageData = ctx.getImageData(
+        0, 0, cropDimension, cropDimension
+      )
 
-        ctx.canvas.convertToBlob()
-            .then((blob) => {
-                const url = URL.createObjectURL(blob)
-                setScannerView(url)
-            })
+      ctx.canvas.convertToBlob()
+        .then((blob) => {
+          const url = URL.createObjectURL(blob)
+          setScannerView(url)
+        })
 
-        readBarcodesFromImageData(imageData, readerOptions)
-            .then((results) => {
-                setResult(results)
-                console.log('interval', results)
-            })
-            .catch(err => {
-                console.log(err)
-            })
+      readBarcodesFromImageData(imageData, readerOptions)
+        .then((results) => {
+          setResult(results)
+          console.log('interval', results)
+        })
+        .catch(err => {
+          console.log(err)
+        })
 
     }, 200)
-}
-  const buttonHandler = () => {
+  }, [])
+  // const buttonHandler = () => {
 
+  //   navigator.mediaDevices.getUserMedia({
+  //     audio: false,
+  //     video: {
+  //       facingMode: 'environment',
+  //     }
+  //   })
+  //     .then((stream) => {
+  //       const video = videoRef.current
+  //       if (!video) return
+
+  //       video.srcObject = stream
+
+  //       video.onloadedmetadata = () => {
+  //         if (!video) return
+  //         video.play()
+  //           .then(() => {
+  //             startScanning(video)
+
+
+  //           })
+  //           .catch(err => console.log(err))
+  //       }
+
+  //     })
+  //     .catch(err => {
+  //       console.log(err)
+  //       // setPageError(new Error(err))
+  //     })
+  // }
+
+  useEffect(() => {
+    
     navigator.mediaDevices.getUserMedia({
       audio: false,
       video: {
@@ -105,8 +143,6 @@ export default function Page() {
           video.play()
             .then(() => {
               startScanning(video)
-
-
             })
             .catch(err => console.log(err))
         }
@@ -116,11 +152,7 @@ export default function Page() {
         console.log(err)
         // setPageError(new Error(err))
       })
-  }
-
-  useEffect(() => {
-    buttonHandler()
-  }, [])
+  }, [startScanning])
 
   // console.log(videoRef.current?.videoWidth)
   // console.log(Math.round((videoRef.current?.videoWidth || 0) / 3))

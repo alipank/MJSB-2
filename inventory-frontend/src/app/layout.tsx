@@ -4,11 +4,11 @@ import "./globals.css";
 import { NextUIProvider } from "@nextui-org/react";
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
-// Prevent fontawesome from adding its CSS since we did it manually above:
-import { config } from '@fortawesome/fontawesome-svg-core';
+import { ToastContainer } from "react-toastify";
+// Prevent fontawesome from adding its CSS since we did it manually above:;
 
 
-const inter = Inter({ subsets: ["latin"], display:"swap",weight:["100","200","300","400","500","600","700","800","900"] });
+const inter = Inter({ subsets: ["latin"], display: "swap", weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"] });
 
 export const metadata: Metadata = {
   title: "MJSB",
@@ -24,9 +24,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextUIProvider>
+          <ToastContainer position="top-center" toastClassName={'max-w-md w-dvw'} />
           {children}
         </NextUIProvider>
-        
       </body>
     </html>
   );

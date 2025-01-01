@@ -1,11 +1,8 @@
 import Form from "./form"
 import { MachineDetails } from "@/models/machines/MachineDetails"
 import { getBrands, getMachineData } from "@/utils/getData"
+import { Brand } from "../../add/page"
 
-export type Brand = {
-  id: number
-  brand_name: string
-}
 
 
 //why it takes me weeks just to finish this section, huft

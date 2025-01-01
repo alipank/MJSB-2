@@ -10,8 +10,7 @@ export default function AdminLayout({
   return (
 
     <div id="MadeByAlipaaankkk">
-
-        <div className=" min-h-dvh flex justify-center items-start">
+        <div className=" min-h-dvh flex justify-center items-start overflow-x-hidden">
           <div className="max-w-md w-full p-4 border-2 border-gray-200 rounded-3xl relative">
             
             {children}
@@ -19,7 +18,7 @@ export default function AdminLayout({
             <p className="text-sm">@2024 | Made by <span className="font-bold">Alipank</span> with &lt;3</p>
           </div>
         </div>
-      <ArrowBack />
+      {/* <ArrowBack /> */}
     </div>
   );
 }

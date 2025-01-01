@@ -2,7 +2,6 @@
 
 import { MachineDetails } from "@/models/machines/MachineDetails"
 import { FormMachine, useFormControl } from "../../../../../components/Form"
-import { Brand } from "./page"
 import { useEffect } from "react"
 import { ImageType } from "@/models/machines/FormImageData"
 import { usePathname, useRouter } from "next/navigation"
@@ -11,6 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FormImageDataURL, FormInputProps } from "@/models/machines/MachineProps"
 import { baseURL } from "@/utils/constants"
+import { toast } from "react-toastify"
+import { Brand } from "../../add/page"
 
 
 
@@ -52,10 +53,15 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
       })
       .then(async (res) => {
         console.log(await res.json())
+        toast.success("Edited Successfully")
         router.push(`/admin/${machineId}`)
 
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        toast.error("Failed to edit the item")
+
+        console.log(err)
+      });
   }
   const formControl = useFormControl((formInput) => { onSubmit(formInput) })
 
@@ -76,27 +82,10 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
     formControl.setBoughtPrice(details.bought_price.toString())
     formControl.setNote(details.note)
     formControl.setReady(details.is_ready)
-  }, [props.machineDetails])
+  }, [props.machineDetails, formControl])
 
-  // const deleteButton = <Button size="lg" color="danger" variant="flat" className="min-w-12 w-14 h-12 p-0" onPress={() => {
-  //   console.log(pathname.split('/'))
-  //   fetch(
-  //     baseURL + '/admin/' + pathname.split('/').at(-1),
-  //     {
-  //       method: 'DELETE'
-  //     }
-  //   ).then(
-  //     () => { console.log("DELETEEED") }
-  //   ).catch(
-  //     (err) => { console.log(err) }
-  //   )
-  // }}>
-  //   <FontAwesomeIcon icon={faTrash} />
-  // </Button >
 
   return (
-    // <div className="flex flex-col items-center">
-      <FormMachine brands={props.brands} formControl={formControl} submitText="Save Changes" hideReadyField/>
-    // </div>
+    <FormMachine brands={props.brands} formControl={formControl} submitText="Save Changes" hideReadyField />
   )
 }

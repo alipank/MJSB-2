@@ -18,7 +18,7 @@ export default function NotFound() {
                     </div>
                     <Divider orientation="vertical" className="mx-4" ></Divider>
                     <div >
-                        Couldn't find the requested resource
+                        Couldn&apos;t find the requested resource
                         <br />
                         <span className="font-bold">{pathname}</span>
                     </div>

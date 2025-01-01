@@ -3,6 +3,7 @@ import { putMachineReady } from "@/utils/alterData"
 import { baseURL } from "@/utils/constants"
 import { cn, Switch } from "@nextui-org/react"
 import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 
 export default function ReadySwitch(props: { id: string, is_ready: boolean }) {
 
@@ -32,10 +33,10 @@ export default function ReadySwitch(props: { id: string, is_ready: boolean }) {
                 console.log(json)
             })
             .catch((err) => {
+                toast.error('Failed to change the ready state')
                 console.log(err)
                 setTimeout(() => {
                     setReady(!state)
-
                 }, 200)
 
             });

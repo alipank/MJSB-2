@@ -9,12 +9,6 @@ import { readBarcodesFromImageData, readBarcodesFromImageFile, ReadResult, type 
 
 export default function Page() {
 
-    const readerOptions: ReaderOptions = {
-        tryHarder: false,
-        formats: ["MicroQRCode"],
-
-        // maxNumberOfSymbols: 1,
-    };
 
     const router = useRouter()
 
@@ -27,19 +21,50 @@ export default function Page() {
         cWidth: number,
         cHeight: number,
         videoToClientBoxDimensionScale: number,
-        boxDimension:number
+        boxDimension: number
     }>({
         cWidth: 0,
         cHeight: 0,
         videoToClientBoxDimensionScale: 0,
-        boxDimension:0
+        boxDimension: 0
     })
 
     // const [scannerView, setScannerView] = useState<string>('')
+    const onScan = useCallback((results:ReadResult[]) => {
+        if (results.length === 0) {
+            setResultErr(false)
+            return
+        }
 
-    const startScanning = (video: HTMLVideoElement) => {
+        if (results.length > 1) {
+            setResultErr(true)
+            return
+        }
 
-        const scannerArea = 2/3//relative to the shortest width ot height 
+        // setResultErr(false)
+        const split = results[0].text.split('-')
+
+        console.log(split[0])
+
+        if (split[0] !== 'MJSB' || (split[1] !== undefined ? split[1].match(/\D+/) : true)) {
+            // console.log(split[0] !== 'MJSB' , split[1].match(/\D+/))
+            setResultErr(true)
+            return
+        }
+
+        router.push(`/admin/${split[1]}`)
+
+    }, [router])
+
+    const startScanning = useCallback((video: HTMLVideoElement) => {
+
+        const readerOptions: ReaderOptions = {
+            tryHarder: false,
+            formats: ["MicroQRCode"],
+        };
+
+
+        const scannerArea = 2 / 3//relative to the shortest width ot height 
 
         const cWidth = video.clientWidth
         const cHeight = video.clientHeight
@@ -47,13 +72,13 @@ export default function Page() {
 
         const width = video.videoWidth
         const height = video.videoHeight
-        const cropDimension = height >= width ? width * scannerArea : height *scannerArea
+        const cropDimension = height >= width ? width * scannerArea : height * scannerArea
 
 
         setVideoDimension({
             cWidth: cWidth,
             cHeight: cHeight,
-            videoToClientBoxDimensionScale : boxDimension / cropDimension,
+            videoToClientBoxDimensionScale: boxDimension / cropDimension,
             boxDimension
         })
 
@@ -77,7 +102,7 @@ export default function Page() {
 
             readBarcodesFromImageData(imageData, readerOptions)
                 .then((results) => {
-                    setResult(results)
+                    onScan(results)
                     console.log('interval', results)
                 })
                 .catch(err => {
@@ -85,9 +110,41 @@ export default function Page() {
                 })
 
         }, 200)
-    }
-// awlanya akan memakai button untuk memulai scannya, namun saya mencoba menaidakan tombol agar mempermudah proses scan
-    const buttonHandler = () => { 
+    }, [onScan])
+    // awlanya akan memakai button untuk memulai scannya, namun saya mencoba menaidakan tombol agar mempermudah proses scan
+    // const buttonHandler = () => { 
+
+    //     navigator.mediaDevices.getUserMedia({
+    //         audio: false,
+    //         video: {
+    //             facingMode: 'environment',
+    //         }
+    //     })
+    //         .then((stream) => {
+    //             const video = videoRef.current
+    //             if (!video) return
+
+    //             video.srcObject = stream
+
+    //             video.onloadedmetadata = () => {
+    //                 if (!video) return
+    //                 video.play()
+    //                     .then(() => {
+    //                         startScanning(video)
+
+
+    //                     })
+    //                     .catch(err => console.log(err))
+    //             }
+
+    //         })
+    //         .catch(err => {
+    //             console.log(err)
+    //             // setPageError(new Error(err))
+    //         })
+    // }
+
+    useEffect(() => {
 
         navigator.mediaDevices.getUserMedia({
             audio: false,
@@ -117,38 +174,33 @@ export default function Page() {
                 console.log(err)
                 // setPageError(new Error(err))
             })
-    }
+    }, [startScanning])
 
-    useEffect(() => {
-        buttonHandler()
-    }, [])
+    // useEffect(() => {
+    //     if (result.length === 0) {
+    //         setResultErr(false)
+    //         return
+    //     }
 
-    useEffect(() => {
-        if (result.length === 0) {
-            setResultErr(false)
-            return
-        }
+    //     if (result.length > 1) {
+    //         setResultErr(true)
+    //         return
+    //     }
 
-        if (result.length > 1) {
-            setResultErr(true)
-            return
-        }
+    //     // setResultErr(false)
+    //     const split = result[0].text.split('-')
 
-        // setResultErr(false)
-        const split = result[0].text.split('-')
+    //     console.log(split[0])
 
-        console.log(split[0])
+    //     if (split[0] !== 'MJSB' || (split[1] !== undefined ? split[1].match(/\D+/) : true)) {
+    //         // console.log(split[0] !== 'MJSB' , split[1].match(/\D+/))
+    //         setResultErr(true)
+    //         return
+    //     }
 
-        if (split[0] !== 'MJSB' || (split[1] !== undefined ? split[1].match(/\D+/) : true)) {
-            // console.log(split[0] !== 'MJSB' , split[1].match(/\D+/))
-            setResultErr(true)
-            return
-        }
-        
-        router.push(`/admin/${split[1]}`)
-        
+    //     router.push(`/admin/${split[1]}`)
 
-    }, [result])
+    // }, [result])
 
     // console.log(videoRef.current?.videoWidth)
     // console.log(Math.round((videoRef.current?.videoWidth || 0) / 3))
@@ -180,23 +232,23 @@ export default function Page() {
                                     const rot = i.orientation
                                     const scale = videoDimension.videoToClientBoxDimensionScale
 
-                                    const checkRot = rot <= 90 && rot >= -90 
+                                    const checkRot = rot <= 90 && rot >= -90
 
                                     console.log(checkRot)
 
                                     const mostL = checkRot ? Math.min(pos.topLeft.x, pos.bottomLeft.x) * scale : Math.max(pos.topLeft.x, pos.bottomLeft.x) * scale
                                     const mostR = checkRot ? Math.max(pos.topRight.x, pos.bottomRight.x) * scale : Math.min(pos.topRight.x, pos.bottomRight.x) * scale
                                     const mostT = checkRot ? Math.min(pos.topLeft.y, pos.topRight.y) * scale : Math.max(pos.topLeft.y, pos.topRight.y) * scale
-                                    const mostB = checkRot ? Math.max(pos.bottomLeft.y, pos.bottomRight.y) * scale : Math.min(pos.bottomLeft.y, pos.bottomRight.y) * scale 
+                                    const mostB = checkRot ? Math.max(pos.bottomLeft.y, pos.bottomRight.y) * scale : Math.min(pos.bottomLeft.y, pos.bottomRight.y) * scale
 
                                     // const qrBoxWidth = mostR - mostL 
                                     // const qrBoxHeight = mostB - mostT 
 
                                     const qrBoxWidth = checkRot ? mostR - mostL : mostL - mostR
-                                    const qrBoxHeight = checkRot ? mostB - mostT : mostT - mostB 
+                                    const qrBoxHeight = checkRot ? mostB - mostT : mostT - mostB
 
                                     const qrCenterX = (checkRot ? mostR : mostL) - qrBoxWidth / 2
-                                    const qrCenterY = (checkRot? mostB : mostT) - qrBoxHeight / 2
+                                    const qrCenterY = (checkRot ? mostB : mostT) - qrBoxHeight / 2
 
                                     console.log(mostL, mostT, mostR, mostB)
 
@@ -228,7 +280,7 @@ export default function Page() {
                                                 top: mostB
                                             }}></div>
 
-                        
+
                                         </>
                                     )
                                 })}

@@ -17,6 +17,7 @@ import revalidateAdmin from "@/utils/revalidate"
 import { CustomerDetails } from "@/models/customers/Customer"
 import SetBuyer from "@/components/SetBuyer"
 import ViewBuyer from "@/components/ViewBuyer"
+import { toast } from "react-toastify"
 // import { revalidatePath } from "next/cache"
 
 
@@ -44,7 +45,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
 
     const machineId = props.machineDetails.id.toString()
 
-    const isWorkingOn = props.machineDetails.is_working_on
+    // const isWorkingOn = props.machineDetails.is_working_on
 
     const router = useRouter()
 
@@ -52,22 +53,22 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
 
         const details: MachineDetails = props.machineDetails
 
-        setWorkingOn(isWorkingOn)
 
         const existingImages: FormImageDataURL[] = details.images.map((img) => (
             new FormImageDataURL(img.image_id, ImageType.Existing, baseURL + '/images/' + img.image_path)
         ))
 
         console.log("monitor formControl useEffect", details.images.length, existingImages.length)
-        formControl.setPreviews(existingImages)
-        formControl.setBrandId(details.brand_id)
-        formControl.setModel(details.model)
-        formControl.setBoughtPrice(details.bought_price.toString())
-        formControl.setNote(details.note)
-        formControl.setReady(details.is_ready)
+        formControl.setPreviews(x => existingImages)
+        formControl.setBrandId(x => details.brand_id)
+        formControl.setModel(x => details.model)
+        formControl.setBoughtPrice(x => details.bought_price.toString())
+        formControl.setNote(x => details.note)
+        formControl.setReady(x => details.is_ready)
 
+        setWorkingOn(details.is_working_on)
         setCustomer(details.customer)
-        console.log(details)
+        // console.log(details)
         setIsInQrBatch(details.is_in_qr_batch)
 
         // setUpdatedAt(details.updated_at)
@@ -76,7 +77,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
         }
 
         setIsLoaded(true)
-    }, [])
+    }, [props.machineDetails, formControl])
 
     //why put it in a useState ? not just destructuring it directly ? if i destructure it directly it will be rerendered every changes, even if the formControl didnt changed
 
@@ -114,9 +115,13 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
             .then(res => (res.json()))
             .then(json => {
                 console.log(json)
+                toast.success('Removed successfully')
                 router.push('/admin')
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                toast.error("Failed to delete the item")
+                console.log(err)
+            })
     }
 
     const handleCustomerDeleteButton = () => {
@@ -145,64 +150,42 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
             })
             .then(json => {
                 setIsInQrBatch(!isInQrBatch)
+                toast.success( !isInQrBatch? 'Added to QR Batch' : "Removed from QR Batch")
                 console.log(json)
             })
             .catch(err => {
+                toast.error( !isInQrBatch? 'Failed to add the item to QR Batch' : "Failed to remove the item from QR Batch")
                 console.log(err)
             })
 
-        // const formData = new FormData()
-        // formData.append('id[]', machineId)
-
-        // fetch(`${baseURL}/card/generate-card`, {
-        //     method: 'POST',
-        //     body: formData
-        // }).then(res => {
-        //     if (res.ok) {
-        //         return res.blob()
-        //     }
-        //     throw new Error('failed to download PDF')
-        // })
-        // .then((blob) => {
-        //     // Create a temporary link for download
-        //     const url = window.URL.createObjectURL(blob);
-        //     const link = document.createElement("a");
-        //     link.href = url;
-        //     link.download = "sewing_machines_qr_codes.pdf";
-        //     link.click();
-        //     window.URL.revokeObjectURL(url); // Cleanup
-        // })
-        // .catch((error) => {
-        //     console.error("Error downloading the PDF:", error);
-        // });
     }
 
-    const handlePrintQr = () => {
-        const formData = new FormData()
-        formData.append('id[]', machineId)
+    // const handlePrintQr = () => {
+    //     const formData = new FormData()
+    //     formData.append('id[]', machineId)
 
-        fetch(`${baseURL}/card/generate-card`, {
-            method: 'POST',
-            body: formData
-        }).then(res => {
-            if (res.ok) {
-                return res.blob()
-            }
-            throw new Error('failed to download PDF')
-        })
-            .then((blob) => {
-                // Create a temporary link for download
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = "sewing_machines_qr_codes.pdf";
-                link.click();
-                window.URL.revokeObjectURL(url); // Cleanup
-            })
-            .catch((error) => {
-                console.error("Error downloading the PDF:", error);
-            });
-    }
+    //     fetch(`${baseURL}/card/generate-card`, {
+    //         method: 'POST',
+    //         body: formData
+    //     }).then(res => {
+    //         if (res.ok) {
+    //             return res.blob()
+    //         }
+    //         throw new Error('failed to download PDF')
+    //     })
+    //         .then((blob) => {
+    //             // Create a temporary link for download
+    //             const url = window.URL.createObjectURL(blob);
+    //             const link = document.createElement("a");
+    //             link.href = url;
+    //             link.download = "sewing_machines_qr_codes.pdf";
+    //             link.click();
+    //             window.URL.revokeObjectURL(url); // Cleanup
+    //         })
+    //         .catch((error) => {
+    //             console.error("Error downloading the PDF:", error);
+    //         });
+    // }
 
     if (isLoaded) {
         return (
@@ -228,10 +211,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                                     )
 
 
-                                } else {
-                                    console.log(typeof imageSrc.src, "Seharusnya type imageSrc.src adalah string")
-                                    return (<div>gagal render :/</div>)
-                                }
+                                } 
                             })
                         }
                     </div>
@@ -338,7 +318,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                         </div>
                         <div className="w-1/5 flex flex-col gap-1 items-center font-bold text-sm">
 
-                            <Button className="min-w-12 w-12 h-12 p-0 rounded-full"><FontAwesomeIcon size="lg" icon={faEllipsis} /></Button>
+                            <Button disabled className="min-w-12 w-12 h-12 p-0 rounded-full"><FontAwesomeIcon size="lg" icon={faEllipsis} /></Button>
                             More
                         </div>
                     </div>

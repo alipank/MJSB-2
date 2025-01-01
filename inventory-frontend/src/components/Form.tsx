@@ -66,6 +66,8 @@ export function FormMachine(props: FormMachineProps) {
 	const formRoundness: string | undefined = 'rounded-lg'
 	const { newImages, setNewImages, deleteImages, setDeleteImages, previews, setPreviews, brandId, setBrandId, model, setModel, boughtPrice, setBoughtPrice, note, setNote, ready, setReady, onSubmit } = props.formControl
 
+	const [loading, setLoading] = useState<boolean>(false)
+    const [wiggle, setWiggle] = useState<boolean>(false)
 
 	async function handleImagesInput(e: ChangeEvent<HTMLInputElement>) {
 
@@ -364,12 +366,14 @@ export function FormMachine(props: FormMachineProps) {
 
 					<div className="flex flex-row gap-2 justify-between flex-wrap">
 						<Button onPress={() => {
+							
 							const newImagesFile = newImages.map(img => img.src)
 							setBtnTouched(true)
 							const formInput: FormInputProps = {
 								newImages: newImagesFile, deleteImages, brandId, model, boughtPrice, note, ready
 							}
 							if (areFieldsValid) {
+								// onSubmit(formInput, setLoading, setWiggle)
 								onSubmit(formInput)
 							} else {
 								Object.keys(touched).forEach((key) => {
@@ -380,9 +384,11 @@ export function FormMachine(props: FormMachineProps) {
 								})
 							}
 						}}
+							isLoading={loading} 
 							size="lg"
 							color={!areFieldsValid && btnTouched ? "danger" : "primary"}
-							className="w-40	 h-12 font-bold shrink-0">
+							className={`w-40 h-12 font-bold shrink-0 ${wiggle ? 'animate-wiggle' : ''}`}
+							onAnimationEnd={() => { setWiggle(false) }}>
 							{props.submitText}
 						</Button>
 						<div className="flex flex-row gap-2 ">

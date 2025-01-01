@@ -13,7 +13,7 @@ export default function ViewBuyer(props: ViewBuyerProps) {
                 {(onClose) => (
                     <>
                         <ModalHeader>
-                            Buyer's Details
+                            Buyer&apos;s Details
                         </ModalHeader>
                         <ModalBody className="flex flex-row">
                             {/* <p><span className="font-bold">Name</span>\t{name}</p>

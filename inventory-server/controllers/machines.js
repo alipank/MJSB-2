@@ -62,6 +62,11 @@ exports.getMachine = async function (req, res, next) {
 
 exports.getMachines = async function (req, res, next) {
     // const sqlQuery = "SELECT * FROM machines;";
+
+
+    const pagination = req.body.pagination && !req.body.pagination.match(/\D+/) ? req.body.pagination : '0'
+    const offset = pagination * 20
+
     const sqlQuery = `
     SELECT 
         m.*, 
@@ -79,15 +84,14 @@ exports.getMachines = async function (req, res, next) {
             SELECT MIN(sub_img.id)
             FROM machine_images AS sub_img
             WHERE sub_img.machine_id = m.id
-        );
+        )
+    LIMIT 20 OFFSET ${offset};
         
 
   `;
 
     await pool.query(sqlQuery)
-        .then(async (json) => {
-
-            console.log(await json[0])
+        .then((json) => {
 
             const parse = json.map((data) => {
                 const { image_id, image_path, is_in_qr_batch, ...rest } = data

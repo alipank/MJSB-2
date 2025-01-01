@@ -13,7 +13,7 @@ router.put("/:id", putMachine);
 
 router.delete("/:id", deleteMachine);
 
-router.get("/", getMachines);
+router.post("/", getMachines);
 
 router.post("/", postMachine);
 
