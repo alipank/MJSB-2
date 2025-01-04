@@ -1,5 +1,6 @@
 import { getBrands } from "@/utils/getData"
 import Form from "./form"
+import ArrowBack from "@/components/ArrowBack"
 
 export type Brand = {
   id: string
@@ -9,11 +10,14 @@ export type Brand = {
 //why it takes me weeks just to finish this section, huft
 
 export default async function Page() {
-  
+
   const brands: Brand[] = await getBrands()
 
   return (
-    <Form  brands={brands} />
+    <>
+      <ArrowBack path={'/admin'} />
+      <Form brands={brands} />
+    </>
   )
- 
+
 }

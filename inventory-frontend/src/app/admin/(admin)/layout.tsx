@@ -18,7 +18,6 @@ export default function AdminLayout({
             <p className="text-sm">@2024 | Made by <span className="font-bold">Alipank</span> with &lt;3</p>
           </div>
         </div>
-      {/* <ArrowBack /> */}
     </div>
   );
 }

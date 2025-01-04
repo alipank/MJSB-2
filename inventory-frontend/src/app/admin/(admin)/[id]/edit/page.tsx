@@ -2,6 +2,7 @@ import Form from "./form"
 import { MachineDetails } from "@/models/machines/MachineDetails"
 import { getBrands, getMachineData } from "@/utils/getData"
 import { Brand } from "../../add/page"
+import ArrowBack from "@/components/ArrowBack"
 
 
 
@@ -9,12 +10,12 @@ import { Brand } from "../../add/page"
 
 export default async function Page({ params }: any) {
 
- 
+
   // const res = await fetch('http://localhost:3002/admin/machines/brands')
   // const brands: Brand[] = await res.json()
   console.log(params)
   try {
-    const machineDetails: MachineDetails = await getMachineData(params.id )
+    const machineDetails: MachineDetails = await getMachineData(params.id)
     console.log(machineDetails)
     // const brands: Brand[] = [
     //   {
@@ -23,17 +24,20 @@ export default async function Page({ params }: any) {
     //   }
     // ]
 
-    const brands:Brand[] = await getBrands()
+    const brands: Brand[] = await getBrands()
 
-    if(machineDetails.images[0].image_id === null) {
-      throw {message: "This error shouldnt be happened (just jaga jaga :P), this error is caused by the image path doesnt exist on the database."}
+    if (machineDetails.images[0].image_id === null) {
+      throw { message: "This error shouldnt be happened (just jaga jaga :P), this error is caused by the image path doesnt exist on the database." }
     }
 
     return (
+      <>
+      <ArrowBack path={'/admin/'+machineDetails.id} />
       <Form brands={brands} machineDetails={machineDetails}  />
+      </>
     )
   } catch (error: any) {
-    
+
     // console.log(error)
 
     return <p>{error.message}</p>

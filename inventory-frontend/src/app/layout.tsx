@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextUIProvider>
-          <ToastContainer position="top-center" toastClassName={'max-w-md w-dvw'} />
+          <ToastContainer position="top-center" toastClassName={'max-w-md w-dvw'} autoClose={1800}/>
           {children}
         </NextUIProvider>
       </body>

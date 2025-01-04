@@ -1,7 +1,7 @@
 'use client'
 
 import { OffscreenCanvas } from "@/utils/OffscreenCanvasPolyfill";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { readBarcodesFromImageData, readBarcodesFromImageFile, ReadResult, type ReaderOptions } from "zxing-wasm/reader";
 
@@ -11,6 +11,7 @@ export default function Page() {
 
 
     const router = useRouter()
+    const pathname = usePathname()
 
     const [pageError, setPageError] = useState<Error>()
     const [result, setResult] = useState<ReadResult[]>([])
@@ -30,7 +31,10 @@ export default function Page() {
     })
 
     // const [scannerView, setScannerView] = useState<string>('')
-    const onScan = useCallback((results:ReadResult[]) => {
+    const onScan = useCallback((results: ReadResult[]) => {
+
+        setResult(results)
+
         if (results.length === 0) {
             setResultErr(false)
             return
@@ -44,7 +48,7 @@ export default function Page() {
         // setResultErr(false)
         const split = results[0].text.split('-')
 
-        console.log(split[0])
+        console.log(split[0], split)
 
         if (split[0] !== 'MJSB' || (split[1] !== undefined ? split[1].match(/\D+/) : true)) {
             // console.log(split[0] !== 'MJSB' , split[1].match(/\D+/))
@@ -54,7 +58,7 @@ export default function Page() {
 
         router.push(`/admin/${split[1]}`)
 
-    }, [router])
+    }, [])
 
     const startScanning = useCallback((video: HTMLVideoElement) => {
 
@@ -90,7 +94,7 @@ export default function Page() {
 
         const ctx = new OffscreenCanvas(cropDimension, cropDimension).getContext('2d') as OffscreenCanvasRenderingContext2D
 
-        setInterval(() => {
+        return setInterval(() => {
             ctx.drawImage(video,
                 cropX, cropY, cropDimension, cropDimension,
                 0, 0, cropDimension, cropDimension
@@ -145,35 +149,77 @@ export default function Page() {
     // }
 
     useEffect(() => {
+        let interval: NodeJS.Timeout
+        const video = videoRef.current
 
-        navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: {
-                facingMode: 'environment',
-            }
-        })
-            .then((stream) => {
-                const video = videoRef.current
-                if (!video) return
+        if (!video?.srcObject) {
+            let stream: MediaStream
 
-                video.srcObject = stream
-
-                video.onloadedmetadata = () => {
-                    if (!video) return
-                    video.play()
-                        .then(() => {
-                            startScanning(video)
-
-
-                        })
-                        .catch(err => console.log(err))
+            navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: {
+                    facingMode: 'environment',
                 }
+            })
+                .then((streamData) => {
+                    if (!video) return
 
-            })
-            .catch(err => {
-                console.log(err)
-                // setPageError(new Error(err))
-            })
+                    stream = streamData
+                    video.srcObject = stream
+
+                    video.onloadedmetadata = () => {
+                        if (!video) return
+                        video.play()
+                            .then(() => {
+                                interval = startScanning(video)
+
+
+                            })
+                            .catch(err => console.log(err))
+                    }
+
+                    video.onpause = () => {
+                        stream.getTracks()[0].stop()
+                        // console.log(streamData.getTracks())
+
+                        console.log('should stop')
+                    }
+
+                })
+                .catch(err => {
+                    console.log(err)
+                    // setPageError(new Error(err))
+                })
+
+
+        }
+
+
+
+        return () => {
+            console.log('cleanup 1')
+
+            clearInterval(interval)
+
+            if (video) {
+                video.pause()
+                video.srcObject = null
+            }
+            // if (videoRef.current?.srcObject) {
+
+            // (videoRef.current.srcObject as MediaStream).getTracks().forEach((track) => {
+            //     console.log('cleanup 2')
+
+            //     if (track.readyState == 'live') {
+            //         console.log('cleanup 3')
+
+            //         track.stop()
+            //     }
+            // })
+            // console.log('cleanup 2')
+
+            // }
+        }
     }, [startScanning])
 
     // useEffect(() => {

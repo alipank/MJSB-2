@@ -6,7 +6,7 @@ import { notFound } from "next/navigation"
 const mURL = `${baseURL}/machines`
 
 export async function getBrands(): Promise<Brand[]> {
-  const res = await fetch(`${baseURL}/brands`, {cache:"no-store"})
+  const res = await fetch(`${baseURL}/brands`, {cache:"no-cache"})
   .catch((err) => console.log(err))
 
   if (!res?.ok) {
@@ -43,7 +43,8 @@ export async function getMachinesData(pagination?: number) {
 
   const res = await fetch(mURL, {
     method: 'POST',
-    body: formData
+    body: formData,
+    // cache: 'force-cache'
   })
 
   if (!res.ok) {

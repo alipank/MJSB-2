@@ -6,6 +6,7 @@ import { Brand } from "./page"
 import { useRouter } from "next/navigation"
 import { baseURL } from "@/utils/constants"
 import { toast } from "react-toastify"
+import { postMachine } from "@/utils/alterData"
 
 
 
@@ -15,7 +16,7 @@ export default function Form(props: { brands: Brand[] }) {
 
 
   const onSubmit = (formInput: FormInputProps) => {
-    const { newImages, deleteImages, brandId, model, boughtPrice, note, ready } = formInput
+    const {deleteImages, ...restFormInput} = formInput
 
     // 	// const formData = new FormData(event.currentTarget);
     // 	formData.set("images", "") //reset images field to be used with useState value fileImages
@@ -34,28 +35,29 @@ export default function Form(props: { brands: Brand[] }) {
     //   note: note
     // }
 
-    const formData = new FormData()
+    // const formData = new FormData()
 
 
-    newImages.forEach(file => {
-      formData.append("new_images[]", file)
-    })
+    // newImages.forEach(file => {
+    //   formData.append("new_images[]", file)
+    // })
 
-    formData.append("brand_id", brandId.toString())
-    formData.append("model", model)
-    formData.append("bought_price", boughtPrice)
-    formData.append("note", note)
-    formData.append('is_ready', ready ? '1' : '0')
+    // formData.append("brand_id", brandId.toString())
+    // formData.append("model", model)
+    // formData.append("bought_price", boughtPrice)
+    // formData.append("note", note)
+    // formData.append('is_ready', ready ? '1' : '0')
 
-    console.log(formData)
+    // console.log(formData)
 
-    fetch(
-      baseURL + "/machines/add",
-      {
-        // headers: { "Content-Type": "multipart/form-data" },  
-        method: "POST",
-        body: formData,
-      })
+    // fetch(
+    //   baseURL + "/machines/add",
+    //   {
+    //     // headers: { "Content-Type": "multipart/form-data" },  
+    //     method: "POST",
+    //     body: formData,
+    //   })
+    postMachine(restFormInput)
       .then(async (res) => {
         // console.log(await res.json())
         if (!res.ok) {
@@ -64,7 +66,7 @@ export default function Form(props: { brands: Brand[] }) {
         const json = await res.json()
         console.log(json)
         toast.success('Created successfully')
-        router.push(`/admin/${json.body.id}`)
+        router.replace(`/admin/${json.body.id}`)
       })
       .catch((err) => {
         toast.error('Failed to create the item')

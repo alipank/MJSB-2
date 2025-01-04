@@ -125,26 +125,52 @@ export function FormMachine(props: FormMachineProps) {
 		setPreviews([...previews, ...selectedImages.map((img) => (img.url))])
 	}
 
-	function handleImageDelete(e: React.MouseEvent<HTMLButtonElement>) {
-		const id = Number(e.currentTarget.getAttribute('data-img-id'))
-		const type = e.currentTarget.getAttribute('data-img-type')
+	// function handleImageDelete(e: React.MouseEvent<HTMLButtonElement>) {
+	// 	const id = Number(e.currentTarget.getAttribute('data-img-id'))
+	// 	const type = e.currentTarget.getAttribute('data-img-type')
+
+	// 	console.log(id, type)
+
+	// 	const filteredPreviews = previews.filter(img => img.id !== id)
+
+
+	// 	if (type === ImageType.Existing.toString()) {
+	// 		setPreviews(filteredPreviews)
+	// 		setDeleteImages([...deleteImages, id])
+	// 	}
+	// 	if (type === ImageType.New.toString()) {
+	// 		const filteredNewImages = newImages.filter(img => img.id !== id)
+	// 		setPreviews(filteredPreviews)
+	// 		setNewImages(filteredNewImages)
+	// 	}
+
+	// }
+
+	function handleImageDelete(id:number, type:ImageType) {
+		// const id = Number(e.currentTarget.getAttribute('data-img-id'))
+		// const type = e.currentTarget.getAttribute('data-img-type')
 
 		console.log(id, type)
 
-		const filteredPreviews = previews.filter(img => img.id !== id)
+		const filteredPreviews = previews.filter(img => {
+			console.log(img.id, id, img.type, type)
+			return img.id !== id
+		})
 
 
-		if (type === ImageType.Existing.toString()) {
+		if (type === ImageType.Existing) {
 			setPreviews(filteredPreviews)
 			setDeleteImages([...deleteImages, id])
 		}
-		if (type === ImageType.New.toString()) {
+		if (type === ImageType.New) {
 			const filteredNewImages = newImages.filter(img => img.id !== id)
 			setPreviews(filteredPreviews)
 			setNewImages(filteredNewImages)
 		}
 
 	}
+
+
 
 
 	const isInvalid = {
@@ -211,7 +237,7 @@ export function FormMachine(props: FormMachineProps) {
 
 										return (
 											<div key={imageSrc.getKey()} className="relative">
-												<Button data-img-id={imageSrc.id} data-img-type={imageSrc.type} className="absolute p-0 m-2 min-w-8 w-8 h-8 rounded-full bg-[#00000077]" onClick={handleImageDelete}>
+												<Button data-img-id={imageSrc.id} data-img-type={imageSrc.type} className="absolute p-0 m-2 min-w-8 w-8 h-8 rounded-full bg-[#00000077]" onPress={() => {handleImageDelete(imageSrc.id, imageSrc.type)}}>
 													<FontAwesomeIcon icon={faXmark} className="text-slate-200" />
 												</Button>
 												<Image key={imageSrc.getKey()} src={imageSrc.src} alt="Your image" width={1} height={1} className={`w-auto h-36 border-2 border-gray-200 ${formRoundness}`} />

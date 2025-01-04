@@ -1,21 +1,21 @@
-// 'use client'
+'use client'
 
 import { baseURL } from "@/utils/constants";
 import { getMachineData, getMachinesData } from "@/utils/getData";
 import { cn, Switch } from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import ReadySwitch from "./ReadySwitch";
+import { createContext, useContext, useEffect, useState } from "react";
+import ReadySwitch, { ReadyContext } from "./ReadySwitch";
 
 // export const getServerSideProps = (async () => )
 
-export default async function MachineLayout({
+export default function MachineLayout({
     children, params
 }: Readonly<{
     children: React.ReactNode,
     params: any
 }>) {
 
-
+    // const ctx = useContext(ReadyContext)
 
 
     // useEffect(() => {
@@ -26,21 +26,20 @@ export default async function MachineLayout({
     //     }
     // }, [])
 
-     return getMachineData(params.id).then((data) => {
-        console.log('masuk', data.is_ready)
-        return (
-            <>
-                <ReadySwitch id={params.id} is_ready={data.is_ready}/>
-                <div className="h-16"></div>
+    return (
+        <>
+            <ReadyContext.Provider value={{ ready: false }}>
+                <ReadySwitch id={params.id} />
+                <div className="h-12 xs:h-16"></div>
                 {children}
-                {/* <div className="h-[2px] w-full bg-default-200 my-6"></div>
+            </ReadyContext.Provider>
+
+            {/* <div className="h-[2px] w-full bg-default-200 my-6"></div>
                 <p className="text-sm">@2024 | Made by <span className="font-bold">Alipank</span> with &lt;3</p> */}
-            </>
-        );
-     })
+        </>
+    );
 
     // console.log(is_ready)
-    
+
 
 }
-``

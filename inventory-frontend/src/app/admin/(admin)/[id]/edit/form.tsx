@@ -2,7 +2,7 @@
 
 import { MachineDetails } from "@/models/machines/MachineDetails"
 import { FormMachine, useFormControl } from "../../../../../components/Form"
-import { useEffect } from "react"
+import { useContext, useEffect } from "react"
 import { ImageType } from "@/models/machines/FormImageData"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@nextui-org/react"
@@ -12,49 +12,54 @@ import { FormImageDataURL, FormInputProps } from "@/models/machines/MachineProps
 import { baseURL } from "@/utils/constants"
 import { toast } from "react-toastify"
 import { Brand } from "../../add/page"
+import { ReadyContext } from "../ReadySwitch"
+import { putMachine } from "@/utils/alterData"
+
 
 
 
 
 export default function Form(props: { brands: Brand[], machineDetails: MachineDetails }) {
 
-
+  const readyCtx = useContext(ReadyContext)
 
   const machineId = props.machineDetails.id
 
   const router = useRouter()
 
   const onSubmit = (formInput: FormInputProps) => {
-    const { newImages, deleteImages, brandId, model, boughtPrice, note, ready } = formInput
+    const { ready, ...restFormInput } = formInput
 
-    const formData = new FormData()
+    // const formData = new FormData()
 
-    newImages.forEach(file => {
-      formData.append("new_images[]", file)
-    })
-    deleteImages.forEach((id, i) => {
-      formData.append(`delete_images_id[]`, id.toString())
-    })
-    formData.append("brand_id", brandId.toString())
-    formData.append("model", model)
-    formData.append("bought_price", boughtPrice)
-    formData.append("note", note)
-    formData.append('is_ready', ready ? '1' : '0')
+    // newImages.forEach(file => {
+    //   formData.append("new_images[]", file)
+    // })
+    // deleteImages.forEach((id, i) => {
+    //   formData.append(`delete_images_id[]`, id.toString())
+    // })
+    // formData.append("brand_id", brandId.toString())
+    // formData.append("model", model)
+    // formData.append("bought_price", boughtPrice)
+    // formData.append("note", note)
+    // formData.append('is_ready', ready ? '1' : '0')
 
-    console.log(newImages, deleteImages, brandId, model, boughtPrice, note, ready)
+    // console.log(newImages, deleteImages, brandId, model, boughtPrice, note, ready)
 
 
-    fetch(
-      baseURL + "/admin/" + machineId,
-      {
-        // headers: { "Content-Type": "multipart/form-data" },  
-        method: "PUT",
-        body: formData,
-      })
+    // fetch(
+    //   baseURL + "/admin/" + machineId,
+    //   {
+    //     // headers: { "Content-Type": "multipart/form-data" },  
+    //     method: "PUT",
+    //     body: formData,
+    //   })
+    putMachine({...restFormInput, machineId})
       .then(async (res) => {
         console.log(await res.json())
+        if (!res.ok) {throw res.status}
         toast.success("Edited Successfully")
-        router.push(`/admin/${machineId}`)
+        router.replace(`/admin/${machineId}`)
 
       })
       .catch((err) => {
@@ -82,7 +87,10 @@ export default function Form(props: { brands: Brand[], machineDetails: MachineDe
     formControl.setBoughtPrice(details.bought_price.toString())
     formControl.setNote(details.note)
     formControl.setReady(details.is_ready)
-  }, [props.machineDetails, formControl])
+
+    readyCtx.ready = details.is_ready
+
+  }, [props.machineDetails])
 
 
   return (

@@ -2,7 +2,7 @@
 import { Button, Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/react"
 import { faCircleDollarToSlot, faFileLines, faPenToSquare, faQrcode, faScrewdriverWrench, faTag, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Dispatch, SetStateAction, useContext, useMemo, useState } from "react"
+import { Dispatch, SetStateAction, useContext, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconProp } from "@fortawesome/fontawesome-svg-core"
 import { deleteMachine, deleteQrBatch, putMachineReady, putMachineWorkingOn, putQrBatch } from "../../../utils/alterData"
@@ -63,7 +63,10 @@ export default function ModalMachine() {
     }
   }
 
-  mm.openModal = openModal
+  useEffect(() => {
+    mm.openModal = openModal
+
+  }, [])
 
   return (
     // <ModalMachineContext.Provider value={{ openModal, modalMachineId, setUseItemIsWorkingOn, setUseItemIsReady }}>
@@ -78,12 +81,12 @@ export default function ModalMachine() {
               <ModalBody className="gap-0 mt-8 px-0 *:bg-white *:rounded-none *:font-bold">
                 <ModalItemButton
                   icon={faFileLines}
-                  onPress={() => { router.push('/admin/' + modalMachineId) }}
+                  onPress={() => { router.replace('/admin/' + modalMachineId) }}
                 >View Machine </ModalItemButton>
 
                 <ModalItemButton
                   icon={faPenToSquare}
-                  onPress={() => { router.push('/admin/' + modalMachineId + '/edit') }}
+                  onPress={() => { router.replace('/admin/' + modalMachineId + '/edit') }}
                 >Edit Machine </ModalItemButton>
 
                 <ModalItemButton
@@ -176,11 +179,11 @@ export default function ModalMachine() {
                 >
                   {!modalMachineData?.is_ready ? 'Mark as Ready' : 'Mark as Not Ready'}
                 </ModalItemButton>
-
+{/* 
                 <ModalItemButton
                   icon={faCircleDollarToSlot}
                   onPress={() => { }}
-                >Mark as Sold</ModalItemButton>
+                >Mark as Sold</ModalItemButton> */}
 
               </ModalBody>)
           }}

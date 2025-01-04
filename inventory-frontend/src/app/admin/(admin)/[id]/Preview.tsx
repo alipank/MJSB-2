@@ -5,7 +5,7 @@ import { FormImageDataURL } from "@/models/machines/MachineProps"
 import Image from "next/image"
 import { Brand } from "../add/page"
 import { useFormControl } from "@/components/Form"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { ImageType } from "@/models/machines/FormImageData"
 import { Button, cn, Popover, PopoverContent, PopoverTrigger, Switch, useDisclosure } from "@nextui-org/react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -18,6 +18,9 @@ import { CustomerDetails } from "@/models/customers/Customer"
 import SetBuyer from "@/components/SetBuyer"
 import ViewBuyer from "@/components/ViewBuyer"
 import { toast } from "react-toastify"
+import { ReadyContext } from "./ReadySwitch"
+import ArrowBack from "@/components/ArrowBack"
+import { div } from "framer-motion/client"
 // import { revalidatePath } from "next/cache"
 
 
@@ -45,6 +48,8 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
 
     const machineId = props.machineDetails.id.toString()
 
+    const readyCtx = useContext(ReadyContext)
+
     // const isWorkingOn = props.machineDetails.is_working_on
 
     const router = useRouter()
@@ -53,30 +58,38 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
 
         const details: MachineDetails = props.machineDetails
 
+        console.log("monitor formControl useEffect")
 
-        const existingImages: FormImageDataURL[] = details.images.map((img) => (
-            new FormImageDataURL(img.image_id, ImageType.Existing, baseURL + '/images/' + img.image_path)
-        ))
+        if (!isLoaded) { //just a sample to check if it has been executed or not
 
-        console.log("monitor formControl useEffect", details.images.length, existingImages.length)
-        formControl.setPreviews(x => existingImages)
-        formControl.setBrandId(x => details.brand_id)
-        formControl.setModel(x => details.model)
-        formControl.setBoughtPrice(x => details.bought_price.toString())
-        formControl.setNote(x => details.note)
-        formControl.setReady(x => details.is_ready)
+            console.log("monitor formControl useEffect 2", isLoaded)
 
-        setWorkingOn(details.is_working_on)
-        setCustomer(details.customer)
-        // console.log(details)
-        setIsInQrBatch(details.is_in_qr_batch)
 
-        // setUpdatedAt(details.updated_at)
-        if (typeof details.updated_at === 'string') {
-            setUpdatedAt(details.updated_at)
+            const existingImages: FormImageDataURL[] = details.images.map((img) => (
+                new FormImageDataURL(img.image_id, ImageType.Existing, baseURL + '/images/' + img.image_path)
+            ))
+
+            formControl.setPreviews(x => existingImages)
+            formControl.setBrandId(x => details.brand_id)
+            formControl.setModel(x => details.model)
+            formControl.setBoughtPrice(x => details.bought_price.toString())
+            formControl.setNote(x => details.note)
+            formControl.setReady(x => details.is_ready)
+
+            setWorkingOn(details.is_working_on)
+            setCustomer(details.customer)
+            // console.log(details)
+            setIsInQrBatch(details.is_in_qr_batch)
+
+            // setUpdatedAt(details.updated_at)
+            if (typeof details.updated_at === 'string') {
+                setUpdatedAt(details.updated_at)
+            }
+
+            readyCtx.ready = details.is_ready
+
+            setIsLoaded(true)
         }
-
-        setIsLoaded(true)
     }, [props.machineDetails])
 
     //why put it in a useState ? not just destructuring it directly ? if i destructure it directly it will be rerendered every changes, even if the formControl didnt changed
@@ -99,7 +112,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                 if (!res.ok) {
                     throw json
                 }
-                return revalidateAdmin()
+                // return revalidateAdmin()
             })
             .then(done => { console.log('/admin revalidated') })
             .catch((err) => {
@@ -139,8 +152,8 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
     }
 
     const handleAddPrintBatch = () => {
-        (isInQrBatch ? 
-            deleteQrBatch({ id: [machineId] }) : 
+        (isInQrBatch ?
+            deleteQrBatch({ id: [machineId] }) :
             putQrBatch({ id: [machineId] }))
             .then(async res => {
                 if (res.ok) {
@@ -150,11 +163,11 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
             })
             .then(json => {
                 setIsInQrBatch(!isInQrBatch)
-                toast.success( !isInQrBatch? 'Added to QR Batch' : "Removed from QR Batch")
+                toast.success(!isInQrBatch ? 'Added to QR Batch' : "Removed from QR Batch")
                 console.log(json)
             })
             .catch(err => {
-                toast.error( !isInQrBatch? 'Failed to add the item to QR Batch' : "Failed to remove the item from QR Batch")
+                toast.error(!isInQrBatch ? 'Failed to add the item to QR Batch' : "Failed to remove the item from QR Batch")
                 console.log(err)
             })
 
@@ -192,17 +205,17 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
             <>
                 {/* <div className="relative min-h-dvh flex justify-center items-center">
                 <div className="max-w-md w-full p-4 border-2 border-gray-200 rounded-3xl"> */}
+                <ArrowBack path={'/admin'} />
 
-                <div className="relative block -mx-4 w-auto overflow-x-auto scrollbar-hide">
+                <div className="relative block -mx-4 w-auto overflow-x-scroll ">
                     <div className="flex w-full flex-row-reverse justify-end gap-1 *:flex-shrink-0">
                         {
-                            previews.map((imageSrc: any, i: any) => {
+                            previews.map((imageSrc, i: any) => {
                                 if (typeof imageSrc.src == 'string') {
 
-                                    const key = imageSrc.type + imageSrc.id
+                                    const key = imageSrc.type.toString() + imageSrc.id
 
-                                    console.log(previews.length)
-
+                                    console.log(previews.length, key)
 
                                     return (
                                         <div key={key} className="relative">
@@ -211,7 +224,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                                     )
 
 
-                                } 
+                                }
                             })
                         }
                     </div>
@@ -220,7 +233,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                 <div className="flex basis-full flex-shrink-0 flex-col justify-center items-center ">
                     {/* <div className=""> */}
                     <h1 className="text-2xl font-bold text-foreground-800">
-                        {machineId +' | '+ brandName + ' ' + model}
+                        {machineId + ' | ' + brandName + ' ' + model}
                     </h1>
                     <p className="text-sm text-foreground-500">
                         {updatedAt}
@@ -264,7 +277,13 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                     <div className="max-w-80 w-full flex justify-center mb-3 rounded-2xl bg-gradient-to-br from-transparent to-default-100">
                         <Switch color="warning"
                             isSelected={workingOn}
-                            onClick={() => { handleWorkingOn(!workingOn) }}
+                            // onValueChange={(value) => {handleWorkingOn(value)}}
+                            // onTouchStart={(e) => {
+                            //     if (e.targetTouches.length === 1) {
+                            //         handleWorkingOn(!workingOn)
+                            //     } 
+                            // }}
+                            onClickCapture={() => { handleWorkingOn(!workingOn) }}
                             size="sm"
                             // className="mb-3"
                             classNames={{
@@ -287,7 +306,7 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                     <div className="*:text-center *:text-default-800 *:*:text-default-800 flex flex-row justify-around w-full max-w-80">
                         <div className="w-1/5 flex flex-col gap-1 items-center font-bold text-sm">
                             <Button onPress={() => {
-                                router.push(`/admin/${machineId}/edit`)
+                                router.replace(`/admin/${machineId}/edit`)
                             }} className="min-w-12 w-12 h-12 p-0 rounded-full"><FontAwesomeIcon size="lg" icon={faPen} /></Button>
                             Edit item
                         </div>
@@ -318,14 +337,20 @@ export default function Preview(props: { brands: Brand[], machineDetails: Machin
                         </div>
                         <div className="w-1/5 flex flex-col gap-1 items-center font-bold text-sm">
 
-                            <Button disabled className="min-w-12 w-12 h-12 p-0 rounded-full"><FontAwesomeIcon size="lg" icon={faEllipsis} /></Button>
+                            <Button isDisabled={true} className="min-w-12 w-12 h-12 p-0 rounded-full"><FontAwesomeIcon size="lg" icon={faEllipsis} /></Button>
                             More
                         </div>
                     </div>
 
                     {/* </div> */}
                     <div className="h-[2px] w-full mt-6 mb-4 bg-default-200 "></div>
-                    <p>{note}</p>
+                    {note.split('\n').map((i) => {
+                        return (
+                            <div key={i} className="text-start w-full">
+                                {i}
+                            </div>
+                        )
+                    })}
 
                 </div>
                 <SetBuyer isOpen={isOpenSetBuyer} onOpenChange={onOpenChangeSetBuyer} machineId={machineId} setCustomer={setCustomer} />

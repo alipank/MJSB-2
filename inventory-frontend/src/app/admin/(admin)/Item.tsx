@@ -3,7 +3,7 @@
 import { MachineDetails } from "@/models/machines/MachineDetails";
 import Image from "next/image";
 import { Brand } from "./add/page";
-import { Button } from "@nextui-org/react";
+import { Button, Skeleton, Spacer } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faQrcode, faScrewdriverWrench, faTag } from "@fortawesome/free-solid-svg-icons";
 import { baseURL } from "../../../utils/constants";
@@ -18,6 +18,8 @@ interface ItemProps {
 
 export default function Item(props: ItemProps) {
 
+
+    const [isImageLoaded, setIsImageLoaded] = useState(false)
 
     const router = useRouter()
 
@@ -54,18 +56,34 @@ export default function Item(props: ItemProps) {
 
 
     return (
-        <div
-            onClick={() => { router.push('/admin/' + id) }}
+        <Button
+            variant="light"
+            onPress={() => { router.replace('/admin/' + id) }}
             // href={'/admin/' + id}
-            className={`flex flex-row justify-start gap-3 
-                hover:opacity-90 hover:bg-default-200
-                py-2 px-4 transition-all duration-200 ease-in`}
+
+            // className={`flex flex-row justify-start gap-3 
+            //     hover:opacity-90 hover:bg-default-200
+            //     py-2 px-4 transition-all duration-200 ease-in`}
+
+            className="flex flex-row justify-start gap-3 py-2 px-4 w-full h-full m-0 rounded-none"
         >
-            <Image src={imagePath} alt="" width={0} height={0} className="w-1/6 aspect-square rounded-lg"></Image>
-            <div>
+            <Skeleton className="w-20 aspect-square rounded-lg" isLoaded={isImageLoaded}>
+                <Image
+                    // priority={true}
+                    // loading='eager'
+                    onLoad={() => { setIsImageLoaded(true) }}
+                    src={imagePath}
+                    alt=""
+                    width={0}
+                    height={0}
+                    className="w-full aspect-square object-cover rounded-lg"
+                ></Image>
+            </Skeleton>
+            <div className="self-start">
                 <h3 className="font-bold text-start">
                     {`${id} | ${brand} ${model}`}
                 </h3>
+                <Spacer y={1} />
                 <div className="flex flex-row">
                     <div className="text-default-600 text-sm font-medium">
                         {is_working_on ?
@@ -101,10 +119,10 @@ export default function Item(props: ItemProps) {
                     mm.setIsInBatch = setIsInBatch
 
                     mm.openModal(machineDetails)
-                }} className="bg-transparent hover:bg-default-100" isIconOnly>
+                }} className="bg-transparent hover:bg-default-200 " isIconOnly>
                     <FontAwesomeIcon icon={faEllipsis} ></FontAwesomeIcon>
                 </Button>
             </div>
-        </div>
+        </Button>
     )
 }

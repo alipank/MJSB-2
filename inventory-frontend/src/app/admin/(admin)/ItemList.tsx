@@ -107,7 +107,9 @@ export default function ItemList(props: ItemListProps) {
         {/* </Link> */}
       <Input className="w-full mb-3" placeholder="Search">
       </Input>
-      <Listbox className="-mx-4 p-0 gap-0 w-screen md:max-w-md" >
+      <Listbox className="-mx-4 p-0 gap-0 w-screen md:max-w-md" classNames={{
+        list: 'gap-0'
+      }}>
         {/* <div className="-mx-4 p-0 gap-0 w-screen md:max-w-md" > */}
 
         {
@@ -115,7 +117,7 @@ export default function ItemList(props: ItemListProps) {
 
             return (
               //Im overriding the Listbox item hover and focus class because i got one in the Item and the hover behaviour is weird.
-              <ListboxItem key={data.id} className={`block gap-0 p-0 w-full
+              <ListboxItem key={data.id} className={`block p-0 w-full
               data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-0 data-[focus-visible=true]:outline-none data-[focus-visible=true]:outline-offset-0 data-[focus-visible=true]:dark:ring-offset-background-content1 data-[hover=true]:transition-colors data-[hover=true]:bg-transparent data-[hover=true]:text-current
               `}>
                 <Item machineDetails={data}

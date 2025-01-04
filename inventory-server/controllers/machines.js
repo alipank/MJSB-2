@@ -284,9 +284,9 @@ exports.putMachine = function (req, res, next) {
                     message: "Maximum image is exceeded"
                 }
             }
-            const sqlQuery = "UPDATE machines SET brand_id=?, model=?, bought_price=?, note=?, is_ready=? WHERE id=?;";
+            const sqlQuery = "UPDATE machines SET brand_id=?, model=?, bought_price=?, note=? WHERE id=?;";
 
-            return pool.query(sqlQuery, [brand_id, model, bought_price, note, is_ready, req.params.id])
+            return pool.query(sqlQuery, [brand_id, model, bought_price, note, req.params.id])
 
         })
         .then(async (success) => {
