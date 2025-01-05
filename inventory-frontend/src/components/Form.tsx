@@ -94,7 +94,7 @@ export function FormMachine(props: FormMachineProps) {
 			selectedFiles.map(async (imageData, i) => {
 
 				// const url = URL.createObjectURL(imageData.src)
-				const resizedImageUrl: ResizeImageResult = await resizeImage(imageData, 600, 600, 0.9)
+				const resizedImageUrl: ResizeImageResult = await resizeImage(imageData, 2000, 2000, 0.9)
 
 
 				const imageObj: { url: FormImageDataURL, file: FormImageDataFile } =
