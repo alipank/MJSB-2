@@ -1,8 +1,8 @@
 import { getBrands } from "@/utils/getData";
-import ItemList from "./ItemList";
-import ModalMachine from "./ModalMachine";
-import { Brand } from "./add/page";
-import ModalMachineProvider from "./ModalContext";
+import ItemList from "@/components/admin/ItemList";
+import ModalMachine from "@/components/admin/ModalMachine";
+import { Brand } from "./(padding)/add/page";
+import ModalMachineProvider from "@/components/admin/ModalContext";
 "./ModalMachine";
 
 export default async function Page() {

@@ -2,8 +2,8 @@
 
 import { ImageDetails } from "@/models/machines/MachineDetails";
 import Image from "next/image";
-import { baseURL } from "../../../../utils/constants";
-import { Brand } from "../add/page";
+import { baseURL } from "@/utils/constants";
+import { Brand } from "@/app/admin/(admin)/(padding)/add/page";
 import { Checkbox, cn } from "@nextui-org/react";
 
 

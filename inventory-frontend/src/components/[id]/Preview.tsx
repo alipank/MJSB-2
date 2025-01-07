@@ -3,7 +3,7 @@
 import { MachineDetails } from "@/models/machines/MachineDetails"
 import { FormImageDataURL } from "@/models/machines/MachineProps"
 import Image from "next/image"
-import { Brand } from "../add/page"
+import { Brand } from "../../app/admin/(admin)/(padding)/add/page"
 import { useFormControl } from "@/components/Form"
 import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { ImageType } from "@/models/machines/FormImageData"

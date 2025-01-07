@@ -5,11 +5,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Dispatch, SetStateAction, useContext, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IconProp } from "@fortawesome/fontawesome-svg-core"
-import { deleteMachine, deleteQrBatch, putMachineReady, putMachineWorkingOn, putQrBatch } from "../../../utils/alterData"
+import { deleteMachine, deleteQrBatch, putMachineReady, putMachineWorkingOn, putQrBatch } from "@/utils/alterData"
 import { MachineDetails } from "@/models/machines/MachineDetails"
 import { ModalMachineContext } from "./ModalContext"
 import { toast } from "react-toastify"
-import { Brand } from "./add/page"
+import { Brand } from "@/app/admin/(admin)/(padding)/add/page"
 
 export interface OpenModalProps {
   id: string,

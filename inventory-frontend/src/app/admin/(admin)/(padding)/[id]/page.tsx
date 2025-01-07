@@ -1,6 +1,6 @@
 import { MachineDetails } from "@/models/machines/MachineDetails";
 import { Brand } from "../add/page";
-import Preview from "./Preview";
+import Preview from "../../../../../components/[id]/Preview";
 import { getBrands, getMachineData } from "@/utils/getData";
 // export const getServerSideProps = (async (context: GetServerSidePropsContext) => {
 //   const { id } = context.params ? context.params : { id: 0 }

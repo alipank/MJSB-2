@@ -12,7 +12,7 @@ import randomInt from "@/utils/randomInt";
 import { Label } from "./Label";
 import { FormImageDataFile, FormImageDataURL as IFormImageDataURL, ImageType } from "@/models/machines/FormImageData";
 import { formControlProps, FormImageDataURL, FormInputProps, FormMachineProps } from "@/models/machines/MachineProps";
-import { Brand } from "@/app/admin/(admin)/add/page";
+import { Brand } from "@/app/admin/(admin)/(padding)/add/page";
 import { useRequired } from "@/utils/validate";
 
 

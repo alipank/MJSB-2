@@ -2,11 +2,11 @@
 
 import { MachineDetails } from "@/models/machines/MachineDetails";
 import Image from "next/image";
-import { Brand } from "./add/page";
+import { Brand } from "@/app/admin/(admin)/(padding)/add/page"; 
 import { Button, Skeleton, Spacer } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faQrcode, faScrewdriverWrench, faTag } from "@fortawesome/free-solid-svg-icons";
-import { baseURL } from "../../../utils/constants";
+import { baseURL } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { ModalMachineContext } from "./ModalContext";
@@ -67,7 +67,7 @@ export default function Item(props: ItemProps) {
 
             className="flex flex-row justify-start gap-3 py-2 px-4 w-full h-full m-0 rounded-none"
         >
-            <Skeleton className="w-20 aspect-square rounded-lg" isLoaded={isImageLoaded}>
+            <Skeleton className="w-16 xs:w-20 shrink-0 aspect-square rounded-lg" isLoaded={isImageLoaded}>
                 <Image
                     // priority={true}
                     // loading='eager'
@@ -79,8 +79,8 @@ export default function Item(props: ItemProps) {
                     className="w-full aspect-square object-cover rounded-lg"
                 ></Image>
             </Skeleton>
-            <div className="self-start">
-                <h3 className="font-bold text-start">
+            <div className="self-start w-3/5">
+                <h3 className="font-bold text-start text-wrap text-ellipsis overflow-hidden whitespace-nowrap">
                     {`${id} | ${brand} ${model}`}
                 </h3>
                 <Spacer y={1} />

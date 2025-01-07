@@ -1,5 +1,5 @@
-import { QrBatchMachineDetails } from "@/app/admin/(admin)/qr-batch/Item"
-import { Brand } from "../app/admin/(admin)/add/page"
+// import { QrBatchMachineDetails } from "@/components/qr-batch/Item"
+import { Brand } from "../app/admin/(admin)/(padding)/add/page"
 import { baseURL } from "./constants"
 import { notFound } from "next/navigation"
 

@@ -1,8 +1,8 @@
 'use client'
 
 import { MachineDetails } from "@/models/machines/MachineDetails"
-import { getMachinesData } from "../../../utils/getData"
-import { Brand } from "./add/page"
+import { getMachinesData } from "@/utils/getData"
+import { Brand } from "@/app/admin/(admin)/(padding)/add/page"
 import { Button, Input, Listbox, ListboxItem } from "@nextui-org/react"
 import { useCallback, useContext, useEffect, useRef, useState } from "react"
 import Item from "./Item"
@@ -101,13 +101,15 @@ export default function ItemList(props: ItemListProps) {
   return (
     <div>
       {/* <Link href={'/admin/add'}> */}
-        <Button onPress={() => {router.push('/admin/add')}} color="primary" size="lg" className="w-full mb-2 font-bold">
+      <div className="mx-4 mt-4">
+        <Button onPress={() => { router.push('/admin/add') }} color="primary" size="lg" className="w-full mb-2 font-bold">
           Create New Machine
         </Button>
         {/* </Link> */}
-      <Input className="w-full mb-3" placeholder="Search">
-      </Input>
-      <Listbox className="-mx-4 p-0 gap-0 w-screen md:max-w-md" classNames={{
+        <Input className="w-full mb-3" placeholder="Search">
+        </Input>
+      </div>
+      <Listbox className=" p-0 gap-0 w-full md:max-w-md" classNames={{
         list: 'gap-0'
       }}>
         {/* <div className="-mx-4 p-0 gap-0 w-screen md:max-w-md" > */}

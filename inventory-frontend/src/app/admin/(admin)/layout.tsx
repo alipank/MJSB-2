@@ -11,11 +11,11 @@ export default function AdminLayout({
 
     <div id="MadeByAlipaaankkk">
         <div className=" min-h-dvh flex justify-center items-start overflow-x-hidden">
-          <div className="max-w-md w-full p-4 border-2 border-gray-200 rounded-3xl relative">
+          <div className="max-w-md w-full border-2 border-gray-200 rounded-3xl relative">
             
             {children}
             <div className="h-[2px] w-full bg-default-200 my-6"></div>
-            <p className="text-sm">@2024 | Made by <span className="font-bold">Alipank</span> with &lt;3</p>
+            <p className="text-sm mx-4 mb-4">@2024 | Made by <span className="font-bold">Alipank</span> with &lt;3</p>
           </div>
         </div>
     </div>

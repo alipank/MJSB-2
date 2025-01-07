@@ -4,7 +4,7 @@ import { baseURL } from "@/utils/constants";
 import { getMachineData, getMachinesData } from "@/utils/getData";
 import { cn, Switch } from "@nextui-org/react";
 import { createContext, useContext, useEffect, useState } from "react";
-import ReadySwitch, { ReadyContext } from "./ReadySwitch";
+import ReadySwitch, { ReadyContext } from "../../../../../components/[id]/ReadySwitch";
 
 // export const getServerSideProps = (async () => )
 
